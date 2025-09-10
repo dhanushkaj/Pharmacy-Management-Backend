@@ -48,6 +48,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/categories/**")
                         .hasRole("ADMIN") // POST/PUT/DELETE
 
+						// Suppliers
+						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/suppliers/**")
+						.hasAnyRole("ADMIN","PHARMACIST","MANAGER")
+						.requestMatchers("/api/suppliers/**")
+						.hasRole("ADMIN") // POST/PUT/DELETE
+
                         // other domains
                         .requestMatchers("/api/grn/approve").hasRole("ADMIN")
                         .requestMatchers("/api/reports/**").hasAnyRole("ADMIN","MANAGER")
