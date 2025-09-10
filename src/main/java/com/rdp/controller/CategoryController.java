@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/categories")
-@CrossOrigin(origins = { "http://localhost:3000", "http://192.168.1.103:3000" }) // adjust if needed
 public class CategoryController {
     private final CategoryService service;
     public CategoryController(CategoryService service) { this.service = service; }
