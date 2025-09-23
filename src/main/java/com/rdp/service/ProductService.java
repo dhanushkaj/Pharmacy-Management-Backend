@@ -9,8 +9,6 @@ import com.rdp.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.xml.validation.Validator;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -219,5 +217,9 @@ public class ProductService {
                 .failed(failed)
                 .errors(errors)
                 .build();
+    }
+
+    public List<ProductResponse> search(String like) {
+        return productRepo.searchLike(like).stream().map(this::toResponse).toList();
     }
 }

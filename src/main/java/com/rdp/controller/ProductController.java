@@ -37,6 +37,11 @@ public class ProductController {
         return ResponseEntity.ok(result); // 200 with {ok, failed, errors}
     }
 
+    @GetMapping("/search")
+    public List<ProductResponse> search(@RequestParam("q") String q) {
+        String like = "%" + q.trim().toLowerCase() + "%";
+        return service.search(like);
+    }
 
     @PutMapping("/{id}")
     public ProductResponse update(@PathVariable Long id, @Valid @RequestBody ProductRequest req) {
