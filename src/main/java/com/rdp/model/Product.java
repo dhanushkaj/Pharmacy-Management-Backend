@@ -3,11 +3,13 @@ package com.rdp.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import java.math.BigDecimal;
+
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "products")
+@Table(name = "rdp_products",
+        indexes = { @Index(name = "rdp_idx_product_code", columnList = "product_code"),
+                @Index(name = "rdp_idx_barcode", columnList = "barcode") })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Product {
     @Id
@@ -16,7 +18,7 @@ public class Product {
     private Long productId;
 
     @NotBlank
-    @Column(nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     private String name;                  // Product name
 
     @Column(name = "generic_name", length = 100)
@@ -30,25 +32,13 @@ public class Product {
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
-    @Column(name = "product_code", unique = true, length = 50)
+    @NotBlank
+    @Column(name = "product_code", nullable = false, length = 50, unique = true)
     private String productCode;
 
-    @Column(name = "barcode", unique = true, length = 50)
+    @NotBlank
+    @Column(name = "barcode", nullable = false, length = 50, unique = true)
     private String barcode;
-
-    @NotNull
-    @DecimalMin("0.0")
-    @Column(name = "cost_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal costPrice;
-
-    @NotNull
-    @DecimalMin("0.0")
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
-
-    @Min(0)
-    @Column(name = "stock")
-    private Integer stock;
 
     @Min(0)
     @Column(name = "min_stock")
@@ -59,7 +49,7 @@ public class Product {
 
     @DecimalMin("0.0") @DecimalMax("100.0")
     @Column(name = "max_discount", precision = 5, scale = 2)
-    private BigDecimal maxDiscount;
+    private java.math.BigDecimal maxDiscount;
 
     @Column(name = "expiry_date")
     private LocalDate expiryDate;
