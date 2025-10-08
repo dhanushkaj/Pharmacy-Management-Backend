@@ -19,7 +19,7 @@ public class Product {
 
     @NotBlank
     @Column(name = "name", nullable = false, length = 100)
-    private String name;                  // Product name
+    private String name;
 
     @Column(name = "generic_name", length = 100)
     private String genericName;
@@ -47,7 +47,8 @@ public class Product {
     @Column(name = "max_stock")
     private Integer maxStock;
 
-    @DecimalMin("0.0") @DecimalMax("100.0")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "100.0", message = "Max Discount must be between 0.0 and 100.0")
     @Column(name = "max_discount", precision = 5, scale = 2)
     private java.math.BigDecimal maxDiscount;
 
