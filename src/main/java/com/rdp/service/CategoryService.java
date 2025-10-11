@@ -4,14 +4,17 @@ import com.rdp.dto.CategoryRequest;
 import com.rdp.dto.CategoryResponse;
 import com.rdp.model.Category;
 import com.rdp.repository.CategoryRepository;
+import com.rdp.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository repo;
-    public CategoryService(CategoryRepository repo) { this.repo = repo; }
+    private final ProductRepository productRepo;
 
     public List<CategoryResponse> findAll() {
         return repo.findAll().stream()
@@ -39,6 +42,13 @@ public class CategoryService {
 
     public void delete(Long id) {
         if (!repo.existsById(id)) throw new IllegalArgumentException("Category not found: " + id);
+
+        boolean inUse = productRepo.existsByCategoryId(id);
+        if (inUse) {
+            // friendly message for frontend
+            throw new IllegalStateException("Category is still referenced by products");
+        }
+
         repo.deleteById(id);
     }
 }

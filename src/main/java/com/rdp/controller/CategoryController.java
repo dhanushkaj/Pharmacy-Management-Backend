@@ -40,11 +40,8 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.ok(Map.of(
-                "message", "Category Deleted",
-                "id", id
-        ));
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+         service.delete(id);
+        return ResponseEntity.ok().body("Category deleted: " + id);
     }
 }

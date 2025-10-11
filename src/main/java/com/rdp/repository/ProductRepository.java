@@ -14,10 +14,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByProductCodeIgnoreCase(String productCode);
 
     @Query("""
-   select p from Product p
-   where lower(p.name) like :like
-      or lower(p.genericName) like :like
-      or lower(p.productCode) like :like
+       select p from Product p
+       where lower(p.name) like :like
+          or lower(p.genericName) like :like
+          or lower(p.productCode) like :like
     """)
     List<Product> searchLike(@Param("like") String like);
+
+    // quick existence check by category id
+    @Query("select case when count(p) > 0 then true else false end from Product p where p.category.categoryId = :catId")
+    boolean existsByCategoryId(@Param("catId") Long categoryId);
 }
