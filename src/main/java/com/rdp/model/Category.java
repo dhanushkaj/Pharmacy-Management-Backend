@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "rdp_categories")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Category {
     @Id

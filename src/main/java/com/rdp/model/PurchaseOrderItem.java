@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "rdb_purchase_order_items")
+@Table(name = "rdp_purchase_order_items")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class PurchaseOrderItem {
 

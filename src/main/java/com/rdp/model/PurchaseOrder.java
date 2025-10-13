@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "rdb_purchase_orders",
-        indexes = { @Index(name = "rdb_po_order_code", columnList = "order_code", unique = true) })
+@Table(name = "rdp_purchase_orders",
+        indexes = { @Index(name = "rdp_po_order_code", columnList = "order_code", unique = true) })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class PurchaseOrder {
 

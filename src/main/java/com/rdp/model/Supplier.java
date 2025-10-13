@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "suppliers")
+@Table(name = "rdp_suppliers")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Supplier {
     @Id
