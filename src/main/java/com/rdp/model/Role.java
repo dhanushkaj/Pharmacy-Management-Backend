@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.Set;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "rdp_roles")
 @Getter
 @Setter
 @AllArgsConstructor

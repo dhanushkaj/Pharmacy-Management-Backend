@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Entity
-@Table(name = "customers",
+@Table(name = "rdp_customers",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"email"}),
                 @UniqueConstraint(columnNames = {"phone"})
