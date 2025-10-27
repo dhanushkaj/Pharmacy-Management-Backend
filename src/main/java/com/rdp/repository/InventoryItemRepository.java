@@ -17,6 +17,9 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
     Optional<InventoryItem> findByProductAndPrice(Product product, BigDecimal price);
     List<InventoryItem> findByProductProductIdOrderByCreatedAtDesc(Long productId);
     Optional<InventoryItem> findByProductProductIdAndPrice(Long productId, BigDecimal price);
+    boolean existsByProductProductIdAndCostPrice(Long productId, BigDecimal costPrice);
+
+    Optional<InventoryItem> findByProductAndCostPriceAndPrice(Product product, BigDecimal costPrice, BigDecimal price);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select i from InventoryItem i where i.product.productId = :productId and i.price = :price")
