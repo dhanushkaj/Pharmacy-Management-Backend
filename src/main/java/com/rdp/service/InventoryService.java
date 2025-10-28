@@ -21,6 +21,10 @@ public class InventoryService {
     private final InventoryItemRepository inventoryRepo;
     private final ProductRepository productRepo;
 
+    public boolean existsWithCost(Long productId, BigDecimal costPrice) {
+        return inventoryRepo.existsByProductProductIdAndCostPrice(productId, costPrice);
+    }
+
     @Transactional
     public InventoryItem addOrIncrement(Long productId, CreateInventoryRequest req) {
         Product p = productRepo.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
