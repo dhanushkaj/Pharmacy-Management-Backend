@@ -1,0 +1,87 @@
+package com.rdp.service;
+
+import com.rdp.dto.CustomerRequest;
+import com.rdp.dto.CustomerResponse;
+import com.rdp.model.Customer;
+import com.rdp.repository.CustomerRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class CustomerService {
+
+    private final CustomerRepository repo;
+
+    private CustomerResponse toResponse(Customer c) {
+        return new CustomerResponse(
+                c.getCustomerId(),
+                c.getName(),
+                c.getPhone(),
+                c.getEmail(),
+                c.getAddress()
+        );
+    }
+
+    public List<CustomerResponse> findAll() {
+        return repo.findAll().stream().map(this::toResponse).toList();
+    }
+
+    public CustomerResponse findById(Long id) {
+        var c = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + id));
+        return toResponse(c);
+    }
+
+    @Transactional
+    public CustomerResponse create(CustomerRequest req) {
+        // Uniqueness checks (optional if DB constraints alone are enough)
+        if (req.email() != null && !req.email().isBlank() && repo.existsByEmailIgnoreCase(req.email())) {
+            throw new IllegalArgumentException("Email already exists: " + req.email());
+        }
+        if (req.phone() != null && !req.phone().isBlank() && repo.existsByPhone(req.phone())) {
+            throw new IllegalArgumentException("Phone already exists: " + req.phone());
+        }
+
+        var c = new Customer();
+        apply(req, c);
+        return toResponse(repo.save(c));
+    }
+
+    @Transactional
+    public CustomerResponse update(Long id, CustomerRequest req) {
+        var c = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + id));
+
+        if (req.email() != null && !req.email().isBlank()
+                && repo.existsByEmailIgnoreCaseAndCustomerIdNot(req.email(), id)) {
+            throw new IllegalArgumentException("Email already exists: " + req.email());
+        }
+        if (req.phone() != null && !req.phone().isBlank()
+                && repo.existsByPhoneAndCustomerIdNot(req.phone(), id)) {
+            throw new IllegalArgumentException("Phone already exists: " + req.phone());
+        }
+
+        apply(req, c);
+        return toResponse(repo.save(c));
+    }
+
+    @Transactional
+    public String delete(Long id) {
+        if (!repo.existsById(id)) {
+            throw new IllegalArgumentException("Customer not found: " + id);
+        }
+        repo.deleteById(id);
+        return "Customer Deleted " + id;
+    }
+
+    private void apply(CustomerRequest req, Customer c) {
+        c.setName(req.name());
+        c.setPhone(req.phone());
+        c.setEmail(req.email());
+        c.setAddress(req.address());
+    }
+}
