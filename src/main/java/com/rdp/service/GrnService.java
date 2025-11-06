@@ -94,8 +94,6 @@ public class GrnService {
                         .price(newSellPrice)
                         .stock(item.getReceivedQuantity())
                         .batchNo("BATCH-" + System.currentTimeMillis())
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
                         .build();
 
                 inventoryItemRepository.save(newBucket);

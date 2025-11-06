@@ -1,11 +1,9 @@
 package com.rdp.model;
 
+import com.rdp.audit.BaseAuditableEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rdp_inventory_items",
@@ -14,7 +12,7 @@ import java.time.LocalDateTime;
                 @Index(name = "rdp_idx_inventory_product", columnList = "product_id")
         })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class InventoryItem {
+public class InventoryItem extends BaseAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,27 +31,10 @@ public class InventoryItem {
 
     @Min(0)
     @Column(name = "stock", nullable = false)
+    @Builder.Default
     private Integer stock = 0;
 
     @Column(name = "batch_no", length = 100)
     private String batchNo;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
 
 }
