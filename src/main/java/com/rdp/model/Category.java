@@ -1,6 +1,6 @@
 package com.rdp.model;
 
-
+import com.rdp.audit.BaseAuditableEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @Entity
 @Table(name = "rdp_categories")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class Category {
+public class Category extends BaseAuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")

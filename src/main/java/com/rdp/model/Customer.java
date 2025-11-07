@@ -1,5 +1,6 @@
 package com.rdp.model;
 
+import com.rdp.audit.BaseAuditableEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -11,7 +12,7 @@ import lombok.*;
                 @UniqueConstraint(columnNames = {"phone"})
         })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class Customer {
+public class Customer extends BaseAuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")

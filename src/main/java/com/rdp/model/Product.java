@@ -1,5 +1,6 @@
 package com.rdp.model;
 
+import com.rdp.audit.BaseAuditableEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
         indexes = { @Index(name = "rdp_idx_product_code", columnList = "product_code"),
                 @Index(name = "rdp_idx_barcode", columnList = "barcode") })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class Product {
+public class Product extends BaseAuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")

@@ -1,5 +1,6 @@
 package com.rdp.model;
 
+import com.rdp.audit.BaseAuditableEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "rdp_purchase_order_items")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class PurchaseOrderItem {
+public class PurchaseOrderItem extends BaseAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

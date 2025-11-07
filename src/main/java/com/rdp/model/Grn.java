@@ -1,5 +1,6 @@
 package com.rdp.model;
 
+import com.rdp.audit.BaseAuditableEntity;
 import com.rdp.model.enums.GrnStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Table(name = "rdp_grns",
         indexes = { @Index(name = "rdp_grn_code_idx", columnList = "grn_code", unique = true) })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class Grn {
+public class Grn extends BaseAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

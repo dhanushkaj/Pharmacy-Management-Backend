@@ -1,12 +1,13 @@
 package com.rdp.model;
 
+import com.rdp.audit.BaseAuditableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "rdp_suppliers")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class Supplier {
+public class Supplier extends BaseAuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "supplier_id")
