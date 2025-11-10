@@ -7,6 +7,8 @@ import com.rdp.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository repo;
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
 
     private CustomerResponse toResponse(Customer c) {
         return new CustomerResponse(
@@ -32,7 +35,11 @@ public class CustomerService {
 
     public CustomerResponse findById(Long id) {
         var c = repo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + id));
+                .orElseThrow(() -> {
+                    log.warn("Customer lookup failed id={}", id);
+                    return new IllegalArgumentException("Customer not found: " + id);
+                });
+        log.debug("Customer retrieved id={} name={}", id, c.getName());
         return toResponse(c);
     }
 
@@ -48,7 +55,9 @@ public class CustomerService {
 
         var c = new Customer();
         apply(req, c);
-        return toResponse(repo.save(c));
+        c = repo.save(c);
+        log.info("Created customer id={} name={} email={} phone={}", c.getCustomerId(), c.getName(), c.getEmail(), c.getPhone());
+        return toResponse(c);
     }
 
     @Transactional
@@ -66,7 +75,9 @@ public class CustomerService {
         }
 
         apply(req, c);
-        return toResponse(repo.save(c));
+        c = repo.save(c);
+        log.info("Updated customer id={} name={} email={} phone={}", c.getCustomerId(), c.getName(), c.getEmail(), c.getPhone());
+        return toResponse(c);
     }
 
     @Transactional
@@ -75,6 +86,7 @@ public class CustomerService {
             throw new IllegalArgumentException("Customer not found: " + id);
         }
         repo.deleteById(id);
+        log.info("Deleted customer id={}", id);
         return "Customer Deleted " + id;
     }
 

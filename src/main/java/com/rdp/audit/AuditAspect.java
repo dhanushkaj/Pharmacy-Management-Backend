@@ -39,6 +39,7 @@ public class AuditAspect {
         try {
             String entityType = extractEntityType(joinPoint);
             HttpServletRequest httpRequest = getCurrentHttpRequest();
+            log.debug("AuditAspect CREATE entityType={}", entityType);
             
             if (httpRequest != null) {
                 // For CREATE, oldValue is null and newValue is the request data
@@ -55,6 +56,7 @@ public class AuditAspect {
         HttpServletRequest httpRequest = getCurrentHttpRequest();
         Object oldValue = null;
         Object result = null;
+        log.debug("AuditAspect UPDATE start entityType={} id={}", entityType, id);
         
         try {
             // Capture old value before the update
@@ -82,6 +84,7 @@ public class AuditAspect {
         try {
             String entityType = extractEntityType(joinPoint);
             HttpServletRequest httpRequest = getCurrentHttpRequest();
+            log.debug("AuditAspect DELETE entityType={} id={}", entityType, id);
             
             if (httpRequest != null) {
                 auditService.logAction(entityType, String.valueOf(id), AuditAction.DELETE, httpRequest);
@@ -96,6 +99,7 @@ public class AuditAspect {
         try {
             String entityType = extractEntityType(joinPoint);
             HttpServletRequest httpRequest = getCurrentHttpRequest();
+            log.trace("AuditAspect VIEW ALL entityType={}", entityType);
             
             if (httpRequest != null) {
                 auditService.logAction(entityType, "ALL", AuditAction.VIEW, httpRequest);
@@ -110,6 +114,7 @@ public class AuditAspect {
         try {
             String entityType = extractEntityType(joinPoint);
             HttpServletRequest httpRequest = getCurrentHttpRequest();
+            log.trace("AuditAspect VIEW BY ID entityType={} id={}", entityType, id);
             
             if (httpRequest != null) {
                 auditService.logAction(entityType, String.valueOf(id), AuditAction.VIEW, httpRequest);
@@ -125,6 +130,7 @@ public class AuditAspect {
             String entityType = extractEntityType(joinPoint);
             HttpServletRequest httpRequest = getCurrentHttpRequest();
             String methodName = joinPoint.getSignature().getName().toLowerCase();
+            log.debug("AuditAspect BULK entityType={} size={} method={} ", entityType, (items==null?0:items.size()), methodName);
             
             AuditAction action = AuditAction.BULK_UPDATE;
             if (methodName.contains("delete")) {
