@@ -7,6 +7,8 @@ import com.rdp.model.Supplier;
 import com.rdp.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import java.util.Map;
 public class SupplierService {
     private final SupplierRepository repo;
     private final ObjectMapper mapper = new ObjectMapper();
+    private static final Logger log = LoggerFactory.getLogger(SupplierService.class);
 
     private String toJson(String contact, String email, String address) {
         try {
@@ -48,7 +51,11 @@ public class SupplierService {
     }
 
     public SupplierResponse findById(Long id) {
-        var s = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Supplier not found: " + id));
+        var s = repo.findById(id).orElseThrow(() -> {
+            log.warn("Supplier lookup failed id={}", id);
+            return new IllegalArgumentException("Supplier not found: " + id);
+        });
+        log.debug("Supplier retrieved id={} name={}", id, s.getName());
         return toResponse(s);
     }
 
@@ -57,6 +64,7 @@ public class SupplierService {
                 .name(req.name())
                 .contactInfo(toJson(req.contact(), req.email(), req.address()))
                 .build());
+        log.info("Created supplier id={} name={}", saved.getSupplierId(), saved.getName());
         return toResponse(saved);
     }
 
@@ -64,12 +72,15 @@ public class SupplierService {
         var s = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Supplier not found: " + id));
         s.setName(req.name());
         s.setContactInfo(toJson(req.contact(), req.email(), req.address()));
-        return toResponse(repo.save(s));
+        s = repo.save(s);
+        log.info("Updated supplier id={} name={}", s.getSupplierId(), s.getName());
+        return toResponse(s);
     }
 
     public String delete(Long id) {
         if (!repo.existsById(id)) throw new IllegalArgumentException("Supplier not found: " + id);
         repo.deleteById(id);
+        log.info("Deleted supplier id={}", id);
         return "Supplier Deleted " + id;
     }
 }

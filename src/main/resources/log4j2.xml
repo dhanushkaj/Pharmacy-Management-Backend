@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="60">
+  <Properties>
+    <Property name="LOG_PATTERN">%d{ISO8601} %-5p [%t] %X{corrId} %c{1.} - %m%n</Property>
+    <Property name="APP_NAME">pharmacy-backend</Property>
+  </Properties>
+
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+    </Console>
+    <RollingFile name="AppFile" fileName="logs/app.log"
+                 filePattern="logs/app-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="20 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="30"/>
+    </RollingFile>
+    <RollingFile name="AuditFile" fileName="logs/audit.log"
+                 filePattern="logs/audit-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="%d{ISO8601} %-5p %c - %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+    </RollingFile>
+    <RollingFile name="SecurityFile" fileName="logs/security.log"
+                 filePattern="logs/security-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="%d{ISO8601} %-5p %c - %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <!-- Package level tuning -->
+    <Logger name="com.rdp.audit" level="info" additivity="false">
+      <AppenderRef ref="AuditFile"/>
+      <AppenderRef ref="Console"/>
+    </Logger>
+    <Logger name="com.rdp.security" level="info" additivity="false">
+      <AppenderRef ref="SecurityFile"/>
+      <AppenderRef ref="Console"/>
+    </Logger>
+    <Logger name="com.rdp.service" level="debug" additivity="false">
+      <AppenderRef ref="AppFile"/>
+      <AppenderRef ref="Console"/>
+    </Logger>
+    <Logger name="org.springframework" level="warn"/>
+
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="AppFile"/>
+    </Root>
+  </Loggers>
+</Configuration>

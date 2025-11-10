@@ -13,6 +13,8 @@ import com.rdp.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +31,7 @@ public class PurchaseOrderService {
     private final SupplierRepository supplierRepo;
     private final ProductRepository productRepo;
     private final PurchaseOrderItemRepository itemRepo;
+    private static final Logger log = LoggerFactory.getLogger(PurchaseOrderService.class);
 
     // e.g. PO-20250923-0001
     private static final DateTimeFormatter DAY = DateTimeFormatter.BASIC_ISO_DATE; // yyyyMMdd
@@ -40,7 +43,11 @@ public class PurchaseOrderService {
 
     public PurchaseOrderResponse findById(Long id) {
         var po = orderRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Purchase order not found: " + id));
+                .orElseThrow(() -> {
+                    log.warn("PO lookup failed id={}", id);
+                    return new IllegalArgumentException("Purchase order not found: " + id);
+                });
+        log.debug("PO retrieved id={} code={} supplierId={}", id, po.getOrderCode(), po.getSupplier().getSupplierId());
         return toResponse(po);
     }
 
@@ -68,6 +75,7 @@ public class PurchaseOrderService {
 
         recalcAndSetTotal(po);
         var saved = orderRepo.save(po);
+        log.info("Created PO id={} code={} supplierId={} items={} totalCost={}", saved.getId(), saved.getOrderCode(), supplier.getSupplierId(), saved.getItems().size(), saved.getTotalCost());
         return toResponse(saved);
     }
 
@@ -90,6 +98,7 @@ public class PurchaseOrderService {
         recalcAndSetTotal(order);
         orderRepo.save(order);
 
+        log.info("Updated PO item quantity orderId={} itemId={} newQty={} totalCost={}", orderId, itemId, quantity, order.getTotalCost());
         return toResponse(order);
     }
 
@@ -107,6 +116,7 @@ public class PurchaseOrderService {
         recalcAndSetTotal(order);
         orderRepo.save(order);
 
+        log.info("Deleted PO item orderId={} itemId={} itemsRemaining={} totalCost={}", orderId, itemId, order.getItems().size(), order.getTotalCost());
         return toResponse(order);
     }
 
@@ -116,6 +126,7 @@ public class PurchaseOrderService {
             throw new IllegalArgumentException("Purchase order not found: " + id);
         }
         orderRepo.deleteById(id);
+        log.info("Deleted PO id={}", id);
     }
 
     private String nextOrderCode() {
@@ -140,10 +151,15 @@ public class PurchaseOrderService {
         do {
             code = prefix + String.format("%04d", next++);
             attempts++;
+            if (attempts % 25 == 0) {
+                log.debug("Attempted {} codes for prefix {} lastTried={}", attempts, prefix, code);
+            }
             if (attempts > 1000) {
                 throw new IllegalStateException("Could not allocate order code");
             }
         } while (orderRepo.existsByOrderCodeIgnoreCase(code));
+
+        log.debug("Allocated order code {} after {} attempts", code, attempts);
 
         return code;
     }
