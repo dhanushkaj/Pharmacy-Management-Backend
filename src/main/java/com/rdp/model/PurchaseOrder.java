@@ -1,5 +1,6 @@
 package com.rdp.model;
 
+import com.rdp.audit.BaseAuditableEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Table(name = "rdp_purchase_orders",
         indexes = { @Index(name = "rdp_po_order_code", columnList = "order_code", unique = true) })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class PurchaseOrder {
+public class PurchaseOrder extends BaseAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

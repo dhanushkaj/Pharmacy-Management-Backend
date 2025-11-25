@@ -11,6 +11,8 @@ import com.rdp.repository.PurchaseOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,6 +30,7 @@ public class GrnService {
     private final ProductRepository productRepository;
     private final InventoryService inventoryService;
     private final InventoryItemRepository inventoryItemRepository;
+    private static final Logger log = LoggerFactory.getLogger(GrnService.class);
 
 
 
@@ -54,6 +57,7 @@ public class GrnService {
         }
 
         Grn savedGrn = grnRepository.save(grn);
+        log.info("Created GRN id={} code={} purchaseOrderId={} items={}", savedGrn.getId(), savedGrn.getGrnCode(), po.getId(), savedGrn.getItems().size());
         return mapToDto(savedGrn);
     }
 
@@ -71,6 +75,7 @@ public class GrnService {
         grn.setApprovedUser(approvedByUser);
         grn.setApprovedDate(LocalDateTime.now());
 
+        int adjustedBuckets = 0;
         for (GrnItem item : grn.getItems()) {
             Product product = item.getProduct();
             BigDecimal newCost = item.getUnitCost();
@@ -86,6 +91,7 @@ public class GrnService {
                 existingBucket.setStock(existingBucket.getStock() + item.getReceivedQuantity());
                 existingBucket.setUpdatedAt(LocalDateTime.now());
                 inventoryItemRepository.save(existingBucket);
+                adjustedBuckets++;
             } else {
                 //No bucket for this cost/sell price — create new inventory record
                 InventoryItem newBucket = InventoryItem.builder()
@@ -94,15 +100,15 @@ public class GrnService {
                         .price(newSellPrice)
                         .stock(item.getReceivedQuantity())
                         .batchNo("BATCH-" + System.currentTimeMillis())
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
                         .build();
 
                 inventoryItemRepository.save(newBucket);
+                adjustedBuckets++;
             }
         }
 
         Grn updated = grnRepository.save(grn);
+        log.info("Approved GRN id={} code={} items={} inventoryBucketsAdjusted={} approvedBy={}", grnId, grn.getGrnCode(), grn.getItems().size(), adjustedBuckets, approvedByUser);
         return mapToDto(updated);
     }
 
@@ -124,19 +130,23 @@ public class GrnService {
         grn.setApprovedUser(null);
 
         Grn updatedGrn = grnRepository.save(grn);
+        log.info("Rejected GRN id={} code={} reason={} status={}", grnId, grn.getGrnCode(), reason, grn.getStatus());
         return mapToDto(updatedGrn);
     }
 
     public GrnResponse getGrnById(Long grnId) {
         Grn grn = grnRepository.findById(grnId)
                 .orElseThrow(() -> new ResourceNotFoundException("GRN not found with id: " + grnId));
+        log.debug("Fetched GRN id={} code={} status={}", grnId, grn.getGrnCode(), grn.getStatus());
         return mapToDto(grn);
     }
 
     public List<GrnResponse> getAllGrns() {
-        return grnRepository.findAll().stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+    List<GrnResponse> list = grnRepository.findAll().stream()
+        .map(this::mapToDto)
+        .collect(Collectors.toList());
+    log.debug("Fetched all GRNs count={}", list.size());
+    return list;
     }
 
     @Transactional
@@ -150,6 +160,7 @@ public class GrnService {
         }
 
         grnRepository.delete(grn);
+        log.info("Deleted GRN id={} code={} status={} items={}", grnId, grn.getGrnCode(), grn.getStatus(), grn.getItems().size());
     }
 
     // --- Helper Methods ---
@@ -158,7 +169,9 @@ public class GrnService {
         // Simple implementation: GRN-YYYYMMDD-COUNT
         String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         long count = grnRepository.count() + 1; // This is a simple but not concurrency-safe way
-        return String.format("GRN-%s-%04d", datePart, count);
+        String code = String.format("GRN-%s-%04d", datePart, count);
+        log.debug("Generated GRN code {} (count={})", code, count);
+        return code;
     }
 
     private GrnResponse mapToDto(Grn grn) {

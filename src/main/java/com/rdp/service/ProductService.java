@@ -12,6 +12,8 @@ import com.rdp.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
 
     private final ProductRepository productRepo;
     private final CategoryRepository categoryRepo;
@@ -70,7 +73,11 @@ public class ProductService {
     }
 
     public ProductResponse findById(Long id) {
-        var p = productRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Product not found: " + id));
+        var p = productRepo.findById(id).orElseThrow(() -> {
+            log.warn("Product lookup failed id={}", id);
+            return new IllegalArgumentException("Product not found: " + id);
+        });
+        log.debug("Product retrieved id={} code={}", id, p.getProductCode());
         return toResponse(p);
     }
 
@@ -80,6 +87,7 @@ public class ProductService {
         var p = new Product();
         applyToProduct(req, p);
         p = productRepo.save(p);
+        log.info("Created product id={} code={} name={}", p.getProductId(), p.getProductCode(), p.getName());
 
         // create initial inventory item if price/stock provided
         if (req.price() != null || req.stock() != null || req.costPrice() != null) {
@@ -106,6 +114,7 @@ public class ProductService {
 
         applyToProduct(req, p);
         p = productRepo.save(p);
+    log.info("Updated product id={} code={} name={}", p.getProductId(), p.getProductCode(), p.getName());
 
         // If price/stock provided on update, create or update inventory accordingly:
         if (req.price() != null || req.stock() != null) {
@@ -141,6 +150,7 @@ public class ProductService {
         var invList = inventoryRepo.findByProduct(productRepo.getReferenceById(id));
         inventoryRepo.deleteAll(invList);
         productRepo.deleteById(id);
+        log.info("Deleted product id={} removedInventoryItems={}", id, invList.size());
         return "Product Deleted " + id;
     }
 
@@ -183,6 +193,7 @@ public class ProductService {
     public BulkImportResponse bulkCreate(List<ProductRequest> items) {
         int ok = 0, failed = 0;
         List<String> errors = new ArrayList<>();
+        log.info("Starting bulk product import size={}", items.size());
 
         // cache existing codes (uppercased) for quick duplicate checks on create
         Set<String> existingCodesUpper = productRepo.findAll().stream()
@@ -284,10 +295,11 @@ public class ProductService {
                 }
             } catch (Exception e) {
                 failed++;
+                log.warn("Bulk import error row={} message={}", row, e.getMessage());
                 errors.add("Row " + row + ": " + e.getMessage());
             }
         }
-
+        log.info("Bulk import completed ok={} failed={}", ok, failed);
         return BulkImportResponse.builder()
                 .ok(ok)
                 .failed(failed)
