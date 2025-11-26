@@ -24,8 +24,8 @@ public class Grn extends BaseAuditableEntity {
     @JoinColumn(name = "po_id", nullable = false)
     private PurchaseOrder purchaseOrder;
 
-    @Column(name = "grn_code", nullable = false, unique = true, length = 30)
-    private String grnCode; // e.g., GRN-20251021-0001
+    @Column(name = "grn_code", nullable = false, unique = true, length = 100)
+    private String grnCode; // e.g., GRN-POACMEPHARMA202511260001-20251126-0001
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

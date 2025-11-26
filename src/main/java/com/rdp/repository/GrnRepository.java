@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface GrnRepository extends JpaRepository<Grn, Long> {
     Optional<Grn> findByGrnCode(String grnCode);
+    
+    long countByGrnCodeStartingWith(String prefix);
 }
