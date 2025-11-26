@@ -22,8 +22,8 @@ public class PurchaseOrder extends BaseAuditableEntity {
     @Column(name = "po_id")
     private Long id;
 
-    @Column(name = "order_code", nullable = false, unique = true, length = 30)
-    private String orderCode;                  // e.g. PO-20250207-0001
+    @Column(name = "order_code", nullable = false, unique = true, length = 50)
+    private String orderCode;                  // e.g. PO-SUPPLIERNAME-20251126-0001
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;           // order created date/time

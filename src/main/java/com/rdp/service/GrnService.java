@@ -9,6 +9,8 @@ import com.rdp.repository.InventoryItemRepository;
 import com.rdp.repository.ProductRepository;
 import com.rdp.repository.PurchaseOrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -42,7 +44,7 @@ public class GrnService {
         Grn grn = Grn.builder()
                 .purchaseOrder(po)
                 .status(GrnStatus.PENDING)
-                .grnCode(generateGrnCode()) // Implement this helper method
+                .grnCode(generateGrnCode(po)) // Pass PO to generate code with supplier info
                 .build();
 
         for (GrnItemRequest itemRequest : request.items()) {
@@ -141,12 +143,18 @@ public class GrnService {
         return mapToDto(grn);
     }
 
+    public Page<GrnResponse> getAllGrns(Pageable pageable) {
+        Page<GrnResponse> page = grnRepository.findAll(pageable).map(this::mapToDto);
+        log.debug("Fetched GRNs page={} size={} total={}", pageable.getPageNumber(), page.getNumberOfElements(), page.getTotalElements());
+        return page;
+    }
+
     public List<GrnResponse> getAllGrns() {
-    List<GrnResponse> list = grnRepository.findAll().stream()
-        .map(this::mapToDto)
-        .collect(Collectors.toList());
-    log.debug("Fetched all GRNs count={}", list.size());
-    return list;
+        List<GrnResponse> list = grnRepository.findAll().stream()
+            .map(this::mapToDto)
+            .collect(Collectors.toList());
+        log.debug("Fetched all GRNs count={}", list.size());
+        return list;
     }
 
     @Transactional
@@ -154,23 +162,28 @@ public class GrnService {
         Grn grn = grnRepository.findById(grnId)
                 .orElseThrow(() -> new ResourceNotFoundException("GRN not found with id: " + grnId));
 
-        // Optional: Add logic to only allow deletion of PENDING or REJECTED GRNs
-        if(grn.getStatus() == GrnStatus.APPROVED) {
-            throw new IllegalStateException("Cannot delete an APPROVED GRN.");
-        }
-
+        // Allow deletion of GRNs in any status (PENDING, REJECTED, or APPROVED)
         grnRepository.delete(grn);
         log.info("Deleted GRN id={} code={} status={} items={}", grnId, grn.getGrnCode(), grn.getStatus(), grn.getItems().size());
     }
 
     // --- Helper Methods ---
 
-    private String generateGrnCode() {
-        // Simple implementation: GRN-YYYYMMDD-COUNT
+    private String generateGrnCode(PurchaseOrder po) {
+        // Format: GRN-POCODE-YYYYMMDD-SEQUENCE
+        // e.g. GRN-PO-ACME-20251126-0001-20251126-0001
+        // Keep PO code as-is (with dashes)
+        String poCode = po.getOrderCode() != null ? po.getOrderCode() : "PO" + po.getId();
+        
         String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = grnRepository.count() + 1; // This is a simple but not concurrency-safe way
-        String code = String.format("GRN-%s-%04d", datePart, count);
-        log.debug("Generated GRN code {} (count={})", code, count);
+        
+        // Count GRNs for this PO today
+        String prefix = "GRN-" + poCode + "-" + datePart + "-";
+        long count = grnRepository.countByGrnCodeStartingWith(prefix);
+        long sequence = count + 1;
+        
+        String code = String.format("%s%04d", prefix, sequence);
+        log.debug("Generated GRN code {} (sequence={})", code, sequence);
         return code;
     }
 

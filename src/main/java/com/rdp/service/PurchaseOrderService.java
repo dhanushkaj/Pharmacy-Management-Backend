@@ -11,6 +11,8 @@ import com.rdp.repository.PurchaseOrderItemRepository;
 import com.rdp.repository.PurchaseOrderRepository;
 import com.rdp.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -33,9 +35,13 @@ public class PurchaseOrderService {
     private final PurchaseOrderItemRepository itemRepo;
     private static final Logger log = LoggerFactory.getLogger(PurchaseOrderService.class);
 
-    // e.g. PO-20250923-0001
-    private static final DateTimeFormatter DAY = DateTimeFormatter.BASIC_ISO_DATE; // yyyyMMdd
+    // e.g. PO-SUPPLIER-20250207-0001
+    private static final DateTimeFormatter DAY = DateTimeFormatter.ofPattern("yyyyMMdd"); // yyyyMMdd
 
+
+    public Page<PurchaseOrderResponse> findAll(Pageable pageable) {
+        return orderRepo.findAll(pageable).map(this::toResponse);
+    }
 
     public List<PurchaseOrderResponse> findAll() {
         return orderRepo.findAll().stream().map(this::toResponse).toList();
@@ -60,7 +66,7 @@ public class PurchaseOrderService {
         po.setCreatedAt(LocalDateTime.now());
         po.setNeededDate(req.neededDate());
         po.setSupplier(supplier);
-        po.setOrderCode(nextOrderCode()); // robust code generator
+        po.setOrderCode(nextOrderCode(supplier)); // robust code generator with supplier
 
         // attach items (cascade from PurchaseOrder -> PurchaseOrderItem)
         req.items().forEach(it -> {
@@ -129,15 +135,24 @@ public class PurchaseOrderService {
         log.info("Deleted PO id={}", id);
     }
 
-    private String nextOrderCode() {
-        String prefix = "PO-" + LocalDate.now().format(DAY) + "-"; // e.g. PO-20250923-
+    private String nextOrderCode(com.rdp.model.Supplier supplier) {
+        // Format: PO-SUPPLIER-YYYYMMDD-SEQUENCE
+        // e.g. PO-ABC-20250207-0001
+        // Extract first word only from supplier name (e.g., "ABC" from "ABC (Pvt) Ltd")
+        String fullName = supplier.getName().toUpperCase();
+        String firstWord = fullName.split("\\s+")[0]; // Split by whitespace and take first word
+        String supplierName = firstWord
+                .replaceAll("[^A-Z0-9]", "") // Remove special characters
+                .substring(0, Math.min(10, firstWord.length())); // Max 10 chars
+        
+        String prefix = "PO-" + supplierName + "-" + LocalDate.now().format(DAY) + "-"; // e.g. PO-ABC-20250207-
         int next = 1;
 
         // Requires this repository method:
         // Optional<PurchaseOrder> findTopByOrderCodeStartingWithOrderByOrderCodeDesc(String prefix);
         var lastOpt = orderRepo.findTopByOrderCodeStartingWithOrderByOrderCodeDesc(prefix);
         if (lastOpt.isPresent()) {
-            String last = lastOpt.get().getOrderCode();   // e.g. PO-20250923-0042
+            String last = lastOpt.get().getOrderCode();   // e.g. PO-ACMEPHARMA-20250207-0042
             String suf = last.substring(prefix.length()); // "0042"
             try {
                 next = Integer.parseInt(suf) + 1;
