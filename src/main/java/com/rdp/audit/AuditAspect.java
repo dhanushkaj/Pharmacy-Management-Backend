@@ -34,7 +34,7 @@ public class AuditAspect {
     private EntityManager entityManager;
 
     // Audit all controller methods in specific packages
-    @After("execution(* com.rdp.controller.*Controller.create*(..)) && args(request,..)")
+    @After(value = "execution(* com.rdp.controller.*Controller.create*(..)) && args(request,..)", argNames = "joinPoint,request")
     public void auditCreate(JoinPoint joinPoint, Object request) {
         try {
             String entityType = extractEntityType(joinPoint);
@@ -50,7 +50,7 @@ public class AuditAspect {
         }
     }
 
-    @Around("execution(* com.rdp.controller.*Controller.update*(..)) && args(id, request,..)")
+    @Around(value = "execution(* com.rdp.controller.*Controller.update*(..)) && args(id, request,..)", argNames = "joinPoint,id,request")
     public Object auditUpdate(ProceedingJoinPoint joinPoint, Object id, Object request) throws Throwable {
         String entityType = extractEntityType(joinPoint);
         HttpServletRequest httpRequest = getCurrentHttpRequest();
@@ -79,7 +79,7 @@ public class AuditAspect {
         return result;
     }
 
-    @After("execution(* com.rdp.controller.*Controller.delete*(..)) && args(id,..)")
+    @After(value = "execution(* com.rdp.controller.*Controller.delete*(..)) && args(id,..)", argNames = "joinPoint,id")
     public void auditDelete(JoinPoint joinPoint, Object id) {
         try {
             String entityType = extractEntityType(joinPoint);
@@ -109,7 +109,7 @@ public class AuditAspect {
         }
     }
 
-    @After("execution(* com.rdp.controller.*Controller.findById*(..)) && args(id,..)")
+    @After(value = "execution(* com.rdp.controller.*Controller.findById*(..)) && args(id,..)", argNames = "joinPoint,id")
     public void auditViewById(JoinPoint joinPoint, Object id) {
         try {
             String entityType = extractEntityType(joinPoint);
@@ -124,7 +124,7 @@ public class AuditAspect {
         }
     }
 
-    @After("execution(* com.rdp.controller.*Controller.bulk*(..)) && args(items,..)")
+    @After(value = "execution(* com.rdp.controller.*Controller.bulk*(..)) && args(items,..)", argNames = "joinPoint,items")
     public void auditBulkOperation(JoinPoint joinPoint, java.util.List<?> items) {
         try {
             String entityType = extractEntityType(joinPoint);
