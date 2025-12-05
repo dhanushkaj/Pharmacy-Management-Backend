@@ -32,12 +32,12 @@ public class AuditController {
     
     @GetMapping("/search")
     public ResponseEntity<Page<AuditLog>> searchAuditLogs(
-            @RequestParam(required = false) String entityType,
-            @RequestParam(required = false) String entityId,
-            @RequestParam(required = false) AuditAction action,
-            @RequestParam(required = false) String performedBy,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate,
+            @RequestParam(value = "entityType", required = false) String entityType,
+            @RequestParam(value = "entityId", required = false) String entityId,
+            @RequestParam(value = "action", required = false) AuditAction action,
+            @RequestParam(value = "performedBy", required = false) String performedBy,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
             Pageable pageable) {
         
         // Parse date strings to LocalDateTime
@@ -79,7 +79,7 @@ public class AuditController {
     
     @GetMapping("/entity/{entityType}")
     public ResponseEntity<Page<AuditLog>> getAuditLogsByEntityType(
-            @PathVariable String entityType, 
+            @PathVariable("entityType") String entityType, 
             Pageable pageable) {
         Page<AuditLog> auditLogs = auditLogRepository.findByEntityTypeOrderByTimestampDesc(entityType, pageable);
         return ResponseEntity.ok(auditLogs);
@@ -87,8 +87,8 @@ public class AuditController {
     
     @GetMapping("/entity/{entityType}/{entityId}")
     public ResponseEntity<Page<AuditLog>> getAuditLogsByEntity(
-            @PathVariable String entityType,
-            @PathVariable String entityId, 
+            @PathVariable("entityType") String entityType,
+            @PathVariable("entityId") String entityId, 
             Pageable pageable) {
         Page<AuditLog> auditLogs = auditLogRepository.findByEntityIdOrderByTimestampDesc(entityId, pageable);
         return ResponseEntity.ok(auditLogs);
@@ -96,7 +96,7 @@ public class AuditController {
     
     @GetMapping("/user/{username}")
     public ResponseEntity<Page<AuditLog>> getAuditLogsByUser(
-            @PathVariable String username, 
+            @PathVariable("username") String username, 
             Pageable pageable) {
         Page<AuditLog> auditLogs = auditLogRepository.findByPerformedByOrderByTimestampDesc(username, pageable);
         return ResponseEntity.ok(auditLogs);
@@ -104,7 +104,7 @@ public class AuditController {
     
     @GetMapping("/action/{action}")
     public ResponseEntity<Page<AuditLog>> getAuditLogsByAction(
-            @PathVariable AuditAction action, 
+            @PathVariable("action") AuditAction action, 
             Pageable pageable) {
         Page<AuditLog> auditLogs = auditLogRepository.findByActionOrderByTimestampDesc(action, pageable);
         return ResponseEntity.ok(auditLogs);
@@ -133,7 +133,7 @@ public class AuditController {
     }
     
     @GetMapping("/recent")
-    public ResponseEntity<List<AuditLog>> getRecentAuditLogs(@RequestParam(defaultValue = "10") int limit) {
+    public ResponseEntity<List<AuditLog>> getRecentAuditLogs(@RequestParam(value = "limit", defaultValue = "10") int limit) {
         Pageable pageable = Pageable.ofSize(limit);
         Page<AuditLog> auditLogs = auditLogRepository.findAll(pageable);
         return ResponseEntity.ok(auditLogs.getContent());
@@ -141,12 +141,12 @@ public class AuditController {
     
     @GetMapping("/export")
     public ResponseEntity<String> exportAuditLogs(
-            @RequestParam(required = false) String entityType,
-            @RequestParam(required = false) String entityId,
-            @RequestParam(required = false) AuditAction action,
-            @RequestParam(required = false) String performedBy,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate) {
+            @RequestParam(value = "entityType", required = false) String entityType,
+            @RequestParam(value = "entityId", required = false) String entityId,
+            @RequestParam(value = "action", required = false) AuditAction action,
+            @RequestParam(value = "performedBy", required = false) String performedBy,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
         
         try {
             // Parse date strings to LocalDateTime (reuse the same logic as search)

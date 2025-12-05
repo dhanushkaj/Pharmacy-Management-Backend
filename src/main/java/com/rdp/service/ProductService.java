@@ -307,6 +307,193 @@ public class ProductService {
                 .build();
     }
 
+    /**
+     * Improved CSV bulk upload that:
+     * - Uses category/supplier names instead of IDs
+     * - Auto-generates product codes and barcodes
+     * - Updates existing products (by name+genericName+category+supplier)
+     * - Rolls back on any error (transactional)
+     */
+    @Transactional
+    public BulkImportResponse bulkCreateFromCsv(List<com.rdp.dto.ProductCsvRequest> items) {
+        int ok = 0, failed = 0;
+        List<String> errors = new ArrayList<>();
+        log.info("Starting CSV bulk product import size={}", items.size());
+
+        // Track used codes in this batch to avoid duplicates
+        Set<String> usedCodesInBatch = new HashSet<>();
+        Set<String> usedBarcodesInBatch = new HashSet<>();
+
+        for (int i = 0; i < items.size(); i++) {
+            int row = i + 2; // assuming row 1 is header
+            com.rdp.dto.ProductCsvRequest req = items.get(i);
+
+            try {
+                // 1. Find or validate category
+                var category = categoryRepo.findByNameIgnoreCase(req.categoryName())
+                        .orElseThrow(() -> new IllegalArgumentException("Category not found: " + req.categoryName()));
+
+                // 2. Find or validate supplier
+                var supplier = supplierRepo.findByNameIgnoreCase(req.supplierName())
+                        .orElseThrow(() -> new IllegalArgumentException("Supplier not found: " + req.supplierName()));
+
+                // 3. Check if product exists (by name + genericName + category + supplier)
+                var existingOpt = productRepo.findByNameAndGenericNameAndCategoryAndSupplier(
+                        req.name(), req.genericName(), category, supplier);
+
+                Product product;
+                if (existingOpt.isPresent()) {
+                    // ===== UPDATE PATH =====
+                    product = existingOpt.get();
+                    log.debug("Updating existing product id={} name={}", product.getProductId(), product.getName());
+
+                    // Update fields (keep existing product code and barcode)
+                    if (req.minStock() != null) product.setMinStock(req.minStock());
+                    if (req.maxStock() != null) product.setMaxStock(req.maxStock());
+                    if (req.maxDiscount() != null) product.setMaxDiscount(req.maxDiscount());
+                    if (req.expiryDate() != null) product.setExpiryDate(req.expiryDate());
+                    if (req.patientInstructions() != null) product.setPatientInstructions(req.patientInstructions());
+                    if (req.binLocation() != null) product.setBinLocation(req.binLocation());
+
+                    product = productRepo.save(product);
+
+                    // Update or create inventory if price/cost/stock provided
+                    if (req.price() != null && req.stock() != null && req.stock() > 0) {
+                        var invOpt = inventoryRepo.findByProductAndPrice(product, req.price());
+                        if (invOpt.isPresent()) {
+                            // Add to existing inventory
+                            InventoryItem inv = invOpt.get();
+                            inv.setStock((inv.getStock() == null ? 0 : inv.getStock()) + req.stock());
+                            if (req.costPrice() != null) inv.setCostPrice(req.costPrice());
+                            inventoryRepo.save(inv);
+                        } else {
+                            // Create new inventory bucket
+                            InventoryItem newInv = InventoryItem.builder()
+                                    .product(product)
+                                    .price(req.price())
+                                    .costPrice(req.costPrice())
+                                    .stock(req.stock())
+                                    .build();
+                            inventoryRepo.save(newInv);
+                        }
+                    }
+                } else {
+                    // ===== CREATE PATH =====
+                    product = new Product();
+                    product.setName(req.name());
+                    product.setGenericName(req.genericName());
+                    product.setCategory(category);
+                    product.setSupplier(supplier);
+
+                    // Auto-generate product code (AA9999 format)
+                    String productCode = generateUniqueProductCode(usedCodesInBatch);
+                    product.setProductCode(productCode);
+                    usedCodesInBatch.add(productCode.toUpperCase());
+
+                    // Auto-generate barcode (13-digit EAN-13 format)
+                    String barcode = generateUniqueBarcode(usedBarcodesInBatch);
+                    product.setBarcode(barcode);
+                    usedBarcodesInBatch.add(barcode);
+
+                    product.setMinStock(req.minStock());
+                    product.setMaxStock(req.maxStock());
+                    product.setMaxDiscount(req.maxDiscount());
+                    product.setExpiryDate(req.expiryDate());
+                    product.setPatientInstructions(req.patientInstructions());
+                    product.setBinLocation(req.binLocation());
+
+                    product = productRepo.save(product);
+                    log.debug("Created new product id={} code={} name={}", product.getProductId(), product.getProductCode(), product.getName());
+
+                    // Create initial inventory if provided
+                    if (req.price() != null && req.stock() != null && req.stock() > 0) {
+                        InventoryItem inv = InventoryItem.builder()
+                                .product(product)
+                                .price(req.price())
+                                .costPrice(req.costPrice())
+                                .stock(req.stock())
+                                .build();
+                        inventoryRepo.save(inv);
+                    }
+                }
+
+                ok++;
+            } catch (Exception e) {
+                failed++;
+                log.warn("CSV bulk import error row={} message={}", row, e.getMessage(), e);
+                errors.add("Row " + row + ": " + e.getMessage());
+                // Rollback will happen automatically due to @Transactional
+                throw new RuntimeException("Bulk import failed at row " + row + ": " + e.getMessage(), e);
+            }
+        }
+
+        log.info("CSV bulk import completed ok={} failed={}", ok, failed);
+        return BulkImportResponse.builder()
+                .ok(ok)
+                .failed(failed)
+                .errors(errors)
+                .build();
+    }
+
+    /**
+     * Generate unique product code in AA9999 format
+     */
+    private String generateUniqueProductCode(Set<String> usedInBatch) {
+        Random random = new Random();
+        int attempts = 0;
+        while (attempts < 1000) {
+            // Generate 2 random letters + 4 random digits
+            char letter1 = (char) ('A' + random.nextInt(26));
+            char letter2 = (char) ('A' + random.nextInt(26));
+            int number = random.nextInt(10000); // 0-9999
+            String code = String.format("%c%c%04d", letter1, letter2, number);
+
+            if (!usedInBatch.contains(code.toUpperCase()) && !productRepo.existsByProductCodeIgnoreCase(code)) {
+                return code;
+            }
+            attempts++;
+        }
+        throw new IllegalStateException("Could not generate unique product code after 1000 attempts");
+    }
+
+    /**
+     * Generate unique 13-digit barcode (EAN-13 format)
+     */
+    private String generateUniqueBarcode(Set<String> usedInBatch) {
+        Random random = new Random();
+        int attempts = 0;
+        while (attempts < 1000) {
+            // Generate 12 random digits + 1 check digit
+            StringBuilder barcode = new StringBuilder();
+            for (int i = 0; i < 12; i++) {
+                barcode.append(random.nextInt(10));
+            }
+            // Calculate EAN-13 check digit
+            int checkDigit = calculateEAN13CheckDigit(barcode.toString());
+            barcode.append(checkDigit);
+
+            String barcodeStr = barcode.toString();
+            if (!usedInBatch.contains(barcodeStr) && !productRepo.existsByBarcode(barcodeStr)) {
+                return barcodeStr;
+            }
+            attempts++;
+        }
+        throw new IllegalStateException("Could not generate unique barcode after 1000 attempts");
+    }
+
+    /**
+     * Calculate EAN-13 check digit
+     */
+    private int calculateEAN13CheckDigit(String barcode12) {
+        int sum = 0;
+        for (int i = 0; i < 12; i++) {
+            int digit = Character.getNumericValue(barcode12.charAt(i));
+            sum += (i % 2 == 0) ? digit : digit * 3;
+        }
+        int checkDigit = (10 - (sum % 10)) % 10;
+        return checkDigit;
+    }
+
     public List<ProductResponse> search(String like) {
         return productRepo.searchLike(like).stream().map(this::toResponse).toList();
     }

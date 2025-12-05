@@ -19,26 +19,26 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping
-    public ResponseEntity<List<InventoryDto>> list(@PathVariable Long productId) {
+    public ResponseEntity<List<InventoryDto>> list(@PathVariable("productId") Long productId) {
         var items = inventoryService.listByProduct(productId);
         var dtos = items.stream().map(InventoryDto::from).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @PostMapping
-    public ResponseEntity<InventoryDto> create(@PathVariable Long productId, @RequestBody CreateInventoryRequest req) {
+    public ResponseEntity<InventoryDto> create(@PathVariable("productId") Long productId, @RequestBody CreateInventoryRequest req) {
         var it = inventoryService.addOrIncrement(productId, req);
         return ResponseEntity.ok(InventoryDto.from(it));
     }
 
     @PutMapping("/{invId}")
-    public ResponseEntity<InventoryDto> update(@PathVariable Long productId, @PathVariable Long invId, @RequestBody UpdateInventoryRequest req) {
+    public ResponseEntity<InventoryDto> update(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId, @RequestBody UpdateInventoryRequest req) {
         var it = inventoryService.updateInventory(productId, invId, req);
         return ResponseEntity.ok(InventoryDto.from(it));
     }
 
     @DeleteMapping("/{invId}")
-    public ResponseEntity<String> delete(@PathVariable Long productId, @PathVariable Long invId) {
+    public ResponseEntity<String> delete(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId) {
         inventoryService.deleteInventory(productId, invId);
         return ResponseEntity.ok("Deleted");
     }

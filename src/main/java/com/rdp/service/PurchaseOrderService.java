@@ -135,6 +135,32 @@ public class PurchaseOrderService {
         log.info("Deleted PO id={}", id);
     }
 
+    @Transactional
+    public PurchaseOrderResponse update(Long id, com.rdp.dto.UpdatePurchaseOrderRequest req) {
+        var po = orderRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Purchase order not found: " + id));
+
+        // Update supplier if provided
+        if (req.supplierId() != null) {
+            var supplier = supplierRepo.findById(req.supplierId())
+                    .orElseThrow(() -> new IllegalArgumentException("Supplier not found: " + req.supplierId()));
+            po.setSupplier(supplier);
+            // Regenerate order code with new supplier
+            po.setOrderCode(nextOrderCode(supplier));
+            log.info("Updated PO supplier id={} newSupplierId={} newOrderCode={}", id, req.supplierId(), po.getOrderCode());
+        }
+
+        // Update needed date if provided
+        if (req.neededDate() != null) {
+            po.setNeededDate(req.neededDate());
+            log.info("Updated PO needed date id={} newNeededDate={}", id, req.neededDate());
+        }
+
+        var saved = orderRepo.save(po);
+        log.info("Updated PO id={} code={} supplierId={} neededDate={}", saved.getId(), saved.getOrderCode(), saved.getSupplier().getSupplierId(), saved.getNeededDate());
+        return toResponse(saved);
+    }
+
     private String nextOrderCode(com.rdp.model.Supplier supplier) {
         // Format: PO-SUPPLIER-YYYYMMDD-SEQUENCE
         // e.g. PO-ABC-20250207-0001
