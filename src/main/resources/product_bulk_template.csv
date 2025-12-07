@@ -1,0 +1,4 @@
+name,genericName,categoryName,supplierName,costPrice,price,stock,minStock,maxStock,maxDiscount,expiryDate,patientInstructions,binLocation
+Paracetamol 500mg,Acetaminophen,Pain Relief,ABC Pharma,10.50,15.00,100,20,500,10,2026-12-31,Take after meals,A1-B2
+Amoxicillin 250mg,Amoxicillin,Antibiotics,XYZ Medical,25.00,35.00,50,10,200,5,2027-06-30,Complete the full course,C3-D4
+Ibuprofen 400mg,Ibuprofen,Pain Relief,ABC Pharma,8.00,12.00,75,15,300,15,2026-09-15,Take with food,A1-B3

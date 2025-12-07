@@ -20,7 +20,7 @@ public class SupplierController {
     public List<SupplierResponse> all() { return service.findAll(); }
 
     @GetMapping("/{id}")
-    public SupplierResponse one(@PathVariable Long id) { return service.findById(id); }
+    public SupplierResponse one(@PathVariable("id") Long id) { return service.findById(id); }
 
     @PostMapping
     public ResponseEntity<SupplierResponse> create(@Valid @RequestBody SupplierRequest req) {
@@ -29,12 +29,12 @@ public class SupplierController {
     }
 
     @PutMapping("/{id}")
-    public SupplierResponse update(@PathVariable Long id, @Valid @RequestBody SupplierRequest req) {
+    public SupplierResponse update(@PathVariable("id") Long id, @Valid @RequestBody SupplierRequest req) {
         return service.update(id, req);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.delete(id)); // "Supplier Deleted <id>"
     }
 }

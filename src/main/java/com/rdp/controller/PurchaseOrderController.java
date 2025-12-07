@@ -4,6 +4,7 @@ package com.rdp.controller;
 import com.rdp.dto.PurchaseOrderRequest;
 import com.rdp.dto.PurchaseOrderResponse;
 import com.rdp.dto.UpdatePoItemQuantityRequest;
+import com.rdp.dto.UpdatePurchaseOrderRequest;
 import com.rdp.service.PurchaseOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,10 @@ public class PurchaseOrderController {
 
     @GetMapping
     public ResponseEntity<Page<PurchaseOrderResponse>> all(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir) {
         
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -38,7 +39,7 @@ public class PurchaseOrderController {
     }
 
     @GetMapping("/{id}")
-    public PurchaseOrderResponse one(@PathVariable Long id) { return service.findById(id); }
+    public PurchaseOrderResponse one(@PathVariable("id") Long id) { return service.findById(id); }
 
     @PostMapping
     public ResponseEntity<PurchaseOrderResponse> create(@Valid @RequestBody PurchaseOrderRequest req) {
@@ -46,9 +47,17 @@ public class PurchaseOrderController {
         return ResponseEntity.created(URI.create("/api/purchase-orders/" + created.id())).body(created);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PurchaseOrderResponse> update(
+            @PathVariable("id") Long id,
+            @RequestBody UpdatePurchaseOrderRequest req) {
+        var updated = service.update(id, req);
+        return ResponseEntity.ok(updated);
+    }
+
     @PatchMapping("/{orderId}/items/{itemId}")
-    public PurchaseOrderResponse updateItemQty(@PathVariable Long orderId,
-                                               @PathVariable Long itemId,
+    public PurchaseOrderResponse updateItemQty(@PathVariable("orderId") Long orderId,
+                                               @PathVariable("itemId") Long itemId,
                                                @RequestBody Map<String, Integer> body) {
         Integer qty = body.get("quantity");
         if (qty == null) throw new IllegalArgumentException("quantity is required");
@@ -56,14 +65,14 @@ public class PurchaseOrderController {
     }
 
     @DeleteMapping("/{orderId}/items/{itemId}")
-    public PurchaseOrderResponse deleteItem(@PathVariable Long orderId,
-                                            @PathVariable Long itemId) {
+    public PurchaseOrderResponse deleteItem(@PathVariable("orderId") Long orderId,
+                                            @PathVariable("itemId") Long itemId) {
         return service.deleteItem(orderId, itemId);
     }
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         service.delete(id);
         return ResponseEntity.ok("Purchase Order Deleted " + id);
     }
