@@ -45,9 +45,9 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<ProductResponse> search(@RequestParam("q") String q) {
-        String like = "%" + q.trim().toLowerCase() + "%";
-        return service.search(like);
+    public List<ProductResponse> search(@RequestParam("q") String q,
+                                        @RequestParam(value = "categoryId", required = false) Long categoryId) {
+        return service.search(q, categoryId);
     }
 
     @PutMapping("/{id}")

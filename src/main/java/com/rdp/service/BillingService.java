@@ -31,6 +31,7 @@ public class BillingService {
     private final CustomerRepository customerRepo;
     private final ProductRepository productRepo;
     private final InventoryItemRepository inventoryItemRepo;
+    private final StockMovementService stockMovementService;
 
     @Transactional
     public BillingResponse createBilling(BillingRequest request) {
@@ -131,6 +132,18 @@ public class BillingService {
 
                 invItem.setStock(currentStock - reduceAmount);
                 inventoryItemRepo.save(invItem);
+
+                // Create STOCK movement: INVENTORY -> SOLD
+                com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                moveReq.setFromBin(com.rdp.model.BinType.INVENTORY);
+                moveReq.setToBin(com.rdp.model.BinType.SOLD);
+                moveReq.setQuantity(reduceAmount);
+                moveReq.setReferenceType("BILLING");
+                moveReq.setReferenceId(billing.getBillingNumber());
+                moveReq.setPerformedBy(billing.getCreatedBy());
+                moveReq.setBatchNo(invItem.getBatchNo());
+                moveReq.setPrice(invItem.getPrice());
+                stockMovementService.createMovement(product.getProductId(), moveReq);
 
                 remainingToReduce -= reduceAmount;
 

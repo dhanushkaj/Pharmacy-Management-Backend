@@ -27,6 +27,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     """)
     List<Product> searchLike(@Param("like") String like);
 
+    @Query("""
+       select p from Product p
+       where (:catId is null or p.category.categoryId = :catId)
+         and (lower(p.name) like :like or lower(p.genericName) like :like or lower(p.productCode) like :like)
+    """)
+    List<Product> searchLikeAndCategory(@Param("like") String like, @Param("catId") Long catId);
+
     // quick existence check by category id
     @Query("select case when count(p) > 0 then true else false end from Product p where p.category.categoryId = :catId")
     boolean existsByCategoryId(@Param("catId") Long categoryId);

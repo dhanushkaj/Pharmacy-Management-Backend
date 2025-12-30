@@ -16,13 +16,13 @@ public record ProductCsvRequest(
         @NotBlank(message = "Product name is required")
         String name,
         
-        @NotBlank(message = "Generic name is required")
+        // Generic name is optional for CSV (can be filled later via UI)
         String genericName,
         
         @NotBlank(message = "Category name is required")
         String categoryName,
         
-        @NotBlank(message = "Supplier name is required")
+        // Supplier is optional for CSV; if provided we'll try to map to existing supplier
         String supplierName,
         
         // Optional fields

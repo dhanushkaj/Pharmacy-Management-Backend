@@ -21,7 +21,6 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
 
     Optional<InventoryItem> findByProductAndCostPriceAndPrice(Product product, BigDecimal costPrice, BigDecimal price);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select i from InventoryItem i where i.product.productId = :productId and i.price = :price")
-    Optional<InventoryItem> findByProductAndPriceForUpdate(@Param("productId") Long productId, @Param("price") BigDecimal price);
+    @Query(value = "SELECT * FROM rdp_inventory_items WHERE product_id = :productId AND price = :price FOR UPDATE", nativeQuery = true)
+    Optional<InventoryItem> findByProductIdAndPriceForUpdateNative(@Param("productId") Long productId, @Param("price") BigDecimal price);
 }

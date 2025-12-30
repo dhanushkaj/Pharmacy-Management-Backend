@@ -5,6 +5,7 @@ import com.rdp.dto.ProductRequest;
 import com.rdp.dto.ProductResponse;
 import com.rdp.model.InventoryItem;
 import com.rdp.model.Product;
+import com.rdp.model.Supplier;
 import com.rdp.repository.CategoryRepository;
 import com.rdp.repository.InventoryItemRepository;
 import com.rdp.repository.ProductRepository;
@@ -28,6 +29,7 @@ public class ProductService {
     private final CategoryRepository categoryRepo;
     private final SupplierRepository supplierRepo;
     private final InventoryItemRepository inventoryRepo;
+    private final StockMovementService stockMovementService;
 
     private static final Pattern PRODUCT_CODE_RE = Pattern.compile("^[A-Za-z]{2}\\d{4}$");
 
@@ -101,6 +103,19 @@ public class ProductService {
                     .stock(stock)
                     .build();
             inventoryRepo.save(inv);
+
+            if (stock > 0) {
+                com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                moveReq.setFromBin(com.rdp.model.BinType.GRN);
+                moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                moveReq.setQuantity(stock);
+                moveReq.setReferenceType("PRODUCT_CREATE");
+                moveReq.setReferenceId(String.valueOf(p.getProductId()));
+                moveReq.setPerformedBy("SYSTEM");
+                moveReq.setBatchNo(inv.getBatchNo());
+                moveReq.setPrice(price);
+                stockMovementService.createMovement(p.getProductId(), moveReq);
+            }
         }
 
         return toResponse(p);
@@ -129,15 +144,41 @@ public class ProductService {
                 inv.setStock((inv.getStock() == null ? 0 : inv.getStock()) + addStock);
                 if (cost != null) inv.setCostPrice(cost);
                 inventoryRepo.save(inv);
+
+                if (addStock > 0) {
+                    com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                    moveReq.setFromBin(com.rdp.model.BinType.GRN);
+                    moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                    moveReq.setQuantity(addStock);
+                    moveReq.setReferenceType("PRODUCT_UPDATE");
+                    moveReq.setReferenceId(String.valueOf(p.getProductId()));
+                    moveReq.setPerformedBy("SYSTEM");
+                    moveReq.setBatchNo(inv.getBatchNo());
+                    moveReq.setPrice(price);                    
+                    stockMovementService.createMovement(p.getProductId(), moveReq);
+                }
             } else {
                 // create new inventory bucket
                 InventoryItem inv = InventoryItem.builder()
                         .product(p)
+                        
                         .price(price)
                         .costPrice(cost)
                         .stock(addStock)
                         .build();
                 inventoryRepo.save(inv);
+
+                if (addStock > 0) {
+                    com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                    moveReq.setFromBin(com.rdp.model.BinType.GRN);
+                    moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                    moveReq.setQuantity(addStock);
+                    moveReq.setReferenceType("PRODUCT_UPDATE");
+                    moveReq.setReferenceId(String.valueOf(p.getProductId()));
+                    moveReq.setPerformedBy("SYSTEM");
+                    moveReq.setBatchNo(inv.getBatchNo());
+                    stockMovementService.createMovement(p.getProductId(), moveReq);
+                }
             }
         }
 
@@ -333,9 +374,14 @@ public class ProductService {
                 var category = categoryRepo.findByNameIgnoreCase(req.categoryName())
                         .orElseThrow(() -> new IllegalArgumentException("Category not found: " + req.categoryName()));
 
-                // 2. Find or validate supplier
-                var supplier = supplierRepo.findByNameIgnoreCase(req.supplierName())
-                        .orElseThrow(() -> new IllegalArgumentException("Supplier not found: " + req.supplierName()));
+                // 2. Find or map supplier (optional)
+                Supplier supplier = null;
+                if (req.supplierName() != null && !req.supplierName().isBlank()) {
+                    supplier = supplierRepo.findByNameIgnoreCase(req.supplierName()).orElse(null);
+                    if (supplier == null) {
+                        log.warn("Supplier '{}' from CSV row not found; proceeding without supplier for this product", req.supplierName());
+                    }
+                }
 
                 // 3. Check if product exists (by name + genericName + category + supplier)
                 var existingOpt = productRepo.findByNameAndGenericNameAndCategoryAndSupplier(
@@ -366,6 +412,17 @@ public class ProductService {
                             inv.setStock((inv.getStock() == null ? 0 : inv.getStock()) + req.stock());
                             if (req.costPrice() != null) inv.setCostPrice(req.costPrice());
                             inventoryRepo.save(inv);
+
+                            // Create movement: GRN -> INVENTORY
+                            com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                            moveReq.setFromBin(com.rdp.model.BinType.GRN);
+                            moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                            moveReq.setQuantity(req.stock());
+                            moveReq.setReferenceType("PRODUCT_CSV_UPDATE");
+                            moveReq.setReferenceId(String.valueOf(product.getProductId()));
+                            moveReq.setPerformedBy("SYSTEM");
+                            moveReq.setBatchNo(inv.getBatchNo());
+                            stockMovementService.createMovement(product.getProductId(), moveReq);
                         } else {
                             // Create new inventory bucket
                             InventoryItem newInv = InventoryItem.builder()
@@ -375,6 +432,17 @@ public class ProductService {
                                     .stock(req.stock())
                                     .build();
                             inventoryRepo.save(newInv);
+
+                            // Create movement: GRN -> INVENTORY
+                            com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                            moveReq.setFromBin(com.rdp.model.BinType.GRN);
+                            moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                            moveReq.setQuantity(req.stock());
+                            moveReq.setReferenceType("PRODUCT_CSV_CREATE");
+                            moveReq.setReferenceId(String.valueOf(product.getProductId()));
+                            moveReq.setPerformedBy("SYSTEM");
+                            moveReq.setBatchNo(newInv.getBatchNo());
+                            stockMovementService.createMovement(product.getProductId(), moveReq);
                         }
                     }
                 } else {
@@ -496,5 +564,11 @@ public class ProductService {
 
     public List<ProductResponse> search(String like) {
         return productRepo.searchLike(like).stream().map(this::toResponse).toList();
+    }
+
+    // New: search by query string and optional category id
+    public List<ProductResponse> search(String q, Long categoryId) {
+        String like = "%" + q.trim().toLowerCase() + "%";
+        return productRepo.searchLikeAndCategory(like, categoryId).stream().map(this::toResponse).toList();
     }
 }
