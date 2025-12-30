@@ -1,6 +1,8 @@
 package com.rdp.repository;
 
+import com.rdp.model.Category;
 import com.rdp.model.Product;
+import com.rdp.model.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +15,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsByBarcode(String barcode);
     Optional<Product> findByProductCodeIgnoreCase(String productCode);
 
+    // Find product by name, generic name, category, and supplier (for CSV update/insert logic)
+    Optional<Product> findByNameAndGenericNameAndCategoryAndSupplier(
+            String name, String genericName, Category category, Supplier supplier);
+
     @Query("""
        select p from Product p
        where lower(p.name) like :like
@@ -20,6 +26,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
           or lower(p.productCode) like :like
     """)
     List<Product> searchLike(@Param("like") String like);
+
+    @Query("""
+       select p from Product p
+       where (:catId is null or p.category.categoryId = :catId)
+         and (lower(p.name) like :like or lower(p.genericName) like :like or lower(p.productCode) like :like)
+    """)
+    List<Product> searchLikeAndCategory(@Param("like") String like, @Param("catId") Long catId);
 
     // quick existence check by category id
     @Query("select case when count(p) > 0 then true else false end from Product p where p.category.categoryId = :catId")

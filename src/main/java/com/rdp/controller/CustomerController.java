@@ -23,7 +23,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public CustomerResponse one(@PathVariable Long id) {
+    public CustomerResponse one(@PathVariable("id") Long id) {
         return service.findById(id);
     }
 
@@ -36,12 +36,12 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public CustomerResponse update(@PathVariable Long id, @Valid @RequestBody CustomerRequest req) {
+    public CustomerResponse update(@PathVariable("id") Long id, @Valid @RequestBody CustomerRequest req) {
         return service.update(id, req);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.delete(id));
     }
 }

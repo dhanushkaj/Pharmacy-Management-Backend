@@ -15,7 +15,8 @@ public class GrnDtos {
     public record GrnItemRequest(
             @NotNull Long productId,
             @NotNull @Min(1) Integer receivedQuantity,
-            BigDecimal unitCost
+            BigDecimal unitCost,
+            BigDecimal price
     ) {}
 
     public record CreateGrnRequest(
@@ -36,7 +37,8 @@ public class GrnDtos {
             Long productId,
             String productName,
             Integer receivedQuantity,
-            BigDecimal unitCost
+            BigDecimal unitCost,
+            BigDecimal price
     ) {}
 
     public record GrnResponse(

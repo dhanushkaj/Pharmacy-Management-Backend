@@ -38,7 +38,7 @@ public class InventoryService {
         Integer qty = req.stock() == null ? 0 : req.stock();
 
         if (price != null) {
-            var opt = inventoryRepo.findByProductAndPriceForUpdate(productId, price);
+            var opt = inventoryRepo.findByProductIdAndPriceForUpdateNative(productId, price);
             if (opt.isPresent()) {
                 InventoryItem existing = opt.get();
                 int current = existing.getStock() == null ? 0 : existing.getStock();

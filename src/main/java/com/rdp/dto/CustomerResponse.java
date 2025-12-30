@@ -1,9 +1,12 @@
 package com.rdp.dto;
 
+import java.math.BigDecimal;
+
 public record CustomerResponse(
         Long customerId,
         String name,
         String phone,
         String email,
-        String address
+        String address,
+        BigDecimal discountPercentage
 ) {}

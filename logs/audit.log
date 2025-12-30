@@ -1,0 +1,34 @@
+2025-11-26T19:42:41,295 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T19:43:37,183 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T19:44:42,944 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T19:50:28,449 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T19:53:08,178 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T20:17:10,671 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T20:20:17,316 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=3
+2025-11-26T20:20:24,899 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=4
+2025-11-26T20:20:30,029 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=5
+2025-11-26T20:20:36,055 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=5
+2025-11-26T20:20:42,264 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=2
+2025-11-26T20:20:46,771 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=6
+2025-11-26T20:24:54,993 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=PurchaseOrder
+2025-11-26T20:25:49,382 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T20:26:45,389 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=7
+2025-11-26T20:48:47,336 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=PurchaseOrder
+2025-11-26T20:50:37,965 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=PurchaseOrder
+2025-11-26T20:51:01,224 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T20:53:43,687 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T20:58:17,545 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=9
+2025-11-26T20:58:21,674 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=8
+2025-11-26T20:58:31,086 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=7
+2025-11-26T20:58:34,894 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=7
+2025-11-26T20:58:49,769 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T21:01:51,672 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T22:14:49,223 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T22:15:16,792 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=1
+2025-11-26T22:15:21,177 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=5
+2025-11-26T22:15:25,047 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=7
+2025-11-26T22:22:50,503 DEBUG com.rdp.audit.AuditAspect - AuditAspect CREATE entityType=Grn
+2025-11-26T22:23:11,582 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=10
+2025-11-26T22:23:15,792 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=11
+2025-11-26T22:23:18,746 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=12
+2025-11-26T22:23:22,927 DEBUG com.rdp.audit.AuditAspect - AuditAspect DELETE entityType=Grn id=13

@@ -34,4 +34,7 @@ public class GrnItem extends BaseAuditableEntity {
     // Snapshot of cost at time of receiving
     @Column(name = "unit_cost", precision = 10, scale = 2)
     private BigDecimal unitCost;
+    
+    @Column(name = "price", precision = 10, scale = 2)
+    private BigDecimal price;
 }

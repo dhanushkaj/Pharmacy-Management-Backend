@@ -32,6 +32,7 @@ public class GrnService {
     private final ProductRepository productRepository;
     private final InventoryService inventoryService;
     private final InventoryItemRepository inventoryItemRepository;
+    private final StockMovementService stockMovementService;
     private static final Logger log = LoggerFactory.getLogger(GrnService.class);
 
 
@@ -54,6 +55,7 @@ public class GrnService {
                     .product(product)
                     .receivedQuantity(itemRequest.receivedQuantity())
                     .unitCost(itemRequest.unitCost())
+                    .price(itemRequest.price())
                     .build();
             grn.addItem(grnItem);
         }
@@ -81,7 +83,7 @@ public class GrnService {
         for (GrnItem item : grn.getItems()) {
             Product product = item.getProduct();
             BigDecimal newCost = item.getUnitCost();
-            BigDecimal newSellPrice = newCost.multiply(BigDecimal.valueOf(1.2));
+            BigDecimal newSellPrice = item.getPrice();
 
             // Check if inventory already has the same product + cost + price combination
             InventoryItem existingBucket = inventoryItemRepository
@@ -93,6 +95,18 @@ public class GrnService {
                 existingBucket.setStock(existingBucket.getStock() + item.getReceivedQuantity());
                 existingBucket.setUpdatedAt(LocalDateTime.now());
                 inventoryItemRepository.save(existingBucket);
+                // Create STOCK movement: GRN -> INVENTORY
+                com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                moveReq.setFromBin(com.rdp.model.BinType.GRN);
+                moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                moveReq.setQuantity(item.getReceivedQuantity());
+                moveReq.setReferenceType("GRN");
+                moveReq.setReferenceId(grn.getGrnCode());
+                moveReq.setPerformedBy(approvedByUser);
+                moveReq.setBatchNo(existingBucket.getBatchNo());
+                moveReq.setPrice(newSellPrice);
+                stockMovementService.createMovement(product.getProductId(), moveReq);
+
                 adjustedBuckets++;
             } else {
                 //No bucket for this cost/sell price — create new inventory record
@@ -105,6 +119,19 @@ public class GrnService {
                         .build();
 
                 inventoryItemRepository.save(newBucket);
+
+                // Create STOCK movement: GRN -> INVENTORY (use new bucket batch)
+                com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                moveReq.setFromBin(com.rdp.model.BinType.GRN);
+                moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                moveReq.setQuantity(item.getReceivedQuantity());
+                moveReq.setReferenceType("GRN");
+                moveReq.setReferenceId(grn.getGrnCode());
+                moveReq.setPerformedBy(approvedByUser);
+                moveReq.setBatchNo(newBucket.getBatchNo());
+                moveReq.setPrice(newSellPrice);
+                stockMovementService.createMovement(product.getProductId(), moveReq);
+
                 adjustedBuckets++;
             }
         }
@@ -194,7 +221,8 @@ public class GrnService {
                         item.getProduct().getProductId(),
                         item.getProduct().getName(),
                         item.getReceivedQuantity(),
-                        item.getUnitCost()
+                        item.getUnitCost(),
+                        item.getPrice()
                 ))
                 .collect(Collectors.toList());
 

@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# removed files
+package-lock.json
+gradle/wrapper/gradle-wrapper.jar
+gradlew.bat

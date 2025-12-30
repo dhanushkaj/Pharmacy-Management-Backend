@@ -127,6 +127,9 @@ public class AuditService {
             // Create a specialized ObjectMapper for audit logging
             ObjectMapper auditMapper = new ObjectMapper();
             
+            // Register Java 8 date/time module (LocalDateTime, LocalDate, etc.)
+            auditMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+            
             // Handle Hibernate lazy loading issues
             auditMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             auditMapper.configure(com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION, false);
