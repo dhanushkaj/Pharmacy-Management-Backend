@@ -25,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> payload) {
+    public Map<String, Object> login(@RequestBody Map<String, String> payload) {
         String username = payload.get("username");
         String password = payload.get("password");
         User user = userRepository.findByUsername(username).orElse(null);
@@ -34,6 +34,10 @@ public class AuthController {
         }
         List<String> roles = user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toList());
         String token = jwtUtil.generateToken(username, roles);
-        return Map.of("token", token, "role", roles.get(0));
+        return Map.of(
+            "token", token,
+            "username", username,
+            "roles", roles // send as real array
+        );
     }
 }
