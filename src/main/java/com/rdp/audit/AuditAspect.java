@@ -165,6 +165,7 @@ public class AuditAspect {
     }
     
     private Object findEntityById(String entityType, Object id) {
+        if (id == null) return null;
         try {
             // Convert id to Long if it's a string
             Long entityId = null;
@@ -175,14 +176,11 @@ public class AuditAspect {
             } else if (id instanceof Number) {
                 entityId = ((Number) id).longValue();
             }
-            
             if (entityId == null) {
                 return null;
             }
-            
             // Try to find the appropriate repository bean and fetch the entity
             String repositoryBeanName = entityType.toLowerCase() + "Repository";
-            
             try {
                 @SuppressWarnings("unchecked")
                 JpaRepository<Object, Long> repository = (JpaRepository<Object, Long>) applicationContext.getBean(repositoryBeanName);
@@ -191,7 +189,6 @@ public class AuditAspect {
                 log.debug("Could not find repository bean '{}' or entity with ID {}: {}", repositoryBeanName, entityId, e.getMessage());
                 return null;
             }
-            
         } catch (Exception e) {
             log.error("Error finding entity '{}' with ID {}: {}", entityType, id, e.getMessage());
             return null;

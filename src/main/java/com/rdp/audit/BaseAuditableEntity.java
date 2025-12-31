@@ -35,5 +35,5 @@ public abstract class BaseAuditableEntity {
 
     @Version
     @Column(name = "version")
-    private Long version = 0L;
+    private long version;
 }

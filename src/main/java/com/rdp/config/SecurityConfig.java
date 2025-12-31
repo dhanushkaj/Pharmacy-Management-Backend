@@ -74,11 +74,15 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.PATCH,"/api/purchase-orders/**").hasRole("ADMIN")
 
 
-                        // other domains
-                        .requestMatchers("/api/grn/approve").hasRole("ADMIN")
-                        .requestMatchers("/api/reports/**").hasAnyRole("ADMIN","MANAGER")
-                        .requestMatchers("/api/sales/**").hasAnyRole("ADMIN","MANAGER","PHARMACIST")
-                        .anyRequest().authenticated()
+						// User self-profile update (allow all authenticated users)
+						.requestMatchers(HttpMethod.PUT, "/api/users/me").authenticated()
+						.requestMatchers(HttpMethod.GET, "/api/users/me").authenticated()
+
+						// other domains
+						.requestMatchers("/api/grn/approve").hasRole("ADMIN")
+						.requestMatchers("/api/reports/**").hasAnyRole("ADMIN","MANAGER")
+						.requestMatchers("/api/sales/**").hasAnyRole("ADMIN","MANAGER","PHARMACIST")
+						.anyRequest().authenticated()
                 )
 				.formLogin(form -> form.disable())
 				.httpBasic(basic -> basic.disable());
