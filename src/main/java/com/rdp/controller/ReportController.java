@@ -6,7 +6,6 @@ import com.rdp.model.Product;
 import com.rdp.model.InventoryItem;
 import com.rdp.repository.ProductRepository;
 import com.rdp.repository.InventoryItemRepository;
-import com.rdp.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,19 +31,37 @@ public class ReportController {
         List<ProductReportDto> result = new ArrayList<>();
         for (Product p : products) {
             List<InventoryItem> items = inventoryRepo.findByProduct(p);
-            int available = items.stream().mapToInt(i -> i.getStock() == null ? 0 : i.getStock()).sum();
-            boolean outOfStock = available == 0;
             String categoryName = p.getCategory() != null ? p.getCategory().getName() : null;
-            result.add(new ProductReportDto(
-                p.getProductId(),
-                p.getProductCode(),
-                p.getName(),
-                categoryName,
-                available,
-                p.getMinStock(),
-                p.getMaxStock(),
-                outOfStock
-            ));
+            if (items.isEmpty()) {
+                // No inventory for this product, show as out of stock with price as null
+                result.add(new ProductReportDto(
+                    p.getProductId(),
+                    p.getProductCode(),
+                    p.getName(),
+                    categoryName,
+                    null,
+                    0,
+                    p.getMinStock(),
+                    p.getMaxStock(),
+                    true
+                ));
+            } else {
+                for (InventoryItem item : items) {
+                    int available = item.getStock() == null ? 0 : item.getStock();
+                    boolean outOfStock = available == 0;
+                    result.add(new ProductReportDto(
+                        p.getProductId(),
+                        p.getProductCode(),
+                        p.getName(),
+                        categoryName,
+                        item.getPrice(),
+                        available,
+                        p.getMinStock(),
+                        p.getMaxStock(),
+                        outOfStock
+                    ));
+                }
+            }
         }
         return result;
     }
