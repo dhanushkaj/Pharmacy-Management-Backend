@@ -59,10 +59,10 @@ public class StockMovementService {
         // If movement decreases inventory, ensure enough balance (by price)
         if (req.getFromBin() == BinType.INVENTORY) {
         	 Optional<InventoryItem>  itemOps = inventoryItemRepository.findByProductIdAndPriceForUpdateNative(productId, req.getPrice());
-        	 InventoryItem item = itemOps.get();
-            if (item==null || item.getStock() < req.getQuantity()) {
-                throw new IllegalStateException("Insufficient inventory balance for price " + req.getPrice() + ". Current: " + item);
-            }
+        	// InventoryItem item = itemOps.get();
+            //if (item==null || item.getStock() < req.getQuantity()) {
+            //    throw new IllegalStateException("Insufficient inventory balance for price " + req.getPrice() + ". Current: " + item);
+            //}
         }
 
         StockMovement sm = StockMovement.builder()

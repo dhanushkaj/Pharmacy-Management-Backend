@@ -25,6 +25,7 @@ public class AlertService {
     private final AlertConfigRepository alertConfigRepository;
     private final AlertLogRepository alertLogRepository;
     private final ProductRepository productRepository;
+    private final InventoryItemRepository inventoryItemRepository;
 
     /**
      * Scheduled job to check for expiring products daily at 8:00 AM
@@ -57,54 +58,61 @@ public class AlertService {
             configs = alertConfigRepository.findByEnabledTrueOrderByThresholdDaysAsc();
         }
 
-        // Get all products with expiry dates
+        // Get all products
         List<Product> products = productRepository.findAll();
-        
         int alertsGenerated = 0;
-        
+
+        // Prepare configs by type for quick lookup
+        AlertConfig expiryCriticalConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.EXPIRY_CRITICAL).findFirst().orElse(null);
+        AlertConfig expiryWarningConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.EXPIRY_WARNING).findFirst().orElse(null);
+        AlertConfig lowStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.LOW_STOCK).findFirst().orElse(null);
+        AlertConfig outOfStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.OUT_OF_STOCK).findFirst().orElse(null);
+
         for (Product product : products) {
-            if (product.getExpiryDate() == null) {
-                continue;
-            }
-            
-            long daysUntilExpiry = ChronoUnit.DAYS.between(today, product.getExpiryDate());
-            
-            // Check each configuration threshold
-            for (AlertConfig config : configs) {
-                if (config.getAlertType() == AlertConfig.AlertType.EXPIRY_WARNING || 
-                    config.getAlertType() == AlertConfig.AlertType.EXPIRY_CRITICAL) {
-                    
-                    if (daysUntilExpiry <= config.getThresholdDays() && daysUntilExpiry >= 0) {
-                        // Check if active alert already exists for this product
-                        List<AlertLog> existingAlerts = alertLogRepository
-                            .findByProductIdAndStatusOrderByCreatedAtDesc(
-                                product.getProductId(), 
-                                AlertLog.AlertStatus.ACTIVE
-                            );
-                        
-                        boolean alertExists = existingAlerts.stream()
-                            .anyMatch(a -> a.getSeverity() == config.getSeverity());
-                        
-                        if (!alertExists) {
-                            createAlertLog(product, config, daysUntilExpiry);
-                            alertsGenerated++;
-                        }
-                        break; // Use highest severity threshold matched
-                    }
+            // --- Expiry Alerts ---
+            if (product.getExpiryDate() != null) {
+                long daysUntilExpiry = ChronoUnit.DAYS.between(today, product.getExpiryDate());
+                if (expiryCriticalConfig != null && daysUntilExpiry <= expiryCriticalConfig.getThresholdDays() && daysUntilExpiry >= 0) {
+                    createStockOrExpiryAlertIfNotExists(product, expiryCriticalConfig, daysUntilExpiry);
+                } else if (expiryWarningConfig != null && daysUntilExpiry <= expiryWarningConfig.getThresholdDays() && daysUntilExpiry >= 0) {
+                    createStockOrExpiryAlertIfNotExists(product, expiryWarningConfig, daysUntilExpiry);
+                }
+                if (daysUntilExpiry < 0) {
+                    resolveProductAlerts(product.getProductId());
                 }
             }
-            
-            // If product expiry date has passed, resolve active alerts
-            if (daysUntilExpiry < 0) {
-                resolveProductAlerts(product.getProductId());
+
+            // --- Stock Alerts ---
+            int currentStock = getCurrentStock(product);
+            if (outOfStockConfig != null && currentStock == 0) {
+                createStockOrExpiryAlertIfNotExists(product, outOfStockConfig, null);
+            } else if (lowStockConfig != null && product.getMinStock() != null && currentStock < product.getMinStock() && currentStock > 0) {
+                createStockOrExpiryAlertIfNotExists(product, lowStockConfig, null);
             }
         }
-        
         log.info("Generated {} new alerts", alertsGenerated);
     }
 
+    // Helper to avoid duplicate alerts
+    private void createStockOrExpiryAlertIfNotExists(Product product, AlertConfig config, Long daysUntilExpiry) {
+        List<AlertLog> existingAlerts = alertLogRepository.findByProductIdAndStatusOrderByCreatedAtDesc(
+            product.getProductId(), AlertLog.AlertStatus.ACTIVE);
+        boolean alertExists = existingAlerts.stream().anyMatch(a -> a.getSeverity() == config.getSeverity() && a.getAlertType() == config.getAlertType());
+        if (!alertExists) {
+            createAlertLog(product, config, daysUntilExpiry != null ? daysUntilExpiry : 0);
+        }
+    // removed extra closing brace
+    }
+
     private void createAlertLog(Product product, AlertConfig config, long daysUntilExpiry) {
-        String message = generateAlertMessage(product, daysUntilExpiry, config.getSeverity());
+        String message;
+        if (config.getAlertType() == AlertConfig.AlertType.OUT_OF_STOCK) {
+            message = String.format("OUT OF STOCK: %s is out of stock!", product.getName());
+        } else if (config.getAlertType() == AlertConfig.AlertType.LOW_STOCK) {
+            message = String.format("LOW STOCK: %s stock is below minimum threshold!", product.getName());
+        } else {
+            message = generateAlertMessage(product, daysUntilExpiry, config.getSeverity());
+        }
         
         AlertLog alertLog = AlertLog.builder()
             .alertType(config.getAlertType())
@@ -133,9 +141,10 @@ public class AlertService {
     }
 
     private Integer getCurrentStock(Product product) {
-        // This would ideally fetch from inventory, but Product entity might have this
-        // If you have an InventoryItems table, aggregate stock here
-        return null; // Placeholder - implement based on your inventory structure
+        // Aggregate stock from inventory items
+        return inventoryItemRepository.findByProduct(product).stream()
+            .mapToInt(item -> item.getStock() != null ? item.getStock() : 0)
+            .sum();
     }
 
     @Transactional
