@@ -1,0 +1,22 @@
+1. in data base table stock_movement this was commented out.
+
+--CONSTRAINT stock_movement_quantity_check CHECK ((quantity >= 1)),
+
+2. in StockMovement java class
+     @NotNull
+    //@Min(value = 1)
+    @Column(name = "quantity", nullable = false) --> this line was commented.
+    private Integer quantity;
+    
+3. in BillingItemRequest.java     
+
+
+        @NotNull(message = "Quantity is required")
+        // @Min(value = 1, message = "Quantity must be at least 1") // Allow zero or negative quantity
+        Integer quantity,
+        
+4. in BillingService.java         
+          // validateStockAvailability(request.items()); // Allow negative inventory
+5. in ProductService.java
+
+                    if (req.price() != null && req.stock() != null && req.stock() > 0) {

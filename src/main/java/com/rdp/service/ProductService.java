@@ -473,8 +473,8 @@ public class ProductService {
                     product = productRepo.save(product);
                     log.debug("Created new product id={} code={} name={}", product.getProductId(), product.getProductCode(), product.getName());
 
-                    // Create initial inventory if provided
-                    if (req.price() != null && req.stock() != null && req.stock() > 0) {
+                    // Always create initial inventory if price is provided (stock is always >=0)
+                    if (req.price() != null) {
                         InventoryItem inv = InventoryItem.builder()
                                 .product(product)
                                 .price(req.price())

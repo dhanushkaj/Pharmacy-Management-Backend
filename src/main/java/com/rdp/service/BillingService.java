@@ -40,7 +40,7 @@ public class BillingService {
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + request.customerId()));
 
         // Validate products and stock availability
-        validateStockAvailability(request.items());
+        // validateStockAvailability(request.items()); // Allow negative inventory
 
         // Calculate totals
         BigDecimal subtotal = calculateSubtotal(request.items());
