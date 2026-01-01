@@ -20,3 +20,15 @@
 5. in ProductService.java
 
                     if (req.price() != null && req.stock() != null && req.stock() > 0) {
+
+                    
+                    ------fonrt end---
+     1. billing.js
+      // Allow inventory to go negative: Commented out stock validation
+    // if (product.totalStock !== undefined && product.totalStock < quantity) {
+    //   alert(`Insufficient stock for product '${product.name}'. Available: ${product.totalStock}, Requested: ${quantity}`);
+    //   return;
+    // }                  
+               
+               
+     2.      
