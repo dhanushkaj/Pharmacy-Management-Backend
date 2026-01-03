@@ -33,6 +33,40 @@ public class BillingService {
     private final InventoryItemRepository inventoryItemRepo;
     private final StockMovementService stockMovementService;
 
+        @Transactional
+        public void deleteBilling(Long billingId) {
+                Billing billing = billingRepo.findById(billingId)
+                                .orElseThrow(() -> new IllegalArgumentException("Billing not found: " + billingId));
+
+                // Restore inventory and log stock movement for each billing item
+                List<BillingItem> items = billingItemRepo.findByBillingBillingId(billingId);
+                for (BillingItem item : items) {
+                        Product product = item.getProduct();
+                        // Find inventory item by product and price
+                        inventoryItemRepo.findByProductAndPrice(product, item.getUnitPrice()).ifPresent(invItem -> {
+                                int currentStock = invItem.getStock() != null ? invItem.getStock() : 0;
+                                invItem.setStock(currentStock + item.getQuantity());
+                                inventoryItemRepo.save(invItem);
+
+                                // Log stock movement: SOLD -> INVENTORY
+                                com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                                moveReq.setFromBin(com.rdp.model.BinType.SOLD);
+                                moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                                moveReq.setQuantity(item.getQuantity());
+                                moveReq.setReferenceType("BILLING_DELETE");
+                                moveReq.setReferenceId(billing.getBillingNumber());
+                                moveReq.setPerformedBy(billing.getCreatedBy());
+                                moveReq.setBatchNo(item.getBatchNo());
+                                moveReq.setPrice(item.getUnitPrice());
+                                moveReq.setRemarks("Billing deleted, inventory returned");
+                                stockMovementService.createMovement(product.getProductId(), moveReq);
+                        });
+                }
+
+                billingRepo.delete(billing);
+                log.info("Deleted billing and restored inventory: billingId={} billingNumber={}", billing.getBillingId(), billing.getBillingNumber());
+        }
+
     @Transactional
     public BillingResponse createBilling(BillingRequest request) {
         // Find customer
@@ -40,7 +74,7 @@ public class BillingService {
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + request.customerId()));
 
         // Validate products and stock availability
-        validateStockAvailability(request.items());
+        // validateStockAvailability(request.items()); // Allow negative inventory
 
         // Calculate totals
         BigDecimal subtotal = calculateSubtotal(request.items());
