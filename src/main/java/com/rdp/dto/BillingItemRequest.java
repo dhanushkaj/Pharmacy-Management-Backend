@@ -11,7 +11,7 @@ public record BillingItemRequest(
         Long productId,
 
         @NotNull(message = "Quantity is required")
-        @Min(value = 1, message = "Quantity must be at least 1")
+        // @Min(value = 1, message = "Quantity must be at least 1") // Allow zero or negative quantity
         Integer quantity,
 
         @NotNull(message = "Unit price is required")

@@ -43,7 +43,8 @@ public class StockMovementService {
         ALLOWED_TRANSITIONS.add("INVENTORY->EXPIRED");
         ALLOWED_TRANSITIONS.add("INVENTORY->DAMAGED");
         ALLOWED_TRANSITIONS.add("SUPPLIER_RETURN->INVENTORY");
-        // Add others as needed
+        // Allow inventory return on billing delete
+        ALLOWED_TRANSITIONS.add("SOLD->INVENTORY");
     }
 
     private boolean isTransitionAllowed(BinType from, BinType to) {

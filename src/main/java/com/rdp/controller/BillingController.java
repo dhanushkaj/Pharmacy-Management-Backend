@@ -16,12 +16,21 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpStatus;
+
 @RestController
 @RequestMapping("/api/billings")
 @RequiredArgsConstructor
 public class BillingController {
 
     private final BillingService service;
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteBilling(@PathVariable("id") Long id) {
+        service.deleteBilling(id);
+        return ResponseEntity.noContent().build();
+    }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'CASHIER')")
