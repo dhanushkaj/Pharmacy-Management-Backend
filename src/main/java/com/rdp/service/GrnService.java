@@ -40,23 +40,27 @@ public class GrnService {
     @Transactional
     public GrnResponse createGrn(CreateGrnRequest request) {
         PurchaseOrder po = purchaseOrderRepository.findById(request.purchaseOrderId())
-                .orElseThrow(() -> new ResourceNotFoundException("PurchaseOrder not found with id: " + request.purchaseOrderId()));
+            .orElseThrow(() -> new ResourceNotFoundException("PurchaseOrder not found with id: " + request.purchaseOrderId()));
 
         Grn grn = Grn.builder()
-                .purchaseOrder(po)
-                .status(GrnStatus.PENDING)
-                .grnCode(generateGrnCode(po)) // Pass PO to generate code with supplier info
-                .build();
+            .purchaseOrder(po)
+            .status(GrnStatus.PENDING)
+            .grnCode(generateGrnCode(po))
+            .paid(request.paid() != null ? request.paid() : false)
+            .paymentDueDate(request.paymentDueDate())
+            .paymentDueDays(request.paymentDueDays())
+            .chequeDate(request.chequeDate())
+            .build();
 
         for (GrnItemRequest itemRequest : request.items()) {
             Product product = productRepository.findById(itemRequest.productId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemRequest.productId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemRequest.productId()));
             GrnItem grnItem = GrnItem.builder()
-                    .product(product)
-                    .receivedQuantity(itemRequest.receivedQuantity())
-                    .unitCost(itemRequest.unitCost())
-                    .price(itemRequest.price())
-                    .build();
+                .product(product)
+                .receivedQuantity(itemRequest.receivedQuantity())
+                .unitCost(itemRequest.unitCost())
+                .price(itemRequest.price())
+                .build();
             grn.addItem(grnItem);
         }
 
@@ -214,29 +218,38 @@ public class GrnService {
         return code;
     }
 
-    private GrnResponse mapToDto(Grn grn) {
+        private GrnResponse mapToDto(Grn grn) {
         List<GrnItemResponse> itemResponses = grn.getItems().stream()
-                .map(item -> new GrnItemResponse(
-                        item.getId(),
-                        item.getProduct().getProductId(),
-                        item.getProduct().getName(),
-                        item.getReceivedQuantity(),
-                        item.getUnitCost(),
-                        item.getPrice()
-                ))
-                .collect(Collectors.toList());
+            .map(item -> new GrnItemResponse(
+                item.getId(),
+                item.getProduct().getProductId(),
+                item.getProduct().getName(),
+                item.getReceivedQuantity(),
+                item.getUnitCost(),
+                item.getPrice()
+            ))
+            .collect(Collectors.toList());
 
+        String supplierName = null;
+        if (grn.getPurchaseOrder() != null && grn.getPurchaseOrder().getSupplier() != null) {
+            supplierName = grn.getPurchaseOrder().getSupplier().getName();
+        }
         return new GrnResponse(
-                grn.getId(),
-                grn.getGrnCode(),
-                grn.getPurchaseOrder().getId(),
-                grn.getPurchaseOrder().getOrderCode(),
-                grn.getCreatedAt(),
-                grn.getApprovedDate(),
-                grn.getApprovedUser(),
-                grn.getStatus(),
-                grn.getRejectedReason(),
-                itemResponses
+            grn.getId(),
+            grn.getGrnCode(),
+            grn.getPurchaseOrder().getId(),
+            grn.getPurchaseOrder().getOrderCode(),
+            supplierName,
+            grn.getCreatedAt(),
+            grn.getApprovedDate(),
+            grn.getApprovedUser(),
+            grn.getStatus(),
+            grn.getRejectedReason(),
+            grn.getPaid(),
+            grn.getPaymentDueDate(),
+            grn.getPaymentDueDays(),
+            grn.getChequeDate(),
+            itemResponses
         );
-    }
+        }
 }

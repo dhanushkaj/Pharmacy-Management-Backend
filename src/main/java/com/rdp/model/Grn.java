@@ -1,3 +1,4 @@
+// Removed duplicate misplaced getters. All are defined inside the Grn class below.
 package com.rdp.model;
 
 import com.rdp.audit.BaseAuditableEntity;
@@ -6,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +17,6 @@ import java.util.List;
         indexes = { @Index(name = "rdp_grn_code_idx", columnList = "grn_code", unique = true) })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Grn extends BaseAuditableEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "grn_id")
@@ -24,10 +26,10 @@ public class Grn extends BaseAuditableEntity {
     @JoinColumn(name = "po_id", nullable = false)
     private PurchaseOrder purchaseOrder;
 
-    @Column(name = "grn_code", nullable = false, unique = true, length = 100)
-    private String grnCode; // e.g., GRN-POACMEPHARMA202511260001-20251126-0001
-
-    @Enumerated(EnumType.STRING)
+            public Boolean getPaid() { return this.paid; }
+            public LocalDate getPaymentDueDate() { return this.paymentDueDate; }
+            public Integer getPaymentDueDays() { return this.paymentDueDays; }
+            public LocalDate getChequeDate() { return this.chequeDate; }
     @Column(name = "status", nullable = false)
     private GrnStatus status;
 
@@ -49,6 +51,22 @@ public class Grn extends BaseAuditableEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    // Payment fields for payment alerts
+    @Column(name = "paid")
+    private Boolean paid = false;
+
+    @Column(name = "payment_due_date")
+    private LocalDate paymentDueDate;
+
+    @Column(name = "payment_due_days")
+    private Integer paymentDueDays;
+
+    @Column(name = "cheque_date")
+    private LocalDate chequeDate;
+    
+    @Column(name="grn_code")
+    private String grnCode;
 
     @PrePersist
     protected void onCreate() {

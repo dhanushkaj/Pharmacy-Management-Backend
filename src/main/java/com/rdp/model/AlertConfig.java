@@ -46,7 +46,9 @@ public class AlertConfig extends BaseAuditableEntity {
         EXPIRY_WARNING,
         EXPIRY_CRITICAL,
         LOW_STOCK,
-        OUT_OF_STOCK
+        OUT_OF_STOCK,
+        PAYMENT_DUE,
+        PAYMENT_OVERDUE
     }
 
     public enum AlertSeverity {

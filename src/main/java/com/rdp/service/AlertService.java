@@ -27,6 +27,8 @@ public class AlertService {
     private final ProductRepository productRepository;
     private final InventoryItemRepository inventoryItemRepository;
 
+    private final GrnRepository grnRepository;
+
     /**
      * Scheduled job to check for expiring products daily at 8:00 AM
      */
@@ -36,6 +38,7 @@ public class AlertService {
         log.info("Starting daily alert generation...");
         try {
             generateExpiryAlerts();
+            generatePaymentAlerts();
             log.info("Daily alert generation completed successfully");
         } catch (Exception e) {
             log.error("Error generating daily alerts", e);
@@ -91,6 +94,73 @@ public class AlertService {
             }
         }
         log.info("Generated {} new alerts", alertsGenerated);
+    }
+
+    /**
+     * Generate payment due and overdue alerts for GRNs
+     */
+    @Transactional
+    public void generatePaymentAlerts() {
+        LocalDate today = LocalDate.now();
+        List<AlertConfig> configs = alertConfigRepository.findByEnabledTrueOrderByThresholdDaysAsc();
+        AlertConfig paymentDueConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.PAYMENT_DUE).findFirst().orElse(null);
+        AlertConfig paymentOverdueConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.PAYMENT_OVERDUE).findFirst().orElse(null);
+        if (paymentDueConfig == null && paymentOverdueConfig == null) {
+            log.warn("No payment alert configs found");
+            return;
+        }
+        List<Grn> unpaidGrns = grnRepository.findByPaidFalseAndPaymentDueDateIsNotNull();
+        for (Grn grn : unpaidGrns) {
+            LocalDate dueDate = grn.getPaymentDueDate();
+            if (dueDate == null) continue;
+            long daysUntilDue = ChronoUnit.DAYS.between(today, dueDate);
+            // Overdue
+            if (paymentOverdueConfig != null && daysUntilDue < 0) {
+                createPaymentAlertIfNotExists(grn, paymentOverdueConfig, (int)daysUntilDue);
+            }
+            // Due soon
+            else if (paymentDueConfig != null && daysUntilDue >= 0 && daysUntilDue <= paymentDueConfig.getThresholdDays()) {
+                createPaymentAlertIfNotExists(grn, paymentDueConfig, (int)daysUntilDue);
+            }
+        }
+    }
+
+    private void createPaymentAlertIfNotExists(Grn grn, AlertConfig config, int daysUntilDue) {
+        // Only one active alert per GRN per type
+        List<AlertLog> existing = alertLogRepository.findByProductIdAndStatusOrderByCreatedAtDesc(grn.getId(), AlertLog.AlertStatus.ACTIVE);
+        boolean exists = existing.stream().anyMatch(a -> a.getAlertType() == config.getAlertType() && a.getGrnId() != null && a.getGrnId().equals(grn.getId()));
+        if (!exists) {
+            String message = generatePaymentAlertMessage(grn, config.getAlertType(), daysUntilDue);
+            String supplierName = null;
+            if (grn.getPurchaseOrder() != null && grn.getPurchaseOrder().getSupplier() != null) {
+                supplierName = grn.getPurchaseOrder().getSupplier().getName();
+            }
+            AlertLog alertLog = AlertLog.builder()
+                .alertType(config.getAlertType())
+                .severity(config.getSeverity())
+                .productId(grn.getId())
+                .grnId(grn.getId())
+                .productName(supplierName != null ? supplierName : "GRN")
+                .message(message)
+                .status(AlertLog.AlertStatus.ACTIVE)
+                .build();
+            alertLogRepository.save(alertLog);
+        }
+    }
+
+    private String generatePaymentAlertMessage(Grn grn, AlertConfig.AlertType type, int daysUntilDue) {
+        if (type == AlertConfig.AlertType.PAYMENT_OVERDUE) {
+            return String.format("PAYMENT OVERDUE: Payment for GRN %s is overdue by %d days!", grn.getGrnCode(), -daysUntilDue);
+        } else if (type == AlertConfig.AlertType.PAYMENT_DUE) {
+            if (daysUntilDue == 0) {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due TODAY!", grn.getGrnCode());
+            } else if (daysUntilDue == 1) {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due TOMORROW!", grn.getGrnCode());
+            } else {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due in %d days", grn.getGrnCode(), daysUntilDue);
+            }
+        }
+        return "";
     }
 
     // Helper to avoid duplicate alerts
