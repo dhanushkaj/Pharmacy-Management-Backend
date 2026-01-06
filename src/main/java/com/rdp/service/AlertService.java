@@ -18,8 +18,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class AlertService {
 
     private final AlertConfigRepository alertConfigRepository;
@@ -70,6 +70,8 @@ public class AlertService {
         AlertConfig expiryWarningConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.EXPIRY_WARNING).findFirst().orElse(null);
         AlertConfig lowStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.LOW_STOCK).findFirst().orElse(null);
         AlertConfig outOfStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.OUT_OF_STOCK).findFirst().orElse(null);
+        AlertConfig nonMovingConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.NON_MOVING).findFirst().orElse(null);
+        AlertConfig overStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.OVER_STOCK).findFirst().orElse(null);
 
         for (Product product : products) {
             // --- Expiry Alerts ---
@@ -92,8 +94,53 @@ public class AlertService {
             } else if (lowStockConfig != null && product.getMinStock() != null && currentStock < product.getMinStock() && currentStock > 0) {
                 createStockOrExpiryAlertIfNotExists(product, lowStockConfig, null);
             }
+
+            // --- Over Stock Alert ---
+            if (overStockConfig != null && product.getMaxStock() != null && currentStock > product.getMaxStock()) {
+                createStockOrExpiryAlertIfNotExists(product, overStockConfig, null);
+            }
+
+            // --- Non Moving Alert ---
+            if (nonMovingConfig != null && nonMovingConfig.getThresholdDays() != null) {
+                LocalDate lastSaleDate = getLastSaleDate(product.getProductId());
+                if (lastSaleDate != null) {
+                    long daysSinceLastSale = ChronoUnit.DAYS.between(lastSaleDate, today);
+                    if (daysSinceLastSale >= nonMovingConfig.getThresholdDays()) {
+                        createNonMovingAlertIfNotExists(product, nonMovingConfig, daysSinceLastSale);
+                    }
+                }
+            }
         }
         log.info("Generated {} new alerts", alertsGenerated);
+
+    }
+
+    // Helper to get last sale date for a product (stub, implement with actual sales logic)
+    private LocalDate getLastSaleDate(Long productId) {
+        // TODO: Implement actual logic to fetch last sale date from sales/invoice/stock movement
+        // For now, return null to avoid false positives
+        return null;
+    }
+
+    // Helper to create non-moving alert
+    private void createNonMovingAlertIfNotExists(Product product, AlertConfig config, long daysSinceLastSale) {
+        List<AlertLog> existingAlerts = alertLogRepository.findByProductIdAndStatusOrderByCreatedAtDesc(
+            product.getProductId(), AlertLog.AlertStatus.ACTIVE);
+        boolean alertExists = existingAlerts.stream().anyMatch(a -> a.getAlertType() == config.getAlertType());
+        if (!alertExists) {
+            String message = String.format("NON MOVING: %s has not been sold for %d days!", product.getName(), daysSinceLastSale);
+            AlertLog alertLog = AlertLog.builder()
+                .alertType(config.getAlertType())
+                .severity(config.getSeverity())
+                .productId(product.getProductId())
+                .productCode(product.getProductCode())
+                .productName(product.getName())
+                .message(message)
+                .currentStock(getCurrentStock(product))
+                .status(AlertLog.AlertStatus.ACTIVE)
+                .build();
+            alertLogRepository.save(alertLog);
+        }
     }
 
     /**

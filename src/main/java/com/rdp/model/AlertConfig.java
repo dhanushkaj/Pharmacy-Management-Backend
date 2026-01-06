@@ -37,6 +37,7 @@ public class AlertConfig extends BaseAuditableEntity {
 
     @NotNull(message = "Enabled flag is required")
     @Column(name = "enabled", nullable = false)
+    @Builder.Default
     private Boolean enabled = true;
 
     @Column(name = "description", length = 500)
@@ -48,7 +49,9 @@ public class AlertConfig extends BaseAuditableEntity {
         LOW_STOCK,
         OUT_OF_STOCK,
         PAYMENT_DUE,
-        PAYMENT_OVERDUE
+        PAYMENT_OVERDUE,
+        NON_MOVING,
+        OVER_STOCK
     }
 
     public enum AlertSeverity {
