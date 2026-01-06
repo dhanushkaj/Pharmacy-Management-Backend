@@ -18,14 +18,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class AlertService {
 
     private final AlertConfigRepository alertConfigRepository;
     private final AlertLogRepository alertLogRepository;
     private final ProductRepository productRepository;
     private final InventoryItemRepository inventoryItemRepository;
+
+    private final GrnRepository grnRepository;
 
     /**
      * Scheduled job to check for expiring products daily at 8:00 AM
@@ -36,6 +38,7 @@ public class AlertService {
         log.info("Starting daily alert generation...");
         try {
             generateExpiryAlerts();
+            generatePaymentAlerts();
             log.info("Daily alert generation completed successfully");
         } catch (Exception e) {
             log.error("Error generating daily alerts", e);
@@ -67,6 +70,8 @@ public class AlertService {
         AlertConfig expiryWarningConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.EXPIRY_WARNING).findFirst().orElse(null);
         AlertConfig lowStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.LOW_STOCK).findFirst().orElse(null);
         AlertConfig outOfStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.OUT_OF_STOCK).findFirst().orElse(null);
+        AlertConfig nonMovingConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.NON_MOVING).findFirst().orElse(null);
+        AlertConfig overStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.OVER_STOCK).findFirst().orElse(null);
 
         for (Product product : products) {
             // --- Expiry Alerts ---
@@ -89,8 +94,120 @@ public class AlertService {
             } else if (lowStockConfig != null && product.getMinStock() != null && currentStock < product.getMinStock() && currentStock > 0) {
                 createStockOrExpiryAlertIfNotExists(product, lowStockConfig, null);
             }
+
+            // --- Over Stock Alert ---
+            if (overStockConfig != null && product.getMaxStock() != null && currentStock > product.getMaxStock()) {
+                createStockOrExpiryAlertIfNotExists(product, overStockConfig, null);
+            }
+
+            // --- Non Moving Alert ---
+            if (nonMovingConfig != null && nonMovingConfig.getThresholdDays() != null) {
+                LocalDate lastSaleDate = getLastSaleDate(product.getProductId());
+                if (lastSaleDate != null) {
+                    long daysSinceLastSale = ChronoUnit.DAYS.between(lastSaleDate, today);
+                    if (daysSinceLastSale >= nonMovingConfig.getThresholdDays()) {
+                        createNonMovingAlertIfNotExists(product, nonMovingConfig, daysSinceLastSale);
+                    }
+                }
+            }
         }
         log.info("Generated {} new alerts", alertsGenerated);
+
+    }
+
+    // Helper to get last sale date for a product (stub, implement with actual sales logic)
+    private LocalDate getLastSaleDate(Long productId) {
+        // TODO: Implement actual logic to fetch last sale date from sales/invoice/stock movement
+        // For now, return null to avoid false positives
+        return null;
+    }
+
+    // Helper to create non-moving alert
+    private void createNonMovingAlertIfNotExists(Product product, AlertConfig config, long daysSinceLastSale) {
+        List<AlertLog> existingAlerts = alertLogRepository.findByProductIdAndStatusOrderByCreatedAtDesc(
+            product.getProductId(), AlertLog.AlertStatus.ACTIVE);
+        boolean alertExists = existingAlerts.stream().anyMatch(a -> a.getAlertType() == config.getAlertType());
+        if (!alertExists) {
+            String message = String.format("NON MOVING: %s has not been sold for %d days!", product.getName(), daysSinceLastSale);
+            AlertLog alertLog = AlertLog.builder()
+                .alertType(config.getAlertType())
+                .severity(config.getSeverity())
+                .productId(product.getProductId())
+                .productCode(product.getProductCode())
+                .productName(product.getName())
+                .message(message)
+                .currentStock(getCurrentStock(product))
+                .status(AlertLog.AlertStatus.ACTIVE)
+                .build();
+            alertLogRepository.save(alertLog);
+        }
+    }
+
+    /**
+     * Generate payment due and overdue alerts for GRNs
+     */
+    @Transactional
+    public void generatePaymentAlerts() {
+        LocalDate today = LocalDate.now();
+        List<AlertConfig> configs = alertConfigRepository.findByEnabledTrueOrderByThresholdDaysAsc();
+        AlertConfig paymentDueConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.PAYMENT_DUE).findFirst().orElse(null);
+        AlertConfig paymentOverdueConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.PAYMENT_OVERDUE).findFirst().orElse(null);
+        if (paymentDueConfig == null && paymentOverdueConfig == null) {
+            log.warn("No payment alert configs found");
+            return;
+        }
+        List<Grn> unpaidGrns = grnRepository.findByPaidFalseAndPaymentDueDateIsNotNull();
+        for (Grn grn : unpaidGrns) {
+            LocalDate dueDate = grn.getPaymentDueDate();
+            if (dueDate == null) continue;
+            long daysUntilDue = ChronoUnit.DAYS.between(today, dueDate);
+            // Overdue
+            if (paymentOverdueConfig != null && daysUntilDue < 0) {
+                createPaymentAlertIfNotExists(grn, paymentOverdueConfig, (int)daysUntilDue);
+            }
+            // Due soon
+            else if (paymentDueConfig != null && daysUntilDue >= 0 && daysUntilDue <= paymentDueConfig.getThresholdDays()) {
+                createPaymentAlertIfNotExists(grn, paymentDueConfig, (int)daysUntilDue);
+            }
+        }
+    }
+
+    private void createPaymentAlertIfNotExists(Grn grn, AlertConfig config, int daysUntilDue) {
+        // Only one active alert per GRN per type
+        List<AlertLog> existing = alertLogRepository.findByProductIdAndStatusOrderByCreatedAtDesc(grn.getId(), AlertLog.AlertStatus.ACTIVE);
+        boolean exists = existing.stream().anyMatch(a -> a.getAlertType() == config.getAlertType() && a.getGrnId() != null && a.getGrnId().equals(grn.getId()));
+        if (!exists) {
+            String message = generatePaymentAlertMessage(grn, config.getAlertType(), daysUntilDue);
+            String supplierName = null;
+            if (grn.getPurchaseOrder() != null && grn.getPurchaseOrder().getSupplier() != null) {
+                supplierName = grn.getPurchaseOrder().getSupplier().getName();
+            }
+            AlertLog alertLog = AlertLog.builder()
+                .alertType(config.getAlertType())
+                .severity(config.getSeverity())
+                .productId(grn.getId())
+                .grnId(grn.getId())
+                .productName(supplierName != null ? supplierName : "GRN")
+                .message(message)
+                .status(AlertLog.AlertStatus.ACTIVE)
+                .build();
+            alertLogRepository.save(alertLog);
+        }
+    }
+
+    private String generatePaymentAlertMessage(Grn grn, AlertConfig.AlertType type, int daysUntilDue) {
+        if (type == AlertConfig.AlertType.PAYMENT_OVERDUE) {
+            return String.format("PAYMENT OVERDUE: Payment for GRN %s is overdue by %d days!", grn.getGrnCode(), -daysUntilDue);
+        } else if (type == AlertConfig.AlertType.PAYMENT_DUE) {
+            if (daysUntilDue == 0) {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due TODAY!", grn.getGrnCode());
+            } else if (daysUntilDue == 1) {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due TOMORROW!", grn.getGrnCode());
+            } else {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due in %d days", grn.getGrnCode(), daysUntilDue);
+            }
+        }
+        return "";
     }
 
     // Helper to avoid duplicate alerts

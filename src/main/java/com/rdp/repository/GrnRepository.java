@@ -1,3 +1,4 @@
+    
 package com.rdp.repository;
 
 import com.rdp.model.Grn;
@@ -9,6 +10,9 @@ import java.util.Optional;
 @Repository
 public interface GrnRepository extends JpaRepository<Grn, Long> {
     Optional<Grn> findByGrnCode(String grnCode);
-    
     long countByGrnCodeStartingWith(String prefix);
+
+    // For payment alert logic
+    java.util.List<Grn> findByPaidFalseAndPaymentDueDateIsNotNull();
+    
 }

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public class GrnDtos {
@@ -21,7 +22,11 @@ public class GrnDtos {
 
     public record CreateGrnRequest(
             @NotNull Long purchaseOrderId,
-            @NotEmpty List<GrnItemRequest> items
+            @NotEmpty List<GrnItemRequest> items,
+            Boolean paid,
+            LocalDate paymentDueDate,
+            Integer paymentDueDays,
+            LocalDate chequeDate
     ) {}
 
     public record RejectGrnRequest(
@@ -46,11 +51,16 @@ public class GrnDtos {
             String grnCode,
             Long purchaseOrderId,
             String purchaseOrderCode,
+            String supplierName,
             LocalDateTime createdAt,
             LocalDateTime approvedDate,
             String approvedUser,
             GrnStatus status,
             String rejectedReason,
+            Boolean paid,
+            LocalDate paymentDueDate,
+            Integer paymentDueDays,
+            LocalDate chequeDate,
             List<GrnItemResponse> items
     ) {}
 }
