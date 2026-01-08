@@ -89,16 +89,18 @@ public class GrnService {
             BigDecimal newCost = item.getUnitCost();
             BigDecimal newSellPrice = item.getPrice();
 
-            // Check if inventory already has the same product + cost + price combination
+            // Try to find existing inventory by product and price (unique constraint)
             InventoryItem existingBucket = inventoryItemRepository
-                    .findByProductAndCostPriceAndPrice(product, newCost, newSellPrice)
+                    .findByProductAndPrice(product, newSellPrice)
                     .orElse(null);
 
             if (existingBucket != null) {
-                //Existing bucket found — increment stock
-                existingBucket.setStock(existingBucket.getStock() + item.getReceivedQuantity());
+                // Existing bucket found — increment stock and update cost if needed
+                existingBucket.setStock((existingBucket.getStock() == null ? 0 : existingBucket.getStock()) + item.getReceivedQuantity());
+                if (newCost != null) existingBucket.setCostPrice(newCost);
                 existingBucket.setUpdatedAt(LocalDateTime.now());
                 inventoryItemRepository.save(existingBucket);
+
                 // Create STOCK movement: GRN -> INVENTORY
                 com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
                 moveReq.setFromBin(com.rdp.model.BinType.GRN);
@@ -113,7 +115,7 @@ public class GrnService {
 
                 adjustedBuckets++;
             } else {
-                //No bucket for this cost/sell price — create new inventory record
+                // No bucket for this price — create new inventory record
                 InventoryItem newBucket = InventoryItem.builder()
                         .product(product)
                         .costPrice(newCost)

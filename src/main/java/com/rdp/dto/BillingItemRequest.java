@@ -18,6 +18,10 @@ public record BillingItemRequest(
         @DecimalMin(value = "0.0", inclusive = false, message = "Unit price must be greater than 0")
         BigDecimal unitPrice,
 
-        String batchNo
+        String batchNo,
+
+        // New fields for discount logic
+        BigDecimal productLevelDiscount,
+        Boolean excludeFromOverall
 ) {
 }

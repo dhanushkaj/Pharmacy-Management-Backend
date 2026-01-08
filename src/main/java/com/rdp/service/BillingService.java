@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ public class BillingService {
     private final ProductRepository productRepo;
     private final InventoryItemRepository inventoryItemRepo;
     private final StockMovementService stockMovementService;
+    private final AuditTrailService auditTrailService;
 
         @Transactional
         public void deleteBilling(Long billingId) {
@@ -69,57 +71,76 @@ public class BillingService {
 
     @Transactional
     public BillingResponse createBilling(BillingRequest request) {
-        // Find customer
         Customer customer = customerRepo.findById(request.customerId())
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + request.customerId()));
 
-        // Validate products and stock availability
-        // validateStockAvailability(request.items()); // Allow negative inventory
-
-        // Calculate totals
-        BigDecimal subtotal = calculateSubtotal(request.items());
-        
-        // Use discount from request, or customer's default discount
-        BigDecimal discountPercentage = request.discountPercentage() != null 
-                ? request.discountPercentage() 
-                : (customer.getDiscountPercentage() != null ? customer.getDiscountPercentage() : BigDecimal.ZERO);
-
-        // Create billing
-        Billing billing = Billing.builder()
-                .billingNumber(generateBillingNumber())
-                .customer(customer)
-                .billingDate(LocalDateTime.now())
-                .subtotal(subtotal)
-                .discountPercentage(discountPercentage)
-                .paymentMethod(request.paymentMethod())
-                .notes(request.notes())
-                .build();
-
-        // Add billing items
+        // Calculate product-level and overall discount logic
+        BigDecimal productLevelTotal = BigDecimal.ZERO;
+        BigDecimal eligibleForOverall = BigDecimal.ZERO;
+        List<BillingItem> items = new ArrayList<>();
         for (BillingItemRequest itemReq : request.items()) {
             Product product = productRepo.findById(itemReq.productId())
                     .orElseThrow(() -> new IllegalArgumentException("Product not found: " + itemReq.productId()));
-
+            boolean exclude = Boolean.TRUE.equals(itemReq.excludeFromOverall());
+            BigDecimal subtotal = itemReq.unitPrice().multiply(new BigDecimal(itemReq.quantity()));
+            if (exclude) {
+                productLevelTotal = productLevelTotal.add(subtotal);
+            } else {
+                eligibleForOverall = eligibleForOverall.add(subtotal);
+            }
             BillingItem item = BillingItem.builder()
                     .product(product)
                     .quantity(itemReq.quantity())
                     .unitPrice(itemReq.unitPrice())
                     .batchNo(itemReq.batchNo())
+                    .subtotal(subtotal)
                     .build();
+            items.add(item);
+        }
+        BigDecimal subtotal = productLevelTotal.add(eligibleForOverall);
+        BigDecimal totalDiscount = request.totalDiscount() != null ? request.totalDiscount() : BigDecimal.ZERO;
+        BigDecimal discountPercentage = request.discountPercentage() != null ? request.discountPercentage() : BigDecimal.ZERO;
+        // Always use the discount amount from the request, do not recalculate from percentage
+        BigDecimal grandTotal = subtotal.subtract(totalDiscount);
 
+        Billing billing = Billing.builder()
+            .billingNumber(generateBillingNumber())
+            .customer(customer)
+            .billingDate(LocalDateTime.now())
+            .subtotal(subtotal)
+            .discountAmount(totalDiscount) // always use the value sent from frontend
+            .discountPercentage(discountPercentage)
+            .grandTotal(grandTotal)
+            .paymentMethod(request.paymentMethod())
+            .notes(request.notes())
+            .build();
+        for (BillingItem item : items) {
             billing.addItem(item);
         }
-
-        // Save billing
         billing = billingRepo.save(billing);
-
-        // Update inventory (reduce stock)
         updateInventoryForBilling(billing);
-
+        // Log discount application
+        String userId = (customer.getCreatedBy() != null) ? customer.getCreatedBy() : "system";
+        auditTrailService.logAction(
+            userId,
+            "DISCOUNT_APPLIED",
+            "Billing created with discount",
+            LocalDateTime.now(),
+            null,
+            request.totalDiscount() != null ? request.totalDiscount().toPlainString() : "0"
+        );
+        // Log payment type selection
+        auditTrailService.logAction(
+            userId,
+            "PAYMENT_TYPE_SELECTED",
+            "Payment type selected during billing",
+            LocalDateTime.now(),
+            null,
+            request.paymentMethod() != null ? request.paymentMethod().name() : "N/A"
+        );
         log.info("Created billing: billingId={} billingNumber={} customerId={} items={} grandTotal={}",
                 billing.getBillingId(), billing.getBillingNumber(), customer.getCustomerId(),
                 billing.getItems().size(), billing.getGrandTotal());
-
         return mapToResponse(billing);
     }
 
@@ -234,12 +255,18 @@ public class BillingService {
     public BillingResponse markAsPrinted(Long billingId) {
         Billing billing = billingRepo.findById(billingId)
                 .orElseThrow(() -> new IllegalArgumentException("Billing not found: " + billingId));
-        
         billing.setIsPrinted(true);
         billing = billingRepo.save(billing);
-        
-        log.info("Marked billing as printed: billingId={} billingNumber={}", billing.getBillingId(), billing.getBillingNumber());
-        
+        // Log bill reprint
+        String userId = (billing.getCreatedBy() != null) ? billing.getCreatedBy() : "system";
+        auditTrailService.logAction(
+            userId,
+            "BILL_REPRINTED",
+            "Bill reprinted",
+            LocalDateTime.now(),
+            null,
+            billing.getBillingNumber()
+        );
         return mapToResponse(billing);
     }
 
