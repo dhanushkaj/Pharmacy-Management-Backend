@@ -448,7 +448,7 @@ CREATE TABLE pharmacy.rdp_billings (
 	payment_method varchar(20) NULL,
 	subtotal numeric(12, 2) NOT NULL,
 	customer_id int8 NOT NULL,
-	CONSTRAINT rdp_billings_payment_method_check CHECK (((payment_method)::text = ANY ((ARRAY['CASH'::character varying, 'CARD'::character varying, 'MOBILE_PAYMENT'::character varying, 'OTHER'::character varying])::text[]))),
+	CONSTRAINT rdp_billings_payment_method_check CHECK (((payment_method)::text = ANY ((ARRAY['CASH'::character varying, 'CARD'::character varying, 'MOBILE_PAYMENT'::character varying, 'ONLINE_TRANSFER'::character varying, 'CREDIT'::character varying, 'CHEQUE'::character varying, 'OTHER'::character varying])::text[]))),
 	CONSTRAINT rdp_billings_pkey PRIMARY KEY (billing_id),
 	CONSTRAINT uk6h9vihameq3tjd4iwi4ccep2w UNIQUE (billing_number),
 	CONSTRAINT fk7etx6vmllat1mslxfaoowuwu2 FOREIGN KEY (customer_id) REFERENCES pharmacy.rdp_customers(customer_id)

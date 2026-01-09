@@ -92,6 +92,9 @@ public class Billing extends BaseAuditableEntity {
         CASH,
         CARD,
         MOBILE_PAYMENT,
+        ONLINE_TRANSFER,
+        CREDIT,
+        CHEQUE,
         OTHER
     }
 }
