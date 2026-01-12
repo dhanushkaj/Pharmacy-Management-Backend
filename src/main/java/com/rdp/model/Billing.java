@@ -86,24 +86,15 @@ public class Billing extends BaseAuditableEntity {
         item.setBilling(null);
     }
 
-    @PrePersist
-    @PreUpdate
-    private void calculateTotals() {
-        // Calculate discount amount
-        if (subtotal != null && discountPercentage != null) {
-            discountAmount = subtotal.multiply(discountPercentage).divide(new BigDecimal("100"));
-        }
-        
-        // Calculate grand total
-        if (subtotal != null && discountAmount != null) {
-            grandTotal = subtotal.subtract(discountAmount);
-        }
-    }
+    // Removed @PrePersist/@PreUpdate calculation to allow manual discountAmount from frontend
 
     public enum PaymentMethod {
         CASH,
         CARD,
         MOBILE_PAYMENT,
+        ONLINE_TRANSFER,
+        CREDIT,
+        CHEQUE,
         OTHER
     }
 }
