@@ -3,6 +3,8 @@ package com.rdp.controller;
 import com.rdp.dto.BillingRequest;
 import com.rdp.dto.BillingResponse;
 import com.rdp.service.BillingService;
+import com.rdp.service.StockMovementService;
+import com.rdp.dto.StockMovementDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,10 +22,18 @@ import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/billings")
+
 @RequiredArgsConstructor
 public class BillingController {
-
     private final BillingService service;
+    private final StockMovementService stockMovementService;
+    // Get all stock movements for a billing
+    @GetMapping("/{id}/movements")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'CASHIER')")
+    public ResponseEntity<java.util.List<StockMovementDto>> getMovementsForBilling(@PathVariable("id") Long billingId) {
+        java.util.List<StockMovementDto> movements = stockMovementService.findByReference("BILL", String.valueOf(billingId));
+        return ResponseEntity.ok(movements);
+    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -83,5 +93,14 @@ public class BillingController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'CASHIER')")
     public BillingResponse markAsPrinted(@PathVariable("id") Long id) {
         return service.markAsPrinted(id);
+    }
+    @GetMapping("/by-number/{billingNumber}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'CASHIER')")
+    public ResponseEntity<BillingResponse> getBillingByNumber(@PathVariable("billingNumber") String billingNumber) {
+        var billing = service.getBillingByNumber(billingNumber);
+        if (billing == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(billing);
     }
 }

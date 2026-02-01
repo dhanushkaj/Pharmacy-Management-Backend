@@ -26,7 +26,8 @@ public class CustomerService {
                 c.getPhone(),
                 c.getEmail(),
                 c.getAddress(),
-                c.getDiscountPercentage()
+                c.getDiscountPercentage(),
+                c.getBirthday()
         );
     }
 
@@ -97,5 +98,6 @@ public class CustomerService {
         c.setEmail(req.email());
         c.setAddress(req.address());
         c.setDiscountPercentage(req.discountPercentage() != null ? req.discountPercentage() : java.math.BigDecimal.ZERO);
+        c.setBirthday(req.birthday());
     }
 }

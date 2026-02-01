@@ -2,6 +2,8 @@ package com.rdp.controller;
 
 import com.rdp.dto.GrnDtos.*;
 import com.rdp.service.GrnService;
+import com.rdp.service.StockMovementService;
+import com.rdp.dto.StockMovementDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,10 +18,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/grns")
+
 @RequiredArgsConstructor
 public class GrnController {
-
     private final GrnService grnService;
+    private final StockMovementService stockMovementService;
+    // Get all stock movements for a GRN
+    @GetMapping("/{id}/movements")
+    public ResponseEntity<java.util.List<StockMovementDto>> getMovementsForGrn(@PathVariable("id") Long grnId) {
+        java.util.List<StockMovementDto> movements = stockMovementService.findByReference("GRN", String.valueOf(grnId));
+        return ResponseEntity.ok(movements);
+    }
 
     @PostMapping
     public ResponseEntity<GrnResponse> createGrn(@Valid @RequestBody CreateGrnRequest request) {

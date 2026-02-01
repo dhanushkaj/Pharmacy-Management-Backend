@@ -5,8 +5,12 @@ import com.rdp.dto.StockMovementDto;
 import com.rdp.model.BinType;
 import com.rdp.model.InventoryItem;
 import com.rdp.model.StockMovement;
+import com.rdp.model.Product;
 import com.rdp.repository.InventoryItemRepository;
 import com.rdp.repository.StockMovementRepository;
+import com.rdp.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,15 +25,24 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
 public class StockMovementService {
+    private static final Logger log = LoggerFactory.getLogger(StockMovementService.class);
+
+    public List<StockMovementDto> findByReference(String referenceType, String referenceId) {
+        List<StockMovement> movements = repository.findByReferenceTypeAndReferenceId(referenceType, referenceId);
+        return movements.stream().map(this::toDto).collect(Collectors.toList());
+    }
 
     private final StockMovementRepository repository;
     private final InventoryItemRepository inventoryItemRepository;
+    private final ProductRepository productRepository;
 
-    public StockMovementService(StockMovementRepository repository,InventoryItemRepository inventoryItemRepository) {
+    public StockMovementService(StockMovementRepository repository, InventoryItemRepository inventoryItemRepository, ProductRepository productRepository) {
         this.repository = repository;
         this.inventoryItemRepository = inventoryItemRepository;
+        this.productRepository = productRepository;
     }
 
     private static final Set<String> ALLOWED_TRANSITIONS = new HashSet<>();
@@ -45,6 +58,8 @@ public class StockMovementService {
         ALLOWED_TRANSITIONS.add("SUPPLIER_RETURN->INVENTORY");
         // Allow inventory return on billing delete
         ALLOWED_TRANSITIONS.add("SOLD->INVENTORY");
+        // Allow manual inventory adjustments
+        ALLOWED_TRANSITIONS.add("INVENTORY->INVENTORY");
     }
 
     private boolean isTransitionAllowed(BinType from, BinType to) {
@@ -117,28 +132,42 @@ public class StockMovementService {
         // sort ascending for running balance calc
         all.sort(Comparator.comparing(sm -> sm.getCreatedAt()));
 
-        // group by batchNo and compute running inventory for each group starting from zero and applying deltas
-        Map<String, Integer> running = new HashMap<>();
+
+        // Compute running balance starting from current inventory and working backwards
+        Map<String, Integer> endingBalance = new HashMap<>();
         List<StockMovementDto> dtos = new ArrayList<>();
 
+        // Get current inventory for each batch (or just product if batch not used)
         for (StockMovement sm : all) {
             String batch = sm.getBatchNo() == null ? "" : sm.getBatchNo();
-
-            int delta = 0;
-            if (sm.getToBin() == BinType.INVENTORY) delta += sm.getQuantity();
-            if (sm.getFromBin() == BinType.INVENTORY) delta -= sm.getQuantity();
-
-            int prev = running.getOrDefault(batch, 0);
-            int newBal = prev + delta;
-            running.put(batch, newBal);
-
-            StockMovementDto dto = toDto(sm);
-            dto.setInventoryBalanceAfter(newBal);
-            dtos.add(dto);
+            if (!endingBalance.containsKey(batch)) {
+                Integer curr = repository.getInventoryBalanceForProduct(sm.getProductId());
+                endingBalance.put(batch, curr != null ? curr : 0);
+            }
         }
 
-        // reverse to show latest first
-        Collections.reverse(dtos);
+        // Walk movements in reverse to compute running balance after each movement
+        Map<String, Integer> running = new HashMap<>(endingBalance);
+        ListIterator<StockMovement> it = all.listIterator(all.size());
+        List<StockMovementDto> reverseDtos = new ArrayList<>();
+        while (it.hasPrevious()) {
+            StockMovement sm = it.previous();
+            String batch = sm.getBatchNo() == null ? "" : sm.getBatchNo();
+            int after = running.getOrDefault(batch, 0);
+            int delta = 0;
+            if (sm.getToBin() == BinType.INVENTORY) delta -= sm.getQuantity();
+            if (sm.getFromBin() == BinType.INVENTORY) delta += sm.getQuantity();
+            int before = after + delta;
+            running.put(batch, before);
+            StockMovementDto dto = toDto(sm);
+            dto.setInventoryBalanceAfter(after);
+            reverseDtos.add(dto);
+        }
+        // Reverse to restore chronological order
+        Collections.reverse(reverseDtos);
+        dtos.addAll(reverseDtos);
+
+        // (Removed extra reverse to preserve correct running balance order)
 
         // pagination
         int total = dtos.size();
@@ -159,9 +188,33 @@ public class StockMovementService {
     }
 
     private StockMovementDto toDto(StockMovement sm) {
+        String productName = null;
+        String productCode = null;
+        try {
+            var invItems = inventoryItemRepository.findByProductProductIdOrderByCreatedAtDesc(sm.getProductId());
+            if (invItems != null && !invItems.isEmpty() && invItems.get(0).getProduct() != null) {
+                productName = invItems.get(0).getProduct().getName();
+                productCode = invItems.get(0).getProduct().getProductCode();
+            } else {
+                // fallback: fetch directly from Product
+                Product product = productRepository.findById(sm.getProductId()).orElse(null);
+                if (product != null) {
+                    productName = product.getName();
+                    productCode = product.getProductCode();
+                }
+            }
+        } catch (Exception e) {
+            // fallback: leave as null
+        }
+        if ("PRODUCT_UPDATE".equals(sm.getReferenceType())) {
+            log.info("Manual Inventory Change DTO: id={}, productId={}, productName={}, productCode={}, batchNo={}, fromBin={}, toBin={}, quantity={}, performedBy={}, createdAt={}",
+                sm.getId(), sm.getProductId(), productName, productCode, sm.getBatchNo(), sm.getFromBin(), sm.getToBin(), sm.getQuantity(), sm.getPerformedBy(), sm.getCreatedAt());
+        }
         return StockMovementDto.builder()
                 .id(sm.getId())
                 .productId(sm.getProductId())
+                .productName(productName)
+                .productCode(productCode)
                 .batchNo(sm.getBatchNo())
                 .fromBin(sm.getFromBin())
                 .toBin(sm.getToBin())
