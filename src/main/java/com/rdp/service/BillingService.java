@@ -306,4 +306,10 @@ public class BillingService {
                 billing.getCreatedBy()
         );
     }
+    
+    @Transactional(readOnly = true)
+    public BillingResponse getBillingByNumber(String billingNumber) {
+        var billing = billingRepo.findByBillingNumber(billingNumber).orElse(null);
+        return billing != null ? mapToResponse(billing) : null;
+    }
 }

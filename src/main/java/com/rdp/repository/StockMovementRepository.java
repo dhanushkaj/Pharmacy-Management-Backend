@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface StockMovementRepository extends JpaRepository<StockMovement, Long>, JpaSpecificationExecutor<StockMovement> {
 
+        List<StockMovement> findByReferenceTypeAndReferenceId(String referenceType, String referenceId);
+
     @Query("SELECT SUM(CASE WHEN sm.toBin = com.rdp.model.BinType.INVENTORY THEN sm.quantity WHEN sm.fromBin = com.rdp.model.BinType.INVENTORY THEN -sm.quantity ELSE 0 END) " +
             "FROM StockMovement sm WHERE sm.productId = :productId AND sm.price = :price")
     Integer getInventoryBalanceForProductAndPrice(@Param("productId") Long productId, @Param("price") java.math.BigDecimal price);

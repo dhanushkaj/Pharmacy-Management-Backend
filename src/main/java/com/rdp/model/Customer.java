@@ -35,9 +35,12 @@ public class Customer extends BaseAuditableEntity {
     @Column(name = "address", columnDefinition = "TEXT")
     private String address;
 
-    @DecimalMin(value = "0.0", message = "Discount percentage must be at least 0")
-    @DecimalMax(value = "100.0", message = "Discount percentage must not exceed 100")
-    @Column(name = "discount_percentage", precision = 5, scale = 2)
-    @Builder.Default
-    private java.math.BigDecimal discountPercentage = java.math.BigDecimal.ZERO;
+        @DecimalMin(value = "0.0", message = "Discount percentage must be at least 0")
+        @DecimalMax(value = "100.0", message = "Discount percentage must not exceed 100")
+        @Column(name = "discount_percentage", precision = 5, scale = 2)
+        @Builder.Default
+        private java.math.BigDecimal discountPercentage = java.math.BigDecimal.ZERO;
+
+        @Column(name = "birthday")
+        private java.sql.Date birthday;
 }
