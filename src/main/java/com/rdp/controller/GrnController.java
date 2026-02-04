@@ -21,6 +21,16 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class GrnController {
+        // Get GRN by grnCode (for Product Bin GRN link)
+        @GetMapping("/by-code/{grnCode}")
+        public ResponseEntity<GrnResponse> getGrnByCode(@PathVariable String grnCode) {
+            GrnResponse grn = grnService.getGrnByCode(grnCode);
+            if (grn != null) {
+                return ResponseEntity.ok(grn);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
     private final GrnService grnService;
     private final StockMovementService stockMovementService;
     // Get all stock movements for a GRN
