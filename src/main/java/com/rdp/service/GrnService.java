@@ -1,3 +1,4 @@
+ 
 package com.rdp.service;
 
 import com.rdp.dto.GrnDtos.*;
@@ -253,5 +254,10 @@ public class GrnService {
             grn.getChequeDate(),
             itemResponses
         );
+        }
+        public GrnResponse getGrnByCode(String grnCode) {
+            return grnRepository.findByGrnCode(grnCode)
+                    .map(this::mapToDto)
+                    .orElse(null);
         }
 }

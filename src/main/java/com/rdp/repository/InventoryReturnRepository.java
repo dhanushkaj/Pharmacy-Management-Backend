@@ -1,4 +1,4 @@
-package com.rdp.repository;
+   package com.rdp.repository;
 
 import com.rdp.model.InventoryReturn;
 import org.springframework.data.domain.Page;
@@ -13,7 +13,10 @@ import java.util.List;
 
 @Repository
 public interface InventoryReturnRepository extends JpaRepository<InventoryReturn, Long> {
-
+    // Add method to fetch all customer returns for a date range
+    @Query("SELECT ir FROM InventoryReturn ir WHERE ir.returnType = com.rdp.model.InventoryReturn.ReturnType.FROM_CUSTOMER AND ir.returnDate BETWEEN :start AND :end")
+    List<InventoryReturn> findCustomerReturnsForDay(@Param("start") java.time.LocalDateTime start, @Param("end") java.time.LocalDateTime end);
+   
     Page<InventoryReturn> findAllByOrderByReturnDateDesc(Pageable pageable);
 
     List<InventoryReturn> findByProductProductIdOrderByReturnDateDesc(Long productId);
