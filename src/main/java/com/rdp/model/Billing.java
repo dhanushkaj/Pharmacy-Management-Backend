@@ -67,9 +67,21 @@ public class Billing extends BaseAuditableEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+
     @Column(name = "is_printed")
     @Builder.Default
     private Boolean isPrinted = false;
+
+    @Column(name = "paid", nullable = false)
+    @Builder.Default
+    private boolean paid = false;
+
+    public boolean isPaid() {
+        return paid;
+    }
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
 
     @OneToMany(mappedBy = "billing", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -95,6 +107,7 @@ public class Billing extends BaseAuditableEntity {
         ONLINE_TRANSFER,
         CREDIT,
         CHEQUE,
-        OTHER
+        OTHER,
+        OLD_MANUAL
     }
 }
