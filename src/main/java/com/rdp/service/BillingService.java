@@ -24,6 +24,31 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BillingService {
+    public List<com.rdp.dto.CustomerCreditReportDto> getCustomerCreditReport(String name, String phone, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Billing> billings = billingRepo.findAll().stream()
+            .filter(b -> b.getPaymentMethod() == Billing.PaymentMethod.CREDIT)
+            .filter(b -> !b.isPaid())
+            .filter(b -> name == null || name.isEmpty() || b.getCustomer().getName().toLowerCase().contains(name.toLowerCase()))
+            .filter(b -> phone == null || phone.isEmpty() || (b.getCustomer().getPhone() != null && b.getCustomer().getPhone().contains(phone)))
+            .filter(b -> (startDate == null || !b.getBillingDate().isBefore(startDate)) && (endDate == null || !b.getBillingDate().isAfter(endDate)))
+            .toList();
+        return billings.stream().map(b -> com.rdp.dto.CustomerCreditReportDto.builder()
+                .customerName(b.getCustomer().getName())
+                .phone(b.getCustomer().getPhone())
+                .billingNumber(b.getBillingNumber())
+                .billingDate(b.getBillingDate())
+                .grandTotal(b.getGrandTotal().doubleValue())
+                .paid(b.isPaid())
+                .build()).toList();
+    }
+
+    @Transactional
+    public void markBillAsPaid(String billingNumber) {
+        Billing bill = billingRepo.findByBillingNumber(billingNumber)
+                .orElseThrow(() -> new IllegalArgumentException("Billing not found: " + billingNumber));
+        bill.setPaid(true);
+        billingRepo.save(bill);
+    }
 
     private static final Logger log = LoggerFactory.getLogger(BillingService.class);
 

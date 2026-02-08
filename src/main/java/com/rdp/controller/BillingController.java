@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 
@@ -25,6 +26,24 @@ import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 public class BillingController {
+        @GetMapping("/credit-report")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<List<com.rdp.dto.CustomerCreditReportDto>> getCustomerCreditReport(
+                @RequestParam(name = "name", required = false) String name,
+                @RequestParam(name = "phone", required = false) String phone,
+                @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+        ) {
+            List<com.rdp.dto.CustomerCreditReportDto> report = service.getCustomerCreditReport(name, phone, startDate, endDate);
+            return ResponseEntity.ok(report);
+        }
+
+        @PutMapping("/{billingNumber}/mark-paid")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<Void> markBillAsPaid(@PathVariable String billingNumber) {
+            service.markBillAsPaid(billingNumber);
+            return ResponseEntity.ok().build();
+        }
     private final BillingService service;
     private final StockMovementService stockMovementService;
     // Get all stock movements for a billing
