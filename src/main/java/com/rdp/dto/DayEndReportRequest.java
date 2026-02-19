@@ -10,9 +10,7 @@ public class DayEndReportRequest {
     private String dayEndNo;
     private List<Denomination> noteDenominations;
     private List<Denomination> coinDenominations;
-    private double cardPayments;
-    private double onlineTransfers;
-    private double customerChequePayments;
+    // Removed: cardPayments, onlineTransfers, customerChequePayments (auto-filled from billing)
     private List<SupplierPayment> supplierPayments;
     private double totalSales;
     private double cashSales;
@@ -28,8 +26,12 @@ public class DayEndReportRequest {
     private String cashierSignature;
     private String supervisorSignature;
     private String printedOn;
+    // Added: cashValue field for day-end report
+    private double cashValue;
 
     // Getters and setters for all fields
+    public double getCashValue() { return cashValue; }
+    public void setCashValue(double cashValue) { this.cashValue = cashValue; }
     public String getBranch() { return branch; }
     public void setBranch(String branch) { this.branch = branch; }
     public String getPosId() { return posId; }
@@ -44,12 +46,7 @@ public class DayEndReportRequest {
     public void setNoteDenominations(List<Denomination> noteDenominations) { this.noteDenominations = noteDenominations; }
     public List<Denomination> getCoinDenominations() { return coinDenominations; }
     public void setCoinDenominations(List<Denomination> coinDenominations) { this.coinDenominations = coinDenominations; }
-    public double getCardPayments() { return cardPayments; }
-    public void setCardPayments(double cardPayments) { this.cardPayments = cardPayments; }
-    public double getOnlineTransfers() { return onlineTransfers; }
-    public void setOnlineTransfers(double onlineTransfers) { this.onlineTransfers = onlineTransfers; }
-    public double getCustomerChequePayments() { return customerChequePayments; }
-    public void setCustomerChequePayments(double customerChequePayments) { this.customerChequePayments = customerChequePayments; }
+    // Removed: cardPayments, onlineTransfers, customerChequePayments getters/setters
     public List<SupplierPayment> getSupplierPayments() { return supplierPayments; }
     public void setSupplierPayments(List<SupplierPayment> supplierPayments) { this.supplierPayments = supplierPayments; }
     public double getTotalSales() { return totalSales; }

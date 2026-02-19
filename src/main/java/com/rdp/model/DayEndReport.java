@@ -14,6 +14,20 @@ import java.util.List;
 })
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class DayEndReport extends BaseAuditableEntity {
+                @Transient
+                private double oldManualBillTotal;
+                @Transient
+                private java.util.List<String> oldManualBillDetails;
+
+                public double getOldManualBillTotal() { return oldManualBillTotal; }
+                public void setOldManualBillTotal(double oldManualBillTotal) { this.oldManualBillTotal = oldManualBillTotal; }
+                public java.util.List<String> getOldManualBillDetails() { return oldManualBillDetails; }
+                public void setOldManualBillDetails(java.util.List<String> oldManualBillDetails) { this.oldManualBillDetails = oldManualBillDetails; }
+            @Column(name = "cash_value", nullable = false)
+            private double cashValue;
+            public double getCashValue() { return cashValue; }
+            public void setCashValue(double cashValue) { this.cashValue = cashValue; }
+      
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "day_end_report_id")
@@ -40,9 +54,7 @@ public class DayEndReport extends BaseAuditableEntity {
     private List<Denomination> coinDenominations;
 
     // Non-cash collections
-    private double cardPayments;
-    private double onlineTransfers;
-    private double customerChequePayments;
+    // Removed: cardPayments, onlineTransfers, customerChequePayments (auto-filled from billing)
 
     // Supplier payments (with mode)
     @ElementCollection
@@ -71,6 +83,17 @@ public class DayEndReport extends BaseAuditableEntity {
 
     // Getters and setters for all fields (omitted for brevity)
 
+    
+    @Transient
+    private List<String> creditCustomerDetails;
+
+    @Transient
+    private double creditCustomerTotal;
+
+    public double getCreditCustomerTotal() { return creditCustomerTotal; }
+    public void setCreditCustomerTotal(double creditCustomerTotal) { this.creditCustomerTotal = creditCustomerTotal; }
+    
+    
     @Embeddable
     public static class Denomination {
         private int value;
