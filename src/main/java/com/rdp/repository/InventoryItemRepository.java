@@ -16,6 +16,9 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
     List<InventoryItem> findByProduct(Product product);
     Optional<InventoryItem> findByProductAndPrice(Product product, BigDecimal price);
     List<InventoryItem> findByProductProductIdOrderByCreatedAtDesc(Long productId);
+
+    // FIFO: Oldest inventory first
+    List<InventoryItem> findByProductProductIdOrderByCreatedAtAsc(Long productId);
     Optional<InventoryItem> findByProductProductIdAndPrice(Long productId, BigDecimal price);
     boolean existsByProductProductIdAndCostPrice(Long productId, BigDecimal costPrice);
 
