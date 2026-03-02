@@ -8,6 +8,7 @@ import com.rdp.dto.ProductResponse;
 import com.rdp.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -51,11 +52,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ProductResponse update(@PathVariable("id") Long id, @Valid @RequestBody ProductRequest req) {
         return service.update(id, req);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.delete(id));
     }

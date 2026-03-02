@@ -6,6 +6,7 @@ import com.rdp.model.InventoryItem;
 import com.rdp.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,12 +33,14 @@ public class InventoryController {
     }
 
     @PutMapping("/{invId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<InventoryDto> update(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId, @RequestBody UpdateInventoryRequest req, @RequestParam(value = "performedBy", required = false) String performedBy) {
         var it = inventoryService.updateInventory(productId, invId, req, performedBy);
         return ResponseEntity.ok(InventoryDto.from(it));
     }
 
     @DeleteMapping("/{invId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> delete(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId, @RequestParam(value = "performedBy", required = false) String performedBy) {
         inventoryService.deleteInventory(productId, invId, performedBy);
         return ResponseEntity.ok("Deleted");
