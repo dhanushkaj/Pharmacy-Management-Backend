@@ -5218,6 +5218,9 @@ COPY pharmacy.rdp_user_roles (user_id, role_id) FROM stdin;
 COPY pharmacy.rdp_users (user_id, created_at, created_by, updated_at, updated_by, version, password_hash, username, address, email, phone) FROM stdin;
 1	2025-10-13 23:20:11.297036	\N	2025-12-30 23:11:37.514802	admin	1	$2a$10$FGJcytH2r9xTcf92TcyduO37lsMfoXoyvitogeYpVc1raotTIkRd2	admin			admin
 10	2026-01-01 21:41:51.459761	admin	2026-01-01 21:41:51.459761	admin	0	$2a$10$7dVPg7TmgekzW6QmzxfBauaQZHqm.MAW68WV/v24muGUiXLyDB97S	rohan	\N	sdfdsa@gmail.com	\N
+11	2026-03-04 10:00:00	admin	2026-03-04 10:00:00	admin	0	$2a$10$wQwQwQwQwQwQwQwQwQwQOeQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw	rohan	\N	rohan@example.com	\N
+12	2026-03-04 10:01:00	admin	2026-03-04 10:01:00	admin	0	$2a$10$PrasannaPrasannaPrasannaPrasannaPrasannaPrasannaPrasanna	prasanna	\N	prasanna@example.com	\N
+13	2026-03-04 10:02:00	admin	2026-03-04 10:02:00	admin	0	$2a$10$SachithraSachithraSachithraSachithraSachithraSachithra	 sachithra	\N	sachithra@example.com	\N
 \.
 
 

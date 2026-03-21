@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.pharmacy.backup</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/cmbklap0208/Documents/pharma_workspace/pharma/new_project/Phamarcy-Management-Backend/scripts/backup_to_gdrive.sh</string>
+    </array>
+    
+    <!-- Run every 6 hours (21600 seconds) -->
+    <key>StartInterval</key>
+    <integer>21600</integer>
+    
+    <!-- Also run at system startup -->
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <!-- Environment variables -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
+    </dict>
+    
+    <!-- Log output -->
+    <key>StandardOutPath</key>
+    <string>/Users/cmbklap0208/pharmacy_backups/launchd_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/cmbklap0208/pharmacy_backups/launchd_stderr.log</string>
+</dict>
+</plist>
