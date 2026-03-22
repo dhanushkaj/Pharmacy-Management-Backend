@@ -15,10 +15,10 @@ echo.
 
 REM Get the directory where this script is located
 set SCRIPT_DIR=%~dp0
-REM Go up two levels: scripts -> Phamarcy-Management-Backend -> new_project
+REM Go up two levels: scripts -> Pharmacy-Management-Backend -> pharma
 set PROJECT_ROOT=%SCRIPT_DIR%..\..\
 set BACKEND_DIR=%SCRIPT_DIR%..\
-set FRONTEND_DIR=%PROJECT_ROOT%front_end
+set FRONTEND_DIR=D:\pharma\Pharmacy-Management
 
 REM Check if Java is installed
 where java >nul 2>&1
@@ -38,6 +38,12 @@ if %errorLevel% neq 0 (
     exit /b 1
 )
 
+REM Switch to Node.js version 21 if nvm is available
+nvm use 21 >nul 2>&1
+if %errorLevel% neq 0 (
+    echo [WARNING] Could not switch to Node.js 21. Make sure nvm is installed and Node 21 is available.
+)
+
 echo [INFO] Starting Backend Server...
 echo.
 
@@ -45,12 +51,12 @@ REM Start Backend in a new window
 cd /d "%BACKEND_DIR%"
 
 REM Check if JAR file exists, otherwise use Gradle
-if exist "build\libs\*.jar" (
+if exist "build\libs\Pharmacy-Management-Backend.jar" (
     echo [INFO] Starting from JAR file...
-    start "Pharmacy Backend" cmd /k "cd /d "%BACKEND_DIR%" && java -jar build\libs\Phamarcy-Management-Backend-0.0.1-SNAPSHOT.jar"
+    start "PharmacyBackend" cmd /k "cd /d "%BACKEND_DIR%" && java -jar build\libs\Pharmacy-Management-Backend.jar"
 ) else (
     echo [INFO] JAR not found, starting with Gradle...
-    start "Pharmacy Backend" cmd /k "cd /d "%BACKEND_DIR%" && gradlew.bat bootRun"
+    start "PharmacyBackend" cmd /k "cd /d "%BACKEND_DIR%" && gradlew.bat bootRun"
 )
 
 echo [INFO] Waiting for backend to initialize (10 seconds)...
@@ -58,18 +64,19 @@ timeout /t 10 /nobreak >nul
 
 echo.
 echo [INFO] Starting Frontend Server...
+echo [INFO] Frontend directory: %FRONTEND_DIR%
 echo.
 
-REM Start Frontend in a new window
-cd /d "%FRONTEND_DIR%"
-
-REM Check if node_modules exists
-if not exist "node_modules" (
-    echo [INFO] Installing frontend dependencies (first time setup)...
-    start "Pharmacy Frontend Setup" cmd /k "cd /d "%FRONTEND_DIR%" && npm install && npm start"
-) else (
-    start "Pharmacy Frontend" cmd /k "cd /d "%FRONTEND_DIR%" && npm start"
+REM Check if frontend directory exists
+if not exist "%FRONTEND_DIR%" (
+    echo [ERROR] Frontend directory not found: %FRONTEND_DIR%
+    pause
+    exit /b 1
 )
+
+REM Start Frontend in a new window
+echo [INFO] Installing frontend dependencies (first time setup)...
+start "PharmacyFrontend" cmd /k cd /d "D:\pharma\Pharmacy-Management" ^& npm install ^& npm start
 
 echo.
 echo  ============================================
@@ -79,13 +86,6 @@ echo.
 echo  Backend:  http://localhost:8080
 echo  Frontend: http://localhost:3000
 echo.
-echo  Two new windows have opened:
-echo    - Backend Server (Java Spring Boot)
-echo    - Frontend Server (React)
-echo.
-echo  Keep those windows open while using the app.
+echo  Keep both windows open while using the app.
 echo  Close them to stop the servers.
 echo.
-echo  This window will close in 5 seconds...
-timeout /t 5 /nobreak >nul
-exit

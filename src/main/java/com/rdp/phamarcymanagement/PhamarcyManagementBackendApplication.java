@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication(scanBasePackages = "com.rdp")
 @EnableJpaRepositories(basePackages = {"com.rdp.repository", "com.rdp.audit"})
@@ -13,7 +14,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class PhamarcyManagementBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PhamarcyManagementBackendApplication.class, args);
+
+	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+	System.out.println(""+encoder.encode("admin123"));
+ 	SpringApplication.run(PhamarcyManagementBackendApplication.class, args);
+	
+		System.out.println(" ++++++++++++++++++++++" );
 	}
 
 }

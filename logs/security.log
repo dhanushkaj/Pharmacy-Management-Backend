@@ -1,0 +1,5 @@
+2026-03-22T22:10:03,891 WARN  com.rdp.security.JwtAuthFilter - Invalid JWT token presented from IP=0:0:0:0:0:0:0:1 uri=/api/alerts/summary
+2026-03-22T22:10:04,059 WARN  com.rdp.security.JwtAuthFilter - Invalid JWT token presented from IP=0:0:0:0:0:0:0:1 uri=/api/alerts/summary
+2026-03-22T22:10:04,071 WARN  com.rdp.security.JwtAuthFilter - Invalid JWT token presented from IP=0:0:0:0:0:0:0:1 uri=/api/alerts/summary
+2026-03-22T22:10:36,624 WARN  com.rdp.security.JwtAuthFilter - Invalid JWT token presented from IP=0:0:0:0:0:0:0:1 uri=/api/products
+2026-03-22T22:10:36,628 WARN  com.rdp.security.JwtAuthFilter - Invalid JWT token presented from IP=0:0:0:0:0:0:0:1 uri=/api/customers
