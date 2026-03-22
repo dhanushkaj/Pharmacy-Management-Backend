@@ -1,0 +1,1123 @@
+2026-03-22T20:56:57,801 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T20:56:57,971 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 15020 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T20:56:57,988 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T20:57:02,619 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T20:57:02,624 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T20:57:02,625 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T20:57:02,718 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T20:57:03,422 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T20:57:03,557 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T20:57:03,636 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T20:57:03,790 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T20:57:04,301 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T20:57:05,670 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7cbe3a05
+2026-03-22T20:57:05,672 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T20:57:06,298 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T20:57:06,353 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T20:57:07,983 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T20:57:10,033 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T20:57:18,444 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T20:57:18,578 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T20:57:20,636 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T20:57:20,723 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 23.673 seconds (process running for 26.163)
+2026-03-22T20:58:25,110 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T20:58:25,129 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T20:58:33,947 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T20:58:34,131 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 11276 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T20:58:34,145 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T20:58:38,699 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T20:58:38,703 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T20:58:38,704 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T20:58:38,790 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T20:58:39,431 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T20:58:39,563 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T20:58:39,645 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T20:58:39,804 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T20:58:40,260 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T20:58:40,797 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1c0680b0
+2026-03-22T20:58:40,800 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T20:58:40,864 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T20:58:40,916 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T20:58:43,286 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T20:58:45,905 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T20:58:53,232 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T20:58:53,341 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T20:58:54,797 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T20:58:54,869 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 21.635 seconds (process running for 23.923)
+2026-03-22T21:01:11,400 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:01:11,578 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 16676 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:01:11,593 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:01:15,870 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:01:15,873 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:01:15,874 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:01:15,971 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:01:16,633 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:01:16,760 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:01:16,835 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:01:17,010 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:01:17,407 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:01:17,902 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T21:01:17,905 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:01:17,960 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:01:17,999 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:01:19,863 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:01:21,855 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:01:28,846 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:01:28,954 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:01:30,531 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:01:30,598 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.882 seconds (process running for 22.108)
+2026-03-22T21:07:01,713 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:07:01,875 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 9328 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:07:01,887 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:07:05,862 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:07:05,866 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:07:05,867 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:07:05,947 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:07:06,537 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:07:06,649 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:07:06,724 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:07:06,902 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:07:07,316 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:07:07,783 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@17a77a7e
+2026-03-22T21:07:07,788 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:07:07,845 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:07:07,890 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:07:09,627 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:07:11,576 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:07:18,791 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:07:18,907 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:07:20,603 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:07:20,671 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.635 seconds (process running for 21.899)
+2026-03-22T21:08:44,922 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:08:44,952 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:09:39,771 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:09:39,943 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 12720 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:09:39,956 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:09:44,135 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:09:44,140 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:09:44,140 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:09:44,219 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:09:44,864 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:09:45,003 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:09:45,107 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:09:45,285 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:09:45,714 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:09:46,230 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1c0680b0
+2026-03-22T21:09:46,233 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:09:46,309 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:09:46,361 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:09:47,969 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:09:49,963 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:09:57,155 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:09:57,245 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:09:58,771 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:09:58,841 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.727 seconds (process running for 21.812)
+2026-03-22T21:11:31,315 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:11:31,334 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:19:12,458 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:19:12,616 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 2064 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:19:12,640 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:19:16,745 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:19:16,755 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:19:16,756 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:19:16,860 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:19:17,499 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:19:17,615 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:19:17,687 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:19:17,907 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:19:18,395 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:19:18,874 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@703cb756
+2026-03-22T21:19:18,876 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:19:18,954 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:19:19,005 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:19:20,825 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:19:22,945 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:19:29,801 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:19:29,921 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:19:31,370 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:19:31,435 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.644 seconds (process running for 21.705)
+2026-03-22T21:21:05,124 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:21:05,151 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:22:49,449 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:22:49,621 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 18092 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:22:49,635 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:22:53,749 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:22:53,752 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:22:53,753 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:22:53,838 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:22:54,517 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:22:54,640 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:22:54,723 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:22:54,892 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:22:55,278 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:22:55,740 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1c0680b0
+2026-03-22T21:22:55,743 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:22:55,812 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:22:55,861 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:22:57,542 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:22:59,533 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:23:06,584 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:23:06,731 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:23:08,235 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:23:08,305 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.535 seconds (process running for 21.54)
+2026-03-22T21:23:28,739 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:23:28,763 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:23:40,456 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:23:40,639 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 16752 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:23:40,663 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:23:44,643 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:23:44,648 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:23:44,649 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:23:44,736 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:23:45,395 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:23:45,509 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:23:45,576 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:23:45,760 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:23:46,182 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:23:46,627 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T21:23:46,631 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:23:46,709 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:23:46,787 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:23:48,607 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:23:50,664 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:23:57,710 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:23:57,825 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:23:59,581 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:23:59,645 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.852 seconds (process running for 21.893)
+2026-03-22T21:24:09,317 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:24:09,337 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:24:18,834 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:24:18,999 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 16308 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:24:19,012 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:24:23,141 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:24:23,145 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:24:23,145 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:24:23,230 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:24:23,863 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:24:24,012 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:24:24,098 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:24:24,273 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:24:24,699 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:24:25,147 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1aaaabd1
+2026-03-22T21:24:25,151 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:24:25,238 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:24:25,303 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:24:26,941 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:24:28,991 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:24:35,725 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:24:35,820 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:24:37,310 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:24:37,380 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.201 seconds (process running for 21.313)
+2026-03-22T21:25:09,355 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:25:09,384 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:26:47,760 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:26:47,939 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 10568 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:26:47,953 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:26:52,226 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:26:52,229 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:26:52,229 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:26:52,342 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:26:53,016 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:26:53,138 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:26:53,218 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:26:53,388 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:26:53,791 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:26:54,321 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1c0680b0
+2026-03-22T21:26:54,325 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:26:54,420 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:26:54,517 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:26:56,300 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:26:58,723 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:27:05,784 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:27:05,887 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:27:07,457 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:27:07,516 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 20.383 seconds (process running for 22.434)
+2026-03-22T21:27:30,262 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:27:30,281 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:30:39,866 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:30:40,038 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 17868 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:30:40,051 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:30:45,239 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:30:45,242 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:30:45,243 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:30:45,325 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:30:46,123 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:30:46,331 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:30:46,425 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:30:46,711 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:30:47,443 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:30:47,924 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2f3cd727
+2026-03-22T21:30:47,927 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:30:47,993 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:30:48,031 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:30:49,745 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:30:51,799 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:30:59,057 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:30:59,171 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:31:01,521 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:31:01,624 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 22.395 seconds (process running for 24.447)
+2026-03-22T21:31:08,790 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:31:08,820 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:31:53,806 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:31:53,989 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 11996 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:31:54,000 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:31:58,260 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:31:58,264 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:31:58,264 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:31:58,346 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:31:59,116 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:31:59,236 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:31:59,314 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:31:59,503 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:31:59,945 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:32:00,467 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T21:32:00,471 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:32:00,546 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:32:00,606 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:32:02,372 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:32:04,886 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:32:12,209 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:32:12,317 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:32:13,902 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:32:13,974 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 20.838 seconds (process running for 23.036)
+2026-03-22T21:33:13,363 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:33:13,389 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:33:24,810 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:33:24,989 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 7396 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:33:25,002 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:33:29,137 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:33:29,141 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:33:29,142 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:33:29,224 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:33:29,991 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:33:30,159 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:33:30,258 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:33:30,479 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:33:30,882 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:33:31,344 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T21:33:31,348 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:33:31,425 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:33:31,481 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:33:33,253 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:33:35,591 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:33:42,693 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:33:42,801 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:33:44,296 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:33:44,359 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 20.134 seconds (process running for 23.146)
+2026-03-22T21:35:29,647 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:35:29,671 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:36:14,066 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:36:14,232 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 10800 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:36:14,248 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:36:18,469 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:36:18,473 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:36:18,474 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:36:18,564 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:36:19,231 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:36:19,371 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:36:19,452 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:36:19,659 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:36:20,152 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:36:20,678 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7bc8ffbc
+2026-03-22T21:36:20,681 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:36:20,757 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:36:20,814 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:36:22,511 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:36:24,634 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:36:31,985 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:36:32,095 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:36:33,565 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:36:33,632 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 20.258 seconds (process running for 22.353)
+2026-03-22T21:38:02,215 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:38:02,236 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:41:44,219 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:41:44,387 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 7524 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:41:44,399 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:41:48,748 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:41:48,753 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:41:48,754 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:41:48,847 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:41:49,674 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:41:49,854 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:41:49,939 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:41:50,112 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:41:50,587 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:41:51,068 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1af82ba8
+2026-03-22T21:41:51,073 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:41:51,287 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:41:51,492 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:41:53,760 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:41:55,915 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:42:02,884 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:42:02,989 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:42:04,427 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:42:04,499 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 20.943 seconds (process running for 22.954)
+2026-03-22T21:42:36,819 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:42:36,841 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:54:44,282 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:54:44,465 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 17952 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:54:44,482 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:54:49,067 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:54:49,070 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:54:49,070 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:54:49,170 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:54:49,940 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:54:50,253 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:54:50,342 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:54:50,552 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:54:50,989 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:54:51,513 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T21:54:51,517 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:54:51,601 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:54:51,681 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:54:53,475 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:54:55,506 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:55:02,530 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:55:02,656 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:55:04,212 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:55:04,285 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 20.7 seconds (process running for 22.952)
+2026-03-22T21:55:30,212 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:55:30,234 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T21:55:40,729 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T21:55:40,886 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 18160 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T21:55:40,899 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T21:55:45,560 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:55:45,564 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T21:55:45,565 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T21:55:45,688 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T21:55:46,819 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T21:55:46,963 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T21:55:47,042 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T21:55:47,448 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T21:55:47,964 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T21:55:48,488 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T21:55:48,492 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T21:55:48,574 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T21:55:48,658 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T21:55:50,997 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T21:55:53,255 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T21:56:00,719 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T21:56:00,825 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T21:56:03,327 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T21:56:03,397 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 23.408 seconds (process running for 25.609)
+2026-03-22T21:56:16,740 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T21:56:16,757 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:05:06,355 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:05:06,556 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 18016 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:05:06,571 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:05:10,962 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:05:10,966 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:05:10,967 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:05:11,056 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:05:11,717 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:05:11,845 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:05:11,931 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:05:12,109 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:05:12,550 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:05:13,052 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T22:05:13,056 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:05:13,153 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:05:13,241 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:05:15,609 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:05:17,694 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:05:24,811 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:05:24,929 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:05:26,698 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 21.041 seconds (process running for 23.228)
+2026-03-22T22:06:29,721 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:06:29,915 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 15852 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:06:29,929 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:06:34,266 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:06:34,269 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:06:34,270 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:06:34,354 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:06:34,988 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:06:35,115 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:06:35,194 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:06:35,377 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:06:35,791 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:06:36,272 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7cbe3a05
+2026-03-22T22:06:36,275 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:06:36,348 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:06:36,403 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:06:38,119 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:06:40,219 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:06:46,931 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:06:47,046 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:06:48,591 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:06:48,666 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.664 seconds (process running for 21.785)
+2026-03-22T22:10:02,489 INFO  [http-nio-8080-exec-3]  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-22T22:10:53,714 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:10:53,736 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:12:53,197 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:12:54,050 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 16628 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:12:54,349 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:12:59,474 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:12:59,478 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:12:59,479 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:12:59,586 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:13:00,503 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:13:00,653 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:13:00,730 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:13:00,920 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:13:01,465 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:13:02,061 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5100c143
+2026-03-22T22:13:02,064 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:13:02,156 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:13:02,242 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:13:04,162 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:13:09,379 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:13:22,269 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:13:22,479 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:13:23,051 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:13:23,431 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 17756 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:13:24,048 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:13:28,447 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:13:28,628 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 36.267 seconds (process running for 38.906)
+2026-03-22T22:13:32,834 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:13:32,839 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:13:32,840 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:13:32,937 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:13:33,637 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:13:33,772 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:13:33,851 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:13:34,079 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:13:34,563 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:13:35,091 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7bc8ffbc
+2026-03-22T22:13:35,096 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:13:35,175 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:13:35,233 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:13:37,137 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:13:39,719 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:13:52,891 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:13:52,993 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:13:54,518 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:13:54,532 WARN  [main]  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-03-22T22:13:54,548 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:13:54,570 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:13:54,796 ERROR [main]  o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-03-22T22:14:02,546 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:14:02,563 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:14:11,023 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:14:11,191 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 17720 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:14:11,203 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:14:17,147 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:14:17,152 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:14:17,153 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:14:17,285 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:14:19,031 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:14:19,391 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:14:19,509 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:14:19,901 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:14:20,671 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:14:21,397 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2f3cd727
+2026-03-22T22:14:21,419 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:14:21,517 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:14:21,625 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:14:24,433 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:14:29,348 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:14:39,066 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:14:39,147 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:14:40,728 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:14:40,802 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 30.658 seconds (process running for 33.045)
+2026-03-22T22:14:59,761 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:14:59,962 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 18380 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:14:59,974 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:15:05,461 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:15:05,466 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:15:05,468 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:15:05,571 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:15:06,329 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:15:07,005 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:15:07,102 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:15:07,287 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:15:07,886 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:15:08,413 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7bc8ffbc
+2026-03-22T22:15:08,415 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:15:08,485 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:15:08,534 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:15:10,354 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:16:22,103 INFO  [http-nio-8080-exec-1]  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-22T22:16:32,601 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:16:32,630 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:18:11,505 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:18:11,681 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 12032 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:18:11,694 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:18:17,303 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:18:17,307 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:18:17,308 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:18:17,381 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:18:18,022 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:18:18,162 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:18:18,240 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:18:18,480 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:18:19,371 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:18:19,990 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5c0272e0
+2026-03-22T22:18:19,993 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:18:20,064 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:18:20,115 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:18:21,626 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:18:24,515 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:18:37,359 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:18:37,488 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:18:39,322 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:18:39,414 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 28.566 seconds (process running for 30.594)
+2026-03-22T22:19:13,638 INFO  [http-nio-8080-exec-2]  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-22T22:19:22,854 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:19:22,875 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:20:13,114 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:20:13,304 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 19236 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:20:13,316 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:20:17,585 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:20:17,590 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:20:17,590 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:20:17,673 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:20:18,344 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:20:18,475 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:20:18,553 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:20:18,729 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:20:19,154 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:20:19,564 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2f3cd727
+2026-03-22T22:20:19,567 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:20:19,626 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:20:19,669 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:20:21,583 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:20:24,072 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:20:33,522 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:20:33,641 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:20:36,779 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:20:36,892 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 24.425 seconds (process running for 26.407)
+2026-03-22T22:20:55,069 INFO  [http-nio-8080-exec-2]  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-22T22:25:59,926 WARN  [http-nio-8080-exec-8]  o.a.c.u.SessionIdGeneratorBase - Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [114] milliseconds.
+2026-03-22T22:26:12,155 DEBUG [http-nio-8080-exec-2]  c.r.s.InventoryService - List inventory buckets productId=3952 count=2
+2026-03-22T22:26:21,031 DEBUG [http-nio-8080-exec-1]  c.r.s.BillingService - Reduced inventory: productId=3952 inventoryItemId=1 reducedBy=1 newStock=22
+2026-03-22T22:26:21,033 INFO  [http-nio-8080-exec-1]  c.r.s.BillingService - Created billing: billingId=3 billingNumber=BILL-20260322222620-0003 customerId=1 items=1 grandTotal=250
+2026-03-22T22:38:42,259 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:38:42,461 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 19936 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:38:42,481 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:38:48,471 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:38:48,475 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:38:48,476 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:38:48,574 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:38:49,541 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:38:49,817 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:38:50,023 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:38:50,330 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:38:51,132 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:38:51,880 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1aaaabd1
+2026-03-22T22:38:51,885 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:38:52,030 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:38:52,148 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:38:55,106 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:38:57,710 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:39:05,647 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:39:05,805 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:39:07,919 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:39:07,932 WARN  [main]  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-03-22T22:39:07,946 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:39:07,987 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:39:08,108 ERROR [main]  o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-03-22T22:39:25,107 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:39:25,133 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:40:48,099 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:40:48,275 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 16484 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:40:48,289 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:40:52,194 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:40:52,197 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:40:52,198 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:40:52,291 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:40:52,951 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:40:53,070 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:40:53,141 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:40:53,323 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:40:53,723 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:40:54,199 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2f3cd727
+2026-03-22T22:40:54,201 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:40:54,272 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:40:54,324 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:40:56,119 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:40:58,160 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:41:04,746 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:41:04,850 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:41:06,360 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:41:06,431 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 19.02 seconds (process running for 21.055)
+2026-03-22T22:43:53,391 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:43:53,419 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:46:59,663 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:46:59,840 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 20760 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:46:59,853 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:47:05,460 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:47:05,465 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:47:05,466 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:47:05,576 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:47:06,335 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:47:06,500 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:47:06,582 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:47:06,846 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:47:08,542 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:47:09,520 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7bc8ffbc
+2026-03-22T22:47:09,523 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:47:09,632 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:47:09,902 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:47:13,852 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:47:16,395 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:47:23,881 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:47:23,991 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:47:25,652 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:47:25,724 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 26.761 seconds (process running for 28.84)
+2026-03-22T22:50:38,013 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:50:38,034 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:51:06,287 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:51:06,493 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 21352 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:51:06,511 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:51:10,987 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:51:10,992 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:51:10,993 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:51:11,082 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:51:11,760 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:51:11,888 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:51:11,966 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:51:12,153 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:51:12,628 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:51:13,111 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2f3cd727
+2026-03-22T22:51:13,114 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:51:13,167 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:51:13,210 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:51:14,933 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:51:16,996 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:51:23,674 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:51:23,799 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:51:25,454 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:51:25,526 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 20.148 seconds (process running for 22.472)
+2026-03-22T22:55:33,490 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:55:33,699 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 21272 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:55:33,748 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:55:39,051 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:55:39,054 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:55:39,055 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:55:39,184 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:55:40,049 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:55:40,193 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:55:40,266 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:55:40,406 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:55:40,826 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:55:41,296 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1af82ba8
+2026-03-22T22:55:41,300 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:55:41,384 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:55:41,475 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:55:43,259 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:55:45,240 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:55:54,961 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:55:55,138 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:55:58,410 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:55:58,448 WARN  [main]  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-03-22T22:55:58,480 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:55:58,701 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:55:58,844 ERROR [main]  o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-03-22T22:56:09,978 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T22:56:10,011 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-22T22:57:57,357 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T22:57:57,588 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 20508 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T22:57:57,606 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T22:58:02,755 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:58:02,760 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T22:58:02,761 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T22:58:02,881 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T22:58:03,655 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T22:58:03,801 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T22:58:03,899 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T22:58:04,383 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T22:58:05,281 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T22:58:06,359 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1af82ba8
+2026-03-22T22:58:06,366 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T22:58:06,476 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T22:58:06,594 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T22:58:09,440 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T22:58:12,639 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T22:58:22,010 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T22:58:22,133 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T22:58:24,011 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T22:58:24,118 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 27.851 seconds (process running for 30.144)
+2026-03-22T23:01:53,205 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T23:01:53,418 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 18472 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T23:01:53,430 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T23:02:00,588 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T23:02:00,594 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T23:02:00,601 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T23:02:00,716 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T23:02:01,775 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T23:02:01,977 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T23:02:02,135 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T23:02:02,471 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T23:02:02,988 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T23:02:03,534 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5897aae1
+2026-03-22T23:02:03,536 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T23:02:03,617 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T23:02:03,677 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T23:02:05,671 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T23:02:07,879 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T23:02:16,740 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T23:02:16,868 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T23:02:18,879 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T23:02:18,966 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 26.519 seconds (process running for 28.745)
+2026-03-22T23:03:50,742 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T23:03:50,925 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 20364 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T23:03:50,945 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T23:03:57,315 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T23:03:57,320 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T23:03:57,321 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T23:03:57,470 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T23:03:58,205 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T23:03:58,354 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T23:03:58,451 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T23:03:58,680 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T23:03:59,138 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T23:03:59,590 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T23:03:59,594 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T23:03:59,681 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T23:03:59,755 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T23:04:01,791 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T23:04:05,322 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T23:04:13,462 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T23:04:13,572 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T23:04:16,453 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T23:04:16,798 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 26.701 seconds (process running for 30.372)
+2026-03-22T23:05:06,358 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T23:05:06,806 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 22604 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T23:05:06,953 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T23:05:14,753 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T23:05:14,760 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T23:05:14,765 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T23:05:14,920 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T23:05:15,892 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T23:05:16,063 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T23:05:16,181 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T23:05:16,425 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T23:05:17,248 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T23:05:18,089 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@120d13ae
+2026-03-22T23:05:18,145 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T23:05:18,248 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T23:05:18,315 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T23:05:22,198 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T23:05:25,394 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T23:05:35,681 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T23:05:35,819 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T23:05:37,749 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T23:05:37,834 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 32.295 seconds (process running for 35.428)
+2026-03-22T23:05:49,583 INFO  [http-nio-8080-exec-2]  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-22T23:05:53,451 WARN  [http-nio-8080-exec-6]  o.a.c.u.SessionIdGeneratorBase - Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [136] milliseconds.
+2026-03-22T23:18:28,027 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T23:18:28,245 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 25292 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in D:\pharma\Pharmacy-Management-Backend)
+2026-03-22T23:18:28,258 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T23:18:32,740 INFO  [main]  o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-22T23:18:32,745 INFO  [main]  o.a.c.c.StandardService - Starting service [Tomcat]
+2026-03-22T23:18:32,746 INFO  [main]  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2026-03-22T23:18:32,833 INFO  [main]  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2026-03-22T23:18:33,461 INFO  [main]  o.h.j.i.u.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-22T23:18:33,578 INFO  [main]  o.h.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2026-03-22T23:18:33,661 INFO  [main]  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-03-22T23:18:33,839 INFO  [main]  o.h.e.b.i.EnversServiceImpl - Envers integration enabled? : true
+2026-03-22T23:18:34,296 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Starting...
+2026-03-22T23:18:35,017 INFO  [main]  c.z.h.p.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1aaaabd1
+2026-03-22T23:18:35,021 INFO  [main]  c.z.h.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-22T23:18:35,104 WARN  [main]  o.h.o.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-22T23:18:35,165 INFO  [main]  o.h.o.c.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-22T23:18:37,066 DEBUG [main]  o.h.e.b.i.EnversIntegrator - Skipping Envers listener registrations : No audited entities found
+2026-03-22T23:18:39,464 INFO  [main]  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-22T23:18:46,866 WARN  [main]  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-22T23:18:46,976 WARN  [main]  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Found 2 UserDetailsService beans, with names [customUserDetailsService, userDetailsService]. Global Authentication Manager will not use a UserDetailsService for username/password login. Consider publishing a single UserDetailsService bean.
+2026-03-22T23:18:49,126 INFO  [main]  o.a.c.h.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-22T23:18:49,236 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Started PhamarcyManagementBackendApplication in 22.027 seconds (process running for 24.373)
+2026-03-22T23:19:05,471 INFO  [http-nio-8080-exec-1]  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-22T23:21:27,987 INFO  [background-preinit]  o.h.v.i.u.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-22T23:21:28,174 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - Starting PhamarcyManagementBackendApplication using Java 17.0.12 with PID 16660 (D:\pharma\Pharmacy-Management-Backend\build\libs\Pharmacy-Management-Backend.jar started by rpc in d:\pharma\Pharmacy-Management-Backend)
+2026-03-22T23:21:28,188 INFO  [main]  c.r.p.PhamarcyManagementBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-22T23:21:30,945 WARN  [http-nio-8080-exec-2]  o.a.c.u.SessionIdGeneratorBase - Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [295] milliseconds.
+2026-03-22T23:21:46,836 DEBUG [http-nio-8080-exec-5]  c.r.s.InventoryService - List inventory buckets productId=3952 count=2
+2026-03-22T23:21:52,793 DEBUG [http-nio-8080-exec-6]  c.r.s.BillingService - Reduced inventory: productId=3952 inventoryItemId=1 reducedBy=1 newStock=21
+2026-03-22T23:21:52,795 INFO  [http-nio-8080-exec-6]  c.r.s.BillingService - Created billing: billingId=4 billingNumber=BILL-20260322232152-0004 customerId=1 items=1 grandTotal=250
+2026-03-22T23:23:18,388 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-22T23:23:18,409 INFO  [SpringApplicationShutdownHook]  c.z.h.HikariDataSource - HikariPool-1 - Shutdown completed.
