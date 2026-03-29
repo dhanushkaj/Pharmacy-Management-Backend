@@ -21,6 +21,8 @@ public record BillingResponse(
         Billing.PaymentMethod paymentMethod,
         String notes,
         Boolean isPrinted,
+        BigDecimal amountReceived,
+        BigDecimal balanceAmount,
         List<BillingItemResponse> items,
         LocalDateTime createdAt,
         String createdBy
