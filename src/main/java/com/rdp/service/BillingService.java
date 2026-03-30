@@ -128,6 +128,10 @@ public class BillingService {
         // Always use the discount amount from the request, do not recalculate from percentage
         BigDecimal grandTotal = subtotal.subtract(totalDiscount);
 
+        // Calculate amount received and balance
+        BigDecimal amountReceived = request.amountReceived() != null ? request.amountReceived() : BigDecimal.ZERO;
+        BigDecimal balanceAmount = amountReceived.subtract(grandTotal);
+
         Billing billing = Billing.builder()
             .billingNumber(generateBillingNumber())
             .customer(customer)
@@ -138,6 +142,8 @@ public class BillingService {
             .grandTotal(grandTotal)
             .paymentMethod(request.paymentMethod())
             .notes(request.notes())
+            .amountReceived(amountReceived)
+            .balanceAmount(balanceAmount)
             .build();
         for (BillingItem item : items) {
             billing.addItem(item);
@@ -327,6 +333,8 @@ public class BillingService {
                 billing.getPaymentMethod(),
                 billing.getNotes(),
                 billing.getIsPrinted(),
+                billing.getAmountReceived(),
+                billing.getBalanceAmount(),
                 itemResponses,
                 billing.getCreatedAt(),
                 billing.getCreatedBy()

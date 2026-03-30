@@ -67,6 +67,14 @@ public class Billing extends BaseAuditableEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @DecimalMin(value = "0.0", message = "Amount received must be at least 0")
+    @Column(name = "amount_received", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal amountReceived = BigDecimal.ZERO;
+
+    @Column(name = "balance_amount", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal balanceAmount = BigDecimal.ZERO;
 
     @Column(name = "is_printed")
     @Builder.Default

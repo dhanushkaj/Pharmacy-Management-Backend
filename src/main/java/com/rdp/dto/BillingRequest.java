@@ -23,6 +23,8 @@ public record BillingRequest(
 
         Billing.PaymentMethod paymentMethod,
 
-        String notes
+        String notes,
+
+        BigDecimal amountReceived
 ) {
 }
