@@ -29,6 +29,14 @@ public class GrnDtos {
             LocalDate chequeDate
     ) {}
 
+    public record UpdateGrnRequest(
+            @NotEmpty List<GrnItemRequest> items,
+            Boolean paid,
+            LocalDate paymentDueDate,
+            Integer paymentDueDays,
+            LocalDate chequeDate
+    ) {}
+
     public record RejectGrnRequest(
             @NotBlank String reason
     ) {}

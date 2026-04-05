@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/grns")
 
@@ -61,6 +59,12 @@ public class GrnController {
     @GetMapping("/{id}")
     public ResponseEntity<GrnResponse> getGrnById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(grnService.getGrnById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GrnResponse> updatePendingGrn(@PathVariable("id") Long id, @Valid @RequestBody UpdateGrnRequest request) {
+        GrnResponse updatedGrn = grnService.updatePendingGrn(id, request);
+        return ResponseEntity.ok(updatedGrn);
     }
 
     @PutMapping("/{id}/approve")

@@ -148,6 +148,38 @@ public class GrnService {
         return mapToDto(updated);
     }
 
+    @Transactional
+    public GrnResponse updatePendingGrn(Long grnId, UpdateGrnRequest request) {
+        Grn grn = grnRepository.findById(grnId)
+                .orElseThrow(() -> new ResourceNotFoundException("GRN not found with id: " + grnId));
+
+        if (grn.getStatus() != GrnStatus.PENDING) {
+            throw new IllegalStateException("Only PENDING GRNs can be edited. Current status: " + grn.getStatus());
+        }
+
+        grn.setPaid(request.paid() != null ? request.paid() : false);
+        grn.setPaymentDueDate(request.paymentDueDate());
+        grn.setPaymentDueDays(request.paymentDueDays());
+        grn.setChequeDate(request.chequeDate());
+
+        grn.getItems().clear();
+        for (GrnItemRequest itemRequest : request.items()) {
+            Product product = productRepository.findById(itemRequest.productId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemRequest.productId()));
+            GrnItem grnItem = GrnItem.builder()
+                    .product(product)
+                    .receivedQuantity(itemRequest.receivedQuantity())
+                    .unitCost(itemRequest.unitCost())
+                    .price(itemRequest.price())
+                    .build();
+            grn.addItem(grnItem);
+        }
+
+        Grn updated = grnRepository.save(grn);
+        log.info("Updated PENDING GRN id={} code={} items={} paid={}", updated.getId(), updated.getGrnCode(), updated.getItems().size(), updated.getPaid());
+        return mapToDto(updated);
+    }
+
 
 
 

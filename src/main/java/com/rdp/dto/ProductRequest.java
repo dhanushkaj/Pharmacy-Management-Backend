@@ -18,5 +18,6 @@ public record ProductRequest(
         java.math.BigDecimal maxDiscount,
         LocalDate expiryDate,
         String patientInstructions,
-        String binLocation
+        String binLocation,
+        String packSize
 ) { }

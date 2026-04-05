@@ -61,4 +61,7 @@ public class Product extends BaseAuditableEntity {
 
     @Column(name = "bin_location", length = 50)
     private String binLocation;
+
+    @Column(name = "pack_size", length = 50)
+    private String packSize;
 }
