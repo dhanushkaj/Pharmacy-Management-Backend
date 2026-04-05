@@ -21,5 +21,6 @@ public record ProductResponse(
         BigDecimal maxDiscount,
         LocalDate expiryDate,
         String patientInstructions,
-        String binLocation
+        String binLocation,
+        String packSize
 ) { }

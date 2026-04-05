@@ -66,7 +66,8 @@ public class ProductService {
                 p.getMaxDiscount(),
                 p.getExpiryDate(),
                 p.getPatientInstructions(),
-                p.getBinLocation()
+                p.getBinLocation(),
+                p.getPackSize()
         );
     }
 
@@ -206,6 +207,7 @@ public class ProductService {
         if (req.expiryDate() != null) p.setExpiryDate(req.expiryDate());
         if (req.patientInstructions() != null) p.setPatientInstructions(req.patientInstructions());
         if (req.binLocation() != null) p.setBinLocation(req.binLocation());
+        if (req.packSize() != null) p.setPackSize(req.packSize());
 
         if (req.categoryId() != null) {
             var cat = categoryRepo.findById(req.categoryId())
