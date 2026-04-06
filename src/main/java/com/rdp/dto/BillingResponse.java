@@ -25,6 +25,9 @@ public record BillingResponse(
         BigDecimal balanceAmount,
         List<BillingItemResponse> items,
         LocalDateTime createdAt,
-        String createdBy
+        String createdBy,
+        BigDecimal returnRefundTotal,
+        BigDecimal netPayable,
+        List<BillingReturnRecordResponse> returnRecords
 ) {
 }

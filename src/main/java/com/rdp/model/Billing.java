@@ -96,6 +96,18 @@ public class Billing extends BaseAuditableEntity {
     @Builder.Default
     private List<BillingItem> items = new ArrayList<>();
 
+    @OneToMany(mappedBy = "billing", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<BillingReturnRecord> returnRecords = new ArrayList<>();
+
+    @Column(name = "return_refund_total", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal returnRefundTotal = BigDecimal.ZERO;
+
+    @Column(name = "net_payable", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal netPayable = BigDecimal.ZERO;
+
     public void addItem(BillingItem item) {
         items.add(item);
         item.setBilling(this);

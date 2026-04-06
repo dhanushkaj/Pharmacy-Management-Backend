@@ -10,6 +10,7 @@ public record BillingItemResponse(
         Integer quantity,
         BigDecimal unitPrice,
         BigDecimal subtotal,
-        String batchNo
+        String batchNo,
+        Integer returnedQty
 ) {
 }

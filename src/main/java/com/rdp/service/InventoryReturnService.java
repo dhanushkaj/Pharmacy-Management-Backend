@@ -6,6 +6,7 @@ import com.rdp.model.InventoryItem;
 import com.rdp.model.InventoryReturn;
 import com.rdp.model.Product;
 import com.rdp.model.Supplier;
+import com.rdp.repository.CustomerRepository;
 import com.rdp.repository.InventoryItemRepository;
 import com.rdp.repository.InventoryReturnRepository;
 import com.rdp.repository.ProductRepository;
@@ -13,12 +14,8 @@ import com.rdp.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +27,7 @@ public class InventoryReturnService {
 
 	private final InventoryReturnRepository returnRepo;
 	private final ProductRepository productRepo;
+	private final CustomerRepository customerRepo;
 	private final SupplierRepository supplierRepo;
 	private final InventoryItemRepository inventoryItemRepo;
 	private final StockMovementService stockMovementService;
@@ -47,6 +45,13 @@ public class InventoryReturnService {
                     .orElseThrow(() -> new IllegalArgumentException("Supplier not found: " + request.supplierId()));
         }
 
+		String customerName = null;
+		if (request.returnType() == InventoryReturn.ReturnType.FROM_CUSTOMER) {
+			customerName = customerRepo.findById(request.customerId())
+					.map(c -> c.getName())
+					.orElseThrow(() -> new IllegalArgumentException("Registered customer not found: " + request.customerId()));
+		}
+
 		// Validate business rules
 		validateReturnRequest(request, product);
 
@@ -58,7 +63,7 @@ public class InventoryReturnService {
 			.unitPrice(request.unitPrice())
 			.reason(request.reason())
 			.batchNo(request.batchNo())
-			.customerName(request.customerName())
+			.customerName(customerName)
 			.supplier(supplier)
 			.notes(request.notes())
 			.build();
@@ -196,8 +201,8 @@ public class InventoryReturnService {
 
 		// If returning FROM_CUSTOMER, customer name should be provided
 		if (request.returnType() == InventoryReturn.ReturnType.FROM_CUSTOMER &&
-				(request.customerName() == null || request.customerName().isBlank())) {
-			throw new IllegalArgumentException("Customer name is required when receiving return from customer");
+				request.customerId() == null) {
+			throw new IllegalArgumentException("Registered customer is required when receiving return from customer");
 		}
 	}
 
