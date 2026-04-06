@@ -122,4 +122,21 @@ public class BillingController {
         }
         return ResponseEntity.ok(billing);
     }
+
+    @PostMapping("/return")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'CASHIER')")
+    public ResponseEntity<com.rdp.dto.BillingReturnResponse> processReturn(
+            @Valid @RequestBody com.rdp.dto.BillingReturnRequest request) {
+        com.rdp.dto.BillingReturnResponse response = service.processReturn(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{id}/attach-returns")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'CASHIER')")
+    public ResponseEntity<BillingResponse> attachReturns(
+            @PathVariable("id") Long billingId,
+            @Valid @RequestBody com.rdp.dto.AttachReturnsRequest request) {
+        BillingResponse response = service.attachReturns(billingId, request);
+        return ResponseEntity.ok(response);
+    }
 }

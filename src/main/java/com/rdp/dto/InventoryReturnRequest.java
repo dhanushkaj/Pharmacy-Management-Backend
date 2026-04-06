@@ -28,6 +28,8 @@ public record InventoryReturnRequest(
 
         String batchNo,
 
+        Long customerId,
+
         String customerName,
 
         Long supplierId,

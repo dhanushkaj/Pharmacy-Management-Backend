@@ -53,6 +53,10 @@ public class BillingItem extends BaseAuditableEntity {
     @Column(name = "batch_no", length = 100)
     private String batchNo;
 
+    @Column(name = "returned_qty")
+    @Builder.Default
+    private Integer returnedQty = 0;
+
     @PrePersist
     @PreUpdate
     private void calculateSubtotal() {

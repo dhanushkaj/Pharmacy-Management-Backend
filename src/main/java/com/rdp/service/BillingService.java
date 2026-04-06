@@ -59,6 +59,7 @@ public class BillingService {
     private final InventoryItemRepository inventoryItemRepo;
     private final StockMovementService stockMovementService;
     private final AuditTrailService auditTrailService;
+    private final BillingReturnRecordRepository billingReturnRecordRepo;
 
         @Transactional
         public void deleteBilling(Long billingId) {
@@ -314,7 +315,23 @@ public class BillingService {
                         item.getQuantity(),
                         item.getUnitPrice(),
                         item.getSubtotal(),
-                        item.getBatchNo()
+                        item.getBatchNo(),
+                        item.getReturnedQty()
+                ))
+                .collect(Collectors.toList());
+
+        List<com.rdp.dto.BillingReturnRecordResponse> returnRecordResponses = billing.getReturnRecords().stream()
+                .map(rr -> new com.rdp.dto.BillingReturnRecordResponse(
+                        rr.getBillingReturnRecordId(),
+                        rr.getOriginalBillingItemId(),
+                        rr.getOriginalBillingNumber(),
+                        rr.getProductId(),
+                        rr.getProductCode(),
+                        rr.getProductName(),
+                        rr.getQuantity(),
+                        rr.getUnitPrice(),
+                        rr.getRefundAmount(),
+                        rr.getDiscountPercentage()
                 ))
                 .collect(Collectors.toList());
 
@@ -337,7 +354,10 @@ public class BillingService {
                 billing.getBalanceAmount(),
                 itemResponses,
                 billing.getCreatedAt(),
-                billing.getCreatedBy()
+                billing.getCreatedBy(),
+                billing.getReturnRefundTotal(),
+                billing.getNetPayable(),
+                returnRecordResponses
         );
     }
     
@@ -345,5 +365,114 @@ public class BillingService {
     public BillingResponse getBillingByNumber(String billingNumber) {
         var billing = billingRepo.findByBillingNumber(billingNumber).orElse(null);
         return billing != null ? mapToResponse(billing) : null;
+    }
+
+    @Transactional
+    public BillingResponse attachReturns(Long billingId, com.rdp.dto.AttachReturnsRequest request) {
+        Billing billing = billingRepo.findById(billingId)
+                .orElseThrow(() -> new IllegalArgumentException("Billing not found: " + billingId));
+
+        billing.setReturnRefundTotal(request.returnRefundTotal());
+        billing.setNetPayable(request.netPayable());
+
+        // Save return record line items
+        if (request.returnRecords() != null) {
+            for (com.rdp.dto.AttachReturnsRequest.ReturnRecordItem rr : request.returnRecords()) {
+                BillingReturnRecord record = BillingReturnRecord.builder()
+                        .billing(billing)
+                        .originalBillingItemId(rr.originalBillingItemId())
+                        .originalBillingNumber(rr.originalBillingNumber())
+                        .productId(rr.productId())
+                        .productCode(rr.productCode())
+                        .productName(rr.productName())
+                        .quantity(rr.quantity())
+                        .unitPrice(rr.unitPrice())
+                        .refundAmount(rr.refundAmount())
+                        .discountPercentage(rr.discountPercentage() != null ? rr.discountPercentage() : BigDecimal.ZERO)
+                        .build();
+                billing.getReturnRecords().add(record);
+            }
+        }
+
+        billing = billingRepo.save(billing);
+        log.info("Attached {} return records to billing: billingId={} billingNumber={} returnRefundTotal={} netPayable={}",
+                request.returnRecords() != null ? request.returnRecords().size() : 0,
+                billing.getBillingId(), billing.getBillingNumber(),
+                billing.getReturnRefundTotal(), billing.getNetPayable());
+        return mapToResponse(billing);
+    }
+
+    @Transactional
+    public com.rdp.dto.BillingReturnResponse processReturn(com.rdp.dto.BillingReturnRequest request) {
+        BillingItem billingItem = billingItemRepo.findById(request.billingItemId())
+                .orElseThrow(() -> new IllegalArgumentException("Billing item not found: " + request.billingItemId()));
+
+        Billing billing = billingItem.getBilling();
+        Product product = billingItem.getProduct();
+
+        int alreadyReturned = billingItem.getReturnedQty() != null ? billingItem.getReturnedQty() : 0;
+        int maxReturnable = billingItem.getQuantity() - alreadyReturned;
+
+        if (request.returnQty() > maxReturnable) {
+            throw new IllegalArgumentException(
+                    String.format("Cannot return %d units. Already returned: %d, Sold: %d, Max returnable: %d",
+                            request.returnQty(), alreadyReturned, billingItem.getQuantity(), maxReturnable));
+        }
+
+        // Calculate refund: use original discount from billing
+        BigDecimal discountPct = billing.getDiscountPercentage() != null ? billing.getDiscountPercentage() : BigDecimal.ZERO;
+        BigDecimal itemGross = billingItem.getUnitPrice().multiply(new BigDecimal(request.returnQty()));
+        BigDecimal discountDeducted = itemGross.multiply(discountPct).divide(new BigDecimal("100"), 2, java.math.RoundingMode.HALF_UP);
+        BigDecimal refundAmount = itemGross.subtract(discountDeducted);
+
+        // Update returnedQty on billing item
+        billingItem.setReturnedQty(alreadyReturned + request.returnQty());
+        billingItemRepo.save(billingItem);
+
+        // Restore inventory at original selling price
+        java.util.Optional<InventoryItem> optInv = inventoryItemRepo.findByProductAndPrice(product, billingItem.getUnitPrice());
+        if (optInv.isPresent()) {
+            InventoryItem inv = optInv.get();
+            int currentStock = inv.getStock() != null ? inv.getStock() : 0;
+            inv.setStock(currentStock + request.returnQty());
+            inventoryItemRepo.save(inv);
+        } else {
+            // Create new inventory bucket at original price
+            InventoryItem newInv = InventoryItem.builder()
+                    .product(product)
+                    .price(billingItem.getUnitPrice())
+                    .stock(request.returnQty())
+                    .build();
+            inventoryItemRepo.save(newInv);
+        }
+
+        // Create stock movement: CUSTOMER_RETURN -> INVENTORY
+        com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+        moveReq.setFromBin(com.rdp.model.BinType.CUSTOMER_RETURN);
+        moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+        moveReq.setQuantity(request.returnQty());
+        moveReq.setReferenceType("BILLING_RETURN");
+        moveReq.setReferenceId(billing.getBillingNumber());
+        moveReq.setPerformedBy(billing.getCreatedBy());
+        moveReq.setBatchNo(billingItem.getBatchNo());
+        moveReq.setPrice(billingItem.getUnitPrice());
+        moveReq.setRemarks("Customer return from bill " + billing.getBillingNumber());
+        stockMovementService.createMovement(product.getProductId(), moveReq);
+
+        log.info("Processed billing return: billingItemId={} productId={} returnQty={} refund={}",
+                billingItem.getBillingItemId(), product.getProductId(), request.returnQty(), refundAmount);
+
+        return new com.rdp.dto.BillingReturnResponse(
+                billingItem.getBillingItemId(),
+                product.getProductId(),
+                product.getProductCode(),
+                product.getName(),
+                request.returnQty(),
+                billingItem.getUnitPrice(),
+                refundAmount,
+                discountPct,
+                discountDeducted,
+                billing.getBillingNumber()
+        );
     }
 }
