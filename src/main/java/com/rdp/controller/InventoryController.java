@@ -6,6 +6,7 @@ import com.rdp.model.InventoryItem;
 import com.rdp.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,20 +27,22 @@ public class InventoryController {
     }
 
     @PostMapping
-    public ResponseEntity<InventoryDto> create(@PathVariable("productId") Long productId, @RequestBody CreateInventoryRequest req) {
-        var it = inventoryService.addOrIncrement(productId, req);
+    public ResponseEntity<InventoryDto> create(@PathVariable("productId") Long productId, @RequestBody CreateInventoryRequest req, @RequestParam(value = "performedBy", required = false) String performedBy) {
+        var it = inventoryService.addOrIncrement(productId, req, performedBy);
         return ResponseEntity.ok(InventoryDto.from(it));
     }
 
     @PutMapping("/{invId}")
-    public ResponseEntity<InventoryDto> update(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId, @RequestBody UpdateInventoryRequest req) {
-        var it = inventoryService.updateInventory(productId, invId, req);
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<InventoryDto> update(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId, @RequestBody UpdateInventoryRequest req, @RequestParam(value = "performedBy", required = false) String performedBy) {
+        var it = inventoryService.updateInventory(productId, invId, req, performedBy);
         return ResponseEntity.ok(InventoryDto.from(it));
     }
 
     @DeleteMapping("/{invId}")
-    public ResponseEntity<String> delete(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId) {
-        inventoryService.deleteInventory(productId, invId);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> delete(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId, @RequestParam(value = "performedBy", required = false) String performedBy) {
+        inventoryService.deleteInventory(productId, invId, performedBy);
         return ResponseEntity.ok("Deleted");
     }
 

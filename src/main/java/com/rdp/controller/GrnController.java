@@ -2,6 +2,8 @@ package com.rdp.controller;
 
 import com.rdp.dto.GrnDtos.*;
 import com.rdp.service.GrnService;
+import com.rdp.service.StockMovementService;
+import com.rdp.dto.StockMovementDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,14 +14,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/grns")
+
 @RequiredArgsConstructor
 public class GrnController {
-
+        // Get GRN by grnCode (for Product Bin GRN link)
+        @GetMapping("/by-code/{grnCode}")
+        public ResponseEntity<GrnResponse> getGrnByCode(@PathVariable String grnCode) {
+            GrnResponse grn = grnService.getGrnByCode(grnCode);
+            if (grn != null) {
+                return ResponseEntity.ok(grn);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
     private final GrnService grnService;
+    private final StockMovementService stockMovementService;
+    // Get all stock movements for a GRN
+    @GetMapping("/{id}/movements")
+    public ResponseEntity<java.util.List<StockMovementDto>> getMovementsForGrn(@PathVariable("id") Long grnId) {
+        java.util.List<StockMovementDto> movements = stockMovementService.findByReference("GRN", String.valueOf(grnId));
+        return ResponseEntity.ok(movements);
+    }
 
     @PostMapping
     public ResponseEntity<GrnResponse> createGrn(@Valid @RequestBody CreateGrnRequest request) {
@@ -42,6 +59,12 @@ public class GrnController {
     @GetMapping("/{id}")
     public ResponseEntity<GrnResponse> getGrnById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(grnService.getGrnById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GrnResponse> updatePendingGrn(@PathVariable("id") Long id, @Valid @RequestBody UpdateGrnRequest request) {
+        GrnResponse updatedGrn = grnService.updatePendingGrn(id, request);
+        return ResponseEntity.ok(updatedGrn);
     }
 
     @PutMapping("/{id}/approve")

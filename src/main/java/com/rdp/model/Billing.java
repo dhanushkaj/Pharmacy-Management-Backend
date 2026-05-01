@@ -67,14 +67,46 @@ public class Billing extends BaseAuditableEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @DecimalMin(value = "0.0", message = "Amount received must be at least 0")
+    @Column(name = "amount_received", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal amountReceived = BigDecimal.ZERO;
+
+    @Column(name = "balance_amount", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal balanceAmount = BigDecimal.ZERO;
+
     @Column(name = "is_printed")
     @Builder.Default
     private Boolean isPrinted = false;
+
+    @Column(name = "paid", nullable = false)
+    @Builder.Default
+    private boolean paid = false;
+
+    public boolean isPaid() {
+        return paid;
+    }
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
 
     @OneToMany(mappedBy = "billing", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     @Builder.Default
     private List<BillingItem> items = new ArrayList<>();
+
+    @OneToMany(mappedBy = "billing", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<BillingReturnRecord> returnRecords = new ArrayList<>();
+
+    @Column(name = "return_refund_total", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal returnRefundTotal = BigDecimal.ZERO;
+
+    @Column(name = "net_payable", precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal netPayable = BigDecimal.ZERO;
 
     public void addItem(BillingItem item) {
         items.add(item);
@@ -86,24 +118,16 @@ public class Billing extends BaseAuditableEntity {
         item.setBilling(null);
     }
 
-    @PrePersist
-    @PreUpdate
-    private void calculateTotals() {
-        // Calculate discount amount
-        if (subtotal != null && discountPercentage != null) {
-            discountAmount = subtotal.multiply(discountPercentage).divide(new BigDecimal("100"));
-        }
-        
-        // Calculate grand total
-        if (subtotal != null && discountAmount != null) {
-            grandTotal = subtotal.subtract(discountAmount);
-        }
-    }
+    // Removed @PrePersist/@PreUpdate calculation to allow manual discountAmount from frontend
 
     public enum PaymentMethod {
         CASH,
         CARD,
         MOBILE_PAYMENT,
-        OTHER
+        ONLINE_TRANSFER,
+        CREDIT,
+        CHEQUE,
+        OTHER,
+        OLD_MANUAL
     }
 }

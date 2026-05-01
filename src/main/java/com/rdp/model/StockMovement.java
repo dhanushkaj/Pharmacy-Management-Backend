@@ -38,7 +38,7 @@ public class StockMovement extends BaseAuditableEntity {
     private BinType toBin;
 
     @NotNull
-    @Min(value = 1)
+    //@Min(value = 1)
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 

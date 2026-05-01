@@ -24,6 +24,7 @@ public class InventoryService {
 
     private final InventoryItemRepository inventoryRepo;
     private final ProductRepository productRepo;
+    private final StockMovementService stockMovementService;
 
     public boolean existsWithCost(Long productId, BigDecimal costPrice) {
         boolean exists = inventoryRepo.existsByProductProductIdAndCostPrice(productId, costPrice);
@@ -32,7 +33,7 @@ public class InventoryService {
     }
 
     @Transactional
-    public InventoryItem addOrIncrement(Long productId, CreateInventoryRequest req) {
+    public InventoryItem addOrIncrement(Long productId, CreateInventoryRequest req, String performedBy) {
         Product p = productRepo.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
         BigDecimal price = req.price();
         Integer qty = req.stock() == null ? 0 : req.stock();
@@ -48,6 +49,19 @@ public class InventoryService {
                 inventoryRepo.save(existing);
                 log.info("Incremented inventory bucket productId={} inventoryId={} price={} addedStock={} newStock={} costUpdated={}",
                         productId, existing.getId(), price, added, existing.getStock(), req.costPrice() != null);
+                // Log stock movement for manual add/increment
+                if (added > 0) {
+                    com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+                    moveReq.setFromBin(com.rdp.model.BinType.INVENTORY);
+                    moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+                    moveReq.setQuantity(added);
+                    moveReq.setReferenceType("PRODUCT_UPDATE");
+                    moveReq.setReferenceId(String.valueOf(productId));
+                    moveReq.setPerformedBy(performedBy != null ? performedBy : "SYSTEM");
+                    moveReq.setBatchNo(existing.getBatchNo());
+                    moveReq.setPrice(price);
+                    stockMovementService.createMovement(productId, moveReq);
+                }
                 return existing;
             }
         }
@@ -62,12 +76,25 @@ public class InventoryService {
     InventoryItem saved = inventoryRepo.save(it);
     log.info("Created inventory bucket productId={} inventoryId={} price={} costPrice={} stock={}",
         productId, saved.getId(), saved.getPrice(), saved.getCostPrice(), saved.getStock());
+    // Log stock movement for manual add
+    if (saved.getStock() > 0) {
+        com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+        moveReq.setFromBin(com.rdp.model.BinType.INVENTORY);
+        moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+        moveReq.setQuantity(saved.getStock());
+        moveReq.setReferenceType("PRODUCT_UPDATE");
+        moveReq.setReferenceId(String.valueOf(productId));
+        moveReq.setPerformedBy(performedBy != null ? performedBy : "SYSTEM");
+        moveReq.setBatchNo(saved.getBatchNo());
+        moveReq.setPrice(saved.getPrice());
+        stockMovementService.createMovement(productId, moveReq);
+    }
     return saved;
     }
 
     /** Update an inventory bucket (absolute update of fields). */
     @Transactional
-    public InventoryItem updateInventory(Long productId, Long inventoryId, UpdateInventoryRequest req) {
+    public InventoryItem updateInventory(Long productId, Long inventoryId, UpdateInventoryRequest req, String performedBy) {
         InventoryItem it = inventoryRepo.findById(inventoryId).orElseThrow(() -> new IllegalArgumentException("Inventory not found: " + inventoryId));
         if (!it.getProduct().getProductId().equals(productId)) throw new IllegalArgumentException("Inventory does not belong to product");
         Integer oldStock = it.getStock();
@@ -78,17 +105,46 @@ public class InventoryService {
         InventoryItem saved = inventoryRepo.save(it);
         log.info("Updated inventory bucket inventoryId={} productId={} oldStock={} newStock={} price={} costPrice={} batchNo={}",
                 inventoryId, productId, oldStock, saved.getStock(), saved.getPrice(), saved.getCostPrice(), saved.getBatchNo());
+        // Log stock movement for manual update
+        int delta = (saved.getStock() == null ? 0 : saved.getStock()) - (oldStock == null ? 0 : oldStock);
+        if (delta != 0) {
+            com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+            moveReq.setFromBin(com.rdp.model.BinType.INVENTORY);
+            moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+            moveReq.setQuantity(Math.abs(delta));
+            moveReq.setReferenceType("PRODUCT_UPDATE");
+            moveReq.setReferenceId(String.valueOf(productId));
+            moveReq.setPerformedBy(performedBy != null ? performedBy : "SYSTEM");
+            moveReq.setBatchNo(saved.getBatchNo());
+            moveReq.setPrice(saved.getPrice());
+            moveReq.setRemarks(delta > 0 ? "Stock increased" : "Stock decreased");
+            stockMovementService.createMovement(productId, moveReq);
+        }
         return saved;
     }
 
     /** Delete an inventory bucket. */
     @Transactional
-    public void deleteInventory(Long productId, Long inventoryId) {
+    public void deleteInventory(Long productId, Long inventoryId, String performedBy) {
         InventoryItem it = inventoryRepo.findById(inventoryId).orElseThrow(() -> new IllegalArgumentException("Inventory not found: " + inventoryId));
         if (!it.getProduct().getProductId().equals(productId)) throw new IllegalArgumentException("Inventory does not belong to product");
         inventoryRepo.delete(it);
         log.info("Deleted inventory bucket inventoryId={} productId={} price={} stock={} batchNo={}",
                 inventoryId, productId, it.getPrice(), it.getStock(), it.getBatchNo());
+        // Log stock movement for manual delete
+        if (it.getStock() != null && it.getStock() > 0) {
+            com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
+            moveReq.setFromBin(com.rdp.model.BinType.INVENTORY);
+            moveReq.setToBin(com.rdp.model.BinType.INVENTORY);
+            moveReq.setQuantity(it.getStock());
+            moveReq.setReferenceType("PRODUCT_UPDATE");
+            moveReq.setReferenceId(String.valueOf(productId));
+            moveReq.setPerformedBy(performedBy != null ? performedBy : "SYSTEM");
+            moveReq.setBatchNo(it.getBatchNo());
+            moveReq.setPrice(it.getPrice());
+            moveReq.setRemarks("Inventory bucket deleted");
+            stockMovementService.createMovement(productId, moveReq);
+        }
     }
 
     public List<InventoryItem> listByProduct(Long productId) {

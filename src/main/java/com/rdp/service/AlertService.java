@@ -18,13 +18,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class AlertService {
 
     private final AlertConfigRepository alertConfigRepository;
     private final AlertLogRepository alertLogRepository;
     private final ProductRepository productRepository;
+    private final InventoryItemRepository inventoryItemRepository;
+
+    private final GrnRepository grnRepository;
 
     /**
      * Scheduled job to check for expiring products daily at 8:00 AM
@@ -35,6 +38,7 @@ public class AlertService {
         log.info("Starting daily alert generation...");
         try {
             generateExpiryAlerts();
+            generatePaymentAlerts();
             log.info("Daily alert generation completed successfully");
         } catch (Exception e) {
             log.error("Error generating daily alerts", e);
@@ -57,54 +61,175 @@ public class AlertService {
             configs = alertConfigRepository.findByEnabledTrueOrderByThresholdDaysAsc();
         }
 
-        // Get all products with expiry dates
+        // Get all products
         List<Product> products = productRepository.findAll();
-        
         int alertsGenerated = 0;
-        
+
+        // Prepare configs by type for quick lookup
+        AlertConfig expiryCriticalConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.EXPIRY_CRITICAL).findFirst().orElse(null);
+        AlertConfig expiryWarningConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.EXPIRY_WARNING).findFirst().orElse(null);
+        AlertConfig lowStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.LOW_STOCK).findFirst().orElse(null);
+        AlertConfig outOfStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.OUT_OF_STOCK).findFirst().orElse(null);
+        AlertConfig nonMovingConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.NON_MOVING).findFirst().orElse(null);
+        AlertConfig overStockConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.OVER_STOCK).findFirst().orElse(null);
+
         for (Product product : products) {
-            if (product.getExpiryDate() == null) {
-                continue;
+            // --- Expiry Alerts ---
+            if (product.getExpiryDate() != null) {
+                long daysUntilExpiry = ChronoUnit.DAYS.between(today, product.getExpiryDate());
+                if (expiryCriticalConfig != null && daysUntilExpiry <= expiryCriticalConfig.getThresholdDays() && daysUntilExpiry >= 0) {
+                    createStockOrExpiryAlertIfNotExists(product, expiryCriticalConfig, daysUntilExpiry);
+                } else if (expiryWarningConfig != null && daysUntilExpiry <= expiryWarningConfig.getThresholdDays() && daysUntilExpiry >= 0) {
+                    createStockOrExpiryAlertIfNotExists(product, expiryWarningConfig, daysUntilExpiry);
+                }
+                if (daysUntilExpiry < 0) {
+                    resolveProductAlerts(product.getProductId());
+                }
             }
-            
-            long daysUntilExpiry = ChronoUnit.DAYS.between(today, product.getExpiryDate());
-            
-            // Check each configuration threshold
-            for (AlertConfig config : configs) {
-                if (config.getAlertType() == AlertConfig.AlertType.EXPIRY_WARNING || 
-                    config.getAlertType() == AlertConfig.AlertType.EXPIRY_CRITICAL) {
-                    
-                    if (daysUntilExpiry <= config.getThresholdDays() && daysUntilExpiry >= 0) {
-                        // Check if active alert already exists for this product
-                        List<AlertLog> existingAlerts = alertLogRepository
-                            .findByProductIdAndStatusOrderByCreatedAtDesc(
-                                product.getProductId(), 
-                                AlertLog.AlertStatus.ACTIVE
-                            );
-                        
-                        boolean alertExists = existingAlerts.stream()
-                            .anyMatch(a -> a.getSeverity() == config.getSeverity());
-                        
-                        if (!alertExists) {
-                            createAlertLog(product, config, daysUntilExpiry);
-                            alertsGenerated++;
-                        }
-                        break; // Use highest severity threshold matched
+
+            // --- Stock Alerts ---
+            int currentStock = getCurrentStock(product);
+            if (outOfStockConfig != null && currentStock == 0) {
+                createStockOrExpiryAlertIfNotExists(product, outOfStockConfig, null);
+            } else if (lowStockConfig != null && product.getMinStock() != null && currentStock < product.getMinStock() && currentStock > 0) {
+                createStockOrExpiryAlertIfNotExists(product, lowStockConfig, null);
+            }
+
+            // --- Over Stock Alert ---
+            if (overStockConfig != null && product.getMaxStock() != null && currentStock > product.getMaxStock()) {
+                createStockOrExpiryAlertIfNotExists(product, overStockConfig, null);
+            }
+
+            // --- Non Moving Alert ---
+            if (nonMovingConfig != null && nonMovingConfig.getThresholdDays() != null) {
+                LocalDate lastSaleDate = getLastSaleDate(product.getProductId());
+                if (lastSaleDate != null) {
+                    long daysSinceLastSale = ChronoUnit.DAYS.between(lastSaleDate, today);
+                    if (daysSinceLastSale >= nonMovingConfig.getThresholdDays()) {
+                        createNonMovingAlertIfNotExists(product, nonMovingConfig, daysSinceLastSale);
                     }
                 }
             }
-            
-            // If product expiry date has passed, resolve active alerts
-            if (daysUntilExpiry < 0) {
-                resolveProductAlerts(product.getProductId());
+        }
+        log.info("Generated {} new alerts", alertsGenerated);
+
+    }
+
+    // Helper to get last sale date for a product (stub, implement with actual sales logic)
+    private LocalDate getLastSaleDate(Long productId) {
+        // TODO: Implement actual logic to fetch last sale date from sales/invoice/stock movement
+        // For now, return null to avoid false positives
+        return null;
+    }
+
+    // Helper to create non-moving alert
+    private void createNonMovingAlertIfNotExists(Product product, AlertConfig config, long daysSinceLastSale) {
+        List<AlertLog> existingAlerts = alertLogRepository.findByProductIdAndStatusOrderByCreatedAtDesc(
+            product.getProductId(), AlertLog.AlertStatus.ACTIVE);
+        boolean alertExists = existingAlerts.stream().anyMatch(a -> a.getAlertType() == config.getAlertType());
+        if (!alertExists) {
+            String message = String.format("NON MOVING: %s has not been sold for %d days!", product.getName(), daysSinceLastSale);
+            AlertLog alertLog = AlertLog.builder()
+                .alertType(config.getAlertType())
+                .severity(config.getSeverity())
+                .productId(product.getProductId())
+                .productCode(product.getProductCode())
+                .productName(product.getName())
+                .message(message)
+                .currentStock(getCurrentStock(product))
+                .status(AlertLog.AlertStatus.ACTIVE)
+                .build();
+            alertLogRepository.save(alertLog);
+        }
+    }
+
+    /**
+     * Generate payment due and overdue alerts for GRNs
+     */
+    @Transactional
+    public void generatePaymentAlerts() {
+        LocalDate today = LocalDate.now();
+        List<AlertConfig> configs = alertConfigRepository.findByEnabledTrueOrderByThresholdDaysAsc();
+        AlertConfig paymentDueConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.PAYMENT_DUE).findFirst().orElse(null);
+        AlertConfig paymentOverdueConfig = configs.stream().filter(c -> c.getAlertType() == AlertConfig.AlertType.PAYMENT_OVERDUE).findFirst().orElse(null);
+        if (paymentDueConfig == null && paymentOverdueConfig == null) {
+            log.warn("No payment alert configs found");
+            return;
+        }
+        List<Grn> unpaidGrns = grnRepository.findByPaidFalseAndPaymentDueDateIsNotNull();
+        for (Grn grn : unpaidGrns) {
+            LocalDate dueDate = grn.getPaymentDueDate();
+            if (dueDate == null) continue;
+            long daysUntilDue = ChronoUnit.DAYS.between(today, dueDate);
+            // Overdue
+            if (paymentOverdueConfig != null && daysUntilDue < 0) {
+                createPaymentAlertIfNotExists(grn, paymentOverdueConfig, (int)daysUntilDue);
+            }
+            // Due soon
+            else if (paymentDueConfig != null && daysUntilDue >= 0 && daysUntilDue <= paymentDueConfig.getThresholdDays()) {
+                createPaymentAlertIfNotExists(grn, paymentDueConfig, (int)daysUntilDue);
             }
         }
-        
-        log.info("Generated {} new alerts", alertsGenerated);
+    }
+
+    private void createPaymentAlertIfNotExists(Grn grn, AlertConfig config, int daysUntilDue) {
+        // Only one active alert per GRN per type
+        List<AlertLog> existing = alertLogRepository.findByProductIdAndStatusOrderByCreatedAtDesc(grn.getId(), AlertLog.AlertStatus.ACTIVE);
+        boolean exists = existing.stream().anyMatch(a -> a.getAlertType() == config.getAlertType() && a.getGrnId() != null && a.getGrnId().equals(grn.getId()));
+        if (!exists) {
+            String message = generatePaymentAlertMessage(grn, config.getAlertType(), daysUntilDue);
+            String supplierName = null;
+            if (grn.getPurchaseOrder() != null && grn.getPurchaseOrder().getSupplier() != null) {
+                supplierName = grn.getPurchaseOrder().getSupplier().getName();
+            }
+            AlertLog alertLog = AlertLog.builder()
+                .alertType(config.getAlertType())
+                .severity(config.getSeverity())
+                .productId(grn.getId())
+                .grnId(grn.getId())
+                .productName(supplierName != null ? supplierName : "GRN")
+                .message(message)
+                .status(AlertLog.AlertStatus.ACTIVE)
+                .build();
+            alertLogRepository.save(alertLog);
+        }
+    }
+
+    private String generatePaymentAlertMessage(Grn grn, AlertConfig.AlertType type, int daysUntilDue) {
+        if (type == AlertConfig.AlertType.PAYMENT_OVERDUE) {
+            return String.format("PAYMENT OVERDUE: Payment for GRN %s is overdue by %d days!", grn.getGrnCode(), -daysUntilDue);
+        } else if (type == AlertConfig.AlertType.PAYMENT_DUE) {
+            if (daysUntilDue == 0) {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due TODAY!", grn.getGrnCode());
+            } else if (daysUntilDue == 1) {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due TOMORROW!", grn.getGrnCode());
+            } else {
+                return String.format("PAYMENT DUE: Payment for GRN %s is due in %d days", grn.getGrnCode(), daysUntilDue);
+            }
+        }
+        return "";
+    }
+
+    // Helper to avoid duplicate alerts
+    private void createStockOrExpiryAlertIfNotExists(Product product, AlertConfig config, Long daysUntilExpiry) {
+        List<AlertLog> existingAlerts = alertLogRepository.findByProductIdAndStatusOrderByCreatedAtDesc(
+            product.getProductId(), AlertLog.AlertStatus.ACTIVE);
+        boolean alertExists = existingAlerts.stream().anyMatch(a -> a.getSeverity() == config.getSeverity() && a.getAlertType() == config.getAlertType());
+        if (!alertExists) {
+            createAlertLog(product, config, daysUntilExpiry != null ? daysUntilExpiry : 0);
+        }
+    // removed extra closing brace
     }
 
     private void createAlertLog(Product product, AlertConfig config, long daysUntilExpiry) {
-        String message = generateAlertMessage(product, daysUntilExpiry, config.getSeverity());
+        String message;
+        if (config.getAlertType() == AlertConfig.AlertType.OUT_OF_STOCK) {
+            message = String.format("OUT OF STOCK: %s is out of stock!", product.getName());
+        } else if (config.getAlertType() == AlertConfig.AlertType.LOW_STOCK) {
+            message = String.format("LOW STOCK: %s stock is below minimum threshold!", product.getName());
+        } else {
+            message = generateAlertMessage(product, daysUntilExpiry, config.getSeverity());
+        }
         
         AlertLog alertLog = AlertLog.builder()
             .alertType(config.getAlertType())
@@ -133,9 +258,10 @@ public class AlertService {
     }
 
     private Integer getCurrentStock(Product product) {
-        // This would ideally fetch from inventory, but Product entity might have this
-        // If you have an InventoryItems table, aggregate stock here
-        return null; // Placeholder - implement based on your inventory structure
+        // Aggregate stock from inventory items
+        return inventoryItemRepository.findByProduct(product).stream()
+            .mapToInt(item -> item.getStock() != null ? item.getStock() : 0)
+            .sum();
     }
 
     @Transactional

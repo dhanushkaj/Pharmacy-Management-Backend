@@ -1,3 +1,6 @@
+        // Add method to fetch all billings for a date range (no pagination)
+       
+// (removed stray method declaration outside interface)
 package com.rdp.repository;
 
 import com.rdp.model.Billing;
@@ -14,6 +17,8 @@ import java.util.Optional;
 
 @Repository
 public interface BillingRepository extends JpaRepository<Billing, Long> {
+        // Add method to fetch all billings for a date range (no pagination)
+    List<Billing> findByBillingDateBetween(LocalDateTime start, LocalDateTime end);
 
     Optional<Billing> findByBillingNumber(String billingNumber);
 
@@ -38,4 +43,6 @@ public interface BillingRepository extends JpaRepository<Billing, Long> {
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable
     );
+    
+    
 }

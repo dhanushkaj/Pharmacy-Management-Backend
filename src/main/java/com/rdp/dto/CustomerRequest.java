@@ -10,5 +10,6 @@ public record CustomerRequest(
         String address,
         @DecimalMin(value = "0.0", message = "Discount percentage must be at least 0")
         @DecimalMax(value = "100.0", message = "Discount percentage must not exceed 100")
-        BigDecimal discountPercentage
+        BigDecimal discountPercentage,
+        java.sql.Date birthday
 ) {}

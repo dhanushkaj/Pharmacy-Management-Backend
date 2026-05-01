@@ -1,3 +1,4 @@
+ 
 package com.rdp.service;
 
 import com.rdp.dto.GrnDtos.*;
@@ -40,23 +41,27 @@ public class GrnService {
     @Transactional
     public GrnResponse createGrn(CreateGrnRequest request) {
         PurchaseOrder po = purchaseOrderRepository.findById(request.purchaseOrderId())
-                .orElseThrow(() -> new ResourceNotFoundException("PurchaseOrder not found with id: " + request.purchaseOrderId()));
+            .orElseThrow(() -> new ResourceNotFoundException("PurchaseOrder not found with id: " + request.purchaseOrderId()));
 
         Grn grn = Grn.builder()
-                .purchaseOrder(po)
-                .status(GrnStatus.PENDING)
-                .grnCode(generateGrnCode(po)) // Pass PO to generate code with supplier info
-                .build();
+            .purchaseOrder(po)
+            .status(GrnStatus.PENDING)
+            .grnCode(generateGrnCode(po))
+            .paid(request.paid() != null ? request.paid() : false)
+            .paymentDueDate(request.paymentDueDate())
+            .paymentDueDays(request.paymentDueDays())
+            .chequeDate(request.chequeDate())
+            .build();
 
         for (GrnItemRequest itemRequest : request.items()) {
             Product product = productRepository.findById(itemRequest.productId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemRequest.productId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemRequest.productId()));
             GrnItem grnItem = GrnItem.builder()
-                    .product(product)
-                    .receivedQuantity(itemRequest.receivedQuantity())
-                    .unitCost(itemRequest.unitCost())
-                    .price(itemRequest.price())
-                    .build();
+                .product(product)
+                .receivedQuantity(itemRequest.receivedQuantity())
+                .unitCost(itemRequest.unitCost())
+                .price(itemRequest.price())
+                .build();
             grn.addItem(grnItem);
         }
 
@@ -85,16 +90,18 @@ public class GrnService {
             BigDecimal newCost = item.getUnitCost();
             BigDecimal newSellPrice = item.getPrice();
 
-            // Check if inventory already has the same product + cost + price combination
+            // Try to find existing inventory by product and price (unique constraint)
             InventoryItem existingBucket = inventoryItemRepository
-                    .findByProductAndCostPriceAndPrice(product, newCost, newSellPrice)
+                    .findByProductAndPrice(product, newSellPrice)
                     .orElse(null);
 
             if (existingBucket != null) {
-                //Existing bucket found — increment stock
-                existingBucket.setStock(existingBucket.getStock() + item.getReceivedQuantity());
+                // Existing bucket found — increment stock and update cost if needed
+                existingBucket.setStock((existingBucket.getStock() == null ? 0 : existingBucket.getStock()) + item.getReceivedQuantity());
+                if (newCost != null) existingBucket.setCostPrice(newCost);
                 existingBucket.setUpdatedAt(LocalDateTime.now());
                 inventoryItemRepository.save(existingBucket);
+
                 // Create STOCK movement: GRN -> INVENTORY
                 com.rdp.dto.CreateMovementRequest moveReq = new com.rdp.dto.CreateMovementRequest();
                 moveReq.setFromBin(com.rdp.model.BinType.GRN);
@@ -109,7 +116,7 @@ public class GrnService {
 
                 adjustedBuckets++;
             } else {
-                //No bucket for this cost/sell price — create new inventory record
+                // No bucket for this price — create new inventory record
                 InventoryItem newBucket = InventoryItem.builder()
                         .product(product)
                         .costPrice(newCost)
@@ -138,6 +145,38 @@ public class GrnService {
 
         Grn updated = grnRepository.save(grn);
         log.info("Approved GRN id={} code={} items={} inventoryBucketsAdjusted={} approvedBy={}", grnId, grn.getGrnCode(), grn.getItems().size(), adjustedBuckets, approvedByUser);
+        return mapToDto(updated);
+    }
+
+    @Transactional
+    public GrnResponse updatePendingGrn(Long grnId, UpdateGrnRequest request) {
+        Grn grn = grnRepository.findById(grnId)
+                .orElseThrow(() -> new ResourceNotFoundException("GRN not found with id: " + grnId));
+
+        if (grn.getStatus() != GrnStatus.PENDING) {
+            throw new IllegalStateException("Only PENDING GRNs can be edited. Current status: " + grn.getStatus());
+        }
+
+        grn.setPaid(request.paid() != null ? request.paid() : false);
+        grn.setPaymentDueDate(request.paymentDueDate());
+        grn.setPaymentDueDays(request.paymentDueDays());
+        grn.setChequeDate(request.chequeDate());
+
+        grn.getItems().clear();
+        for (GrnItemRequest itemRequest : request.items()) {
+            Product product = productRepository.findById(itemRequest.productId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemRequest.productId()));
+            GrnItem grnItem = GrnItem.builder()
+                    .product(product)
+                    .receivedQuantity(itemRequest.receivedQuantity())
+                    .unitCost(itemRequest.unitCost())
+                    .price(itemRequest.price())
+                    .build();
+            grn.addItem(grnItem);
+        }
+
+        Grn updated = grnRepository.save(grn);
+        log.info("Updated PENDING GRN id={} code={} items={} paid={}", updated.getId(), updated.getGrnCode(), updated.getItems().size(), updated.getPaid());
         return mapToDto(updated);
     }
 
@@ -214,29 +253,43 @@ public class GrnService {
         return code;
     }
 
-    private GrnResponse mapToDto(Grn grn) {
+        private GrnResponse mapToDto(Grn grn) {
         List<GrnItemResponse> itemResponses = grn.getItems().stream()
-                .map(item -> new GrnItemResponse(
-                        item.getId(),
-                        item.getProduct().getProductId(),
-                        item.getProduct().getName(),
-                        item.getReceivedQuantity(),
-                        item.getUnitCost(),
-                        item.getPrice()
-                ))
-                .collect(Collectors.toList());
+            .map(item -> new GrnItemResponse(
+                item.getId(),
+                item.getProduct().getProductId(),
+                item.getProduct().getName(),
+                item.getReceivedQuantity(),
+                item.getUnitCost(),
+                item.getPrice()
+            ))
+            .collect(Collectors.toList());
 
+        String supplierName = null;
+        if (grn.getPurchaseOrder() != null && grn.getPurchaseOrder().getSupplier() != null) {
+            supplierName = grn.getPurchaseOrder().getSupplier().getName();
+        }
         return new GrnResponse(
-                grn.getId(),
-                grn.getGrnCode(),
-                grn.getPurchaseOrder().getId(),
-                grn.getPurchaseOrder().getOrderCode(),
-                grn.getCreatedAt(),
-                grn.getApprovedDate(),
-                grn.getApprovedUser(),
-                grn.getStatus(),
-                grn.getRejectedReason(),
-                itemResponses
+            grn.getId(),
+            grn.getGrnCode(),
+            grn.getPurchaseOrder().getId(),
+            grn.getPurchaseOrder().getOrderCode(),
+            supplierName,
+            grn.getCreatedAt(),
+            grn.getApprovedDate(),
+            grn.getApprovedUser(),
+            grn.getStatus(),
+            grn.getRejectedReason(),
+            grn.getPaid(),
+            grn.getPaymentDueDate(),
+            grn.getPaymentDueDays(),
+            grn.getChequeDate(),
+            itemResponses
         );
-    }
+        }
+        public GrnResponse getGrnByCode(String grnCode) {
+            return grnRepository.findByGrnCode(grnCode)
+                    .map(this::mapToDto)
+                    .orElse(null);
+        }
 }

@@ -34,5 +34,14 @@ public class User extends BaseAuditableEntity {
     )
     private Set<Role> roles;
 
+    @Column
+    private String email;
+
+    @Column
+    private String address;
+
+    @Column
+    private String phone;
+
     // Getters and setters
 }

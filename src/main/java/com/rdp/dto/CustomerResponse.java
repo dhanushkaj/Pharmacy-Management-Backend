@@ -8,5 +8,6 @@ public record CustomerResponse(
         String phone,
         String email,
         String address,
-        BigDecimal discountPercentage
+        BigDecimal discountPercentage,
+        java.sql.Date birthday
 ) {}

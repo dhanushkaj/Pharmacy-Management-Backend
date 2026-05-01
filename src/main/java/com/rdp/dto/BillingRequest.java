@@ -17,11 +17,14 @@ public record BillingRequest(
         @Valid
         List<BillingItemRequest> items,
 
-        @DecimalMin(value = "0.0", message = "Discount percentage must be at least 0")
+        BigDecimal totalDiscount,
+
         BigDecimal discountPercentage,
 
         Billing.PaymentMethod paymentMethod,
 
-        String notes
+        String notes,
+
+        BigDecimal amountReceived
 ) {
 }

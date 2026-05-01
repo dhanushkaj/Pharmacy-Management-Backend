@@ -15,6 +15,8 @@ import java.time.OffsetDateTime;
 public class StockMovementDto {
     private Long id;
     private Long productId;
+    private String productName;
+    private String productCode;
     private String batchNo;
     private BinType fromBin;
     private BinType toBin;
