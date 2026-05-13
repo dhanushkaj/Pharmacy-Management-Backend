@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
+    private static final String JWT_COOKIE_NAME = "jwt_token";
+    
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -29,14 +32,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String header = request.getHeader("Authorization");
         String token = null;
 
-        if (header != null && header.startsWith("Bearer ")) {
-            token = header.substring(7);
+        // First, try to get token from HTTP-only cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (JWT_COOKIE_NAME.equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        
+        // Fallback: try Authorization header (for backward compatibility)
+        if (token == null) {
+            String header = request.getHeader("Authorization");
+            if (header != null && header.startsWith("Bearer ")) {
+                token = header.substring(7);
+            }
         }
 
-        if (token != null) {
+        if (token != null && !token.isEmpty()) {
             if (jwtUtil.validateJwtToken(token)) {
                 String username = jwtUtil.getUsernameFromToken(token);
                 List<String> roles = jwtUtil.getRolesFromToken(token);

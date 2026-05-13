@@ -10,8 +10,11 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 public class JwtUtil {
-    private final String jwtSecret = "yourSuperLongSecretKeyThatIsAtLeast64CharactersLongForHS512Algorithm1234567890"; // 32+ chars for HS512
-    private final long jwtExpirationMs = 86400000; // 1 day
+    private final String jwtSecret = "yourSuperLongSecretKeyThatIsAtLeast64CharactersLongForHS512Algorithm1234567890";
+    
+    // Token expiration: 30 minutes (matches frontend inactivity timeout)
+    private final long jwtExpirationMs = 30 * 60 * 1000; // 30 minutes
+    
     private final SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
     public String generateToken(String username, List<String> roles) {
@@ -45,5 +48,9 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+    
+    public long getJwtExpirationMs() {
+        return jwtExpirationMs;
     }
 }

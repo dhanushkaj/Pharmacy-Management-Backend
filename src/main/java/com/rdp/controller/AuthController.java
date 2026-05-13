@@ -3,9 +3,14 @@ package com.rdp.controller;
 import com.rdp.model.User;
 import com.rdp.repository.UserRepository;
 import com.rdp.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -17,6 +22,8 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    
+    public static final String JWT_COOKIE_NAME = "jwt_token";
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -25,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> payload, HttpServletResponse response) {
         String username = payload.get("username");
         String password = payload.get("password");
         User user = userRepository.findByUsername(username).orElse(null);
@@ -34,10 +41,106 @@ public class AuthController {
         }
         List<String> roles = user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toList());
         String token = jwtUtil.generateToken(username, roles);
-        return Map.of(
-            "token", token,
+        
+        // Set JWT in HTTP-only cookie
+        ResponseCookie cookie = ResponseCookie.from(JWT_COOKIE_NAME, token)
+            .httpOnly(true)                    // Cannot be accessed by JavaScript
+            .secure(false)                     // Set to true in production (HTTPS only)
+            .path("/")                         // Available for all paths
+            .maxAge(jwtUtil.getJwtExpirationMs() / 1000)  // 30 minutes in seconds
+            .sameSite("Lax")                   // CSRF protection
+            .build();
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        
+        // Return user info (but NOT the token - it's in the cookie)
+        return ResponseEntity.ok(Map.of(
             "username", username,
-            "roles", roles // send as real array
-        );
+            "roles", roles,
+            "message", "Login successful"
+        ));
+    }
+    
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
+        // Clear the JWT cookie by setting it to empty with immediate expiration
+        ResponseCookie cookie = ResponseCookie.from(JWT_COOKIE_NAME, "")
+            .httpOnly(true)
+            .secure(false)                     // Set to true in production
+            .path("/")
+            .maxAge(0)                         // Immediate expiration
+            .sameSite("Lax")
+            .build();
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        
+        return ResponseEntity.ok(Map.of("message", "Logout successful"));
+    }
+    
+    @GetMapping("/validate")
+    public ResponseEntity<Map<String, Object>> validateToken(HttpServletRequest request) {
+        // This endpoint validates the current token from cookie
+        String token = extractTokenFromCookie(request);
+        if (token == null || !jwtUtil.validateJwtToken(token)) {
+            return ResponseEntity.status(401).body(Map.of(
+                "valid", false,
+                "message", "Invalid or expired token"
+            ));
+        }
+        
+        String username = jwtUtil.getUsernameFromToken(token);
+        List<String> roles = jwtUtil.getRolesFromToken(token);
+        
+        return ResponseEntity.ok(Map.of(
+            "valid", true,
+            "username", username,
+            "roles", roles
+        ));
+    }
+    
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, Object>> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        // Refresh the token if the current one is still valid
+        String token = extractTokenFromCookie(request);
+        if (token == null || !jwtUtil.validateJwtToken(token)) {
+            return ResponseEntity.status(401).body(Map.of(
+                "success", false,
+                "message", "Invalid or expired token"
+            ));
+        }
+        
+        String username = jwtUtil.getUsernameFromToken(token);
+        List<String> roles = jwtUtil.getRolesFromToken(token);
+        
+        // Generate new token
+        String newToken = jwtUtil.generateToken(username, roles);
+        
+        // Set new JWT cookie
+        ResponseCookie cookie = ResponseCookie.from(JWT_COOKIE_NAME, newToken)
+            .httpOnly(true)
+            .secure(false)
+            .path("/")
+            .maxAge(jwtUtil.getJwtExpirationMs() / 1000)
+            .sameSite("Lax")
+            .build();
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "message", "Token refreshed"
+        ));
+    }
+    
+    private String extractTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (JWT_COOKIE_NAME.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }
