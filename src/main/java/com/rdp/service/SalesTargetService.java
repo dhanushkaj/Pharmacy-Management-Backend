@@ -34,14 +34,15 @@ public class SalesTargetService {
 
     @Transactional
     public void saveTargetsForMonth(Integer year, Integer month, List<SalesTarget> targets) {
+        // Use raw SQL for atomic delete+insert to avoid race conditions
         // Delete existing targets for the month
-        salesTargetRepository.deleteByYearAndMonth(year, month);
+        String deleteSql = "DELETE FROM sales_targets WHERE year = ? AND month = ?";
+        jdbcTemplate.update(deleteSql, year, month);
         
-        // Save new targets
+        // Insert new targets
+        String insertSql = "INSERT INTO sales_targets (year, month, day, target_amount) VALUES (?, ?, ?, ?)";
         for (SalesTarget target : targets) {
-            target.setYear(year);
-            target.setMonth(month);
-            salesTargetRepository.save(target);
+            jdbcTemplate.update(insertSql, year, month, target.getDay(), target.getTargetAmount());
         }
     }
 
