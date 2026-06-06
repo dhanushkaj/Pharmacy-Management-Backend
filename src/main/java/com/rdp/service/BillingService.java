@@ -1,12 +1,12 @@
 package com.rdp.service;
 
-import com.rdp.dto.BillingItemRequest;
-import com.rdp.dto.BillingItemResponse;
-import com.rdp.dto.BillingRequest;
-import com.rdp.dto.BillingResponse;
-import com.rdp.model.*;
-import com.rdp.repository.*;
-import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -14,12 +14,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.rdp.dto.BillingItemRequest;
+import com.rdp.dto.BillingItemResponse;
+import com.rdp.dto.BillingRequest;
+import com.rdp.dto.BillingResponse;
+import com.rdp.model.Billing;
+import com.rdp.model.BillingItem;
+import com.rdp.model.BillingReturnRecord;
+import com.rdp.model.Customer;
+import com.rdp.model.InventoryItem;
+import com.rdp.model.Product;
+import com.rdp.repository.BillingItemRepository;
+import com.rdp.repository.BillingRepository;
+import com.rdp.repository.BillingReturnRecordRepository;
+import com.rdp.repository.CustomerRepository;
+import com.rdp.repository.InventoryItemRepository;
+import com.rdp.repository.ProductRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -130,7 +142,7 @@ public class BillingService {
         BigDecimal grandTotal = subtotal.subtract(totalDiscount);
 
         // Calculate amount received and balance
-        BigDecimal amountReceived = request.amountReceived() != null ? request.amountReceived() : BigDecimal.ZERO;
+        BigDecimal amountReceived = request.amountReceived() != null ? request.amountReceived().setScale(2, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
         BigDecimal balanceAmount = amountReceived.subtract(grandTotal);
 
         Billing billing = Billing.builder()
