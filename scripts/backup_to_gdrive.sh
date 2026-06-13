@@ -2,26 +2,43 @@
 # =============================================================================
 # Pharmacy Database Backup to Google Drive
 # Runs every 6 hours via launchd
+# Reads configuration from backup_config.json
 # =============================================================================
 
-# Configuration - Update these values
-DB_NAME="pharmacy"
-DB_USER="pharmacy"
-DB_PASSWORD="pharmacy"
-DB_HOST="localhost"
-DB_PORT="5432"
+# Load configuration from backup_config.json
+CONFIG_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/backup_config.json"
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "ERROR: backup_config.json not found at $CONFIG_FILE"
+    exit 1
+fi
 
-# Google Drive remote name (configured in rclone)
-GDRIVE_REMOTE="gdrive"
-GDRIVE_FOLDER="PharmacyBackups"
+# Parse JSON config (using jq if available, otherwise basic grep)
+if command -v jq &> /dev/null; then
+    DB_NAME=$(jq -r '.database.name' "$CONFIG_FILE")
+    DB_USER=$(jq -r '.database.user' "$CONFIG_FILE")
+    DB_PASSWORD=$(jq -r '.database.password' "$CONFIG_FILE")
+    DB_HOST=$(jq -r '.database.host' "$CONFIG_FILE")
+    DB_PORT=$(jq -r '.database.port' "$CONFIG_FILE")
+    GDRIVE_REMOTE=$(jq -r '.gdrive.remote' "$CONFIG_FILE")
+    GDRIVE_FOLDER=$(jq -r '.gdrive.folder' "$CONFIG_FILE")
+    KEEP_LOCAL_BACKUPS=$(jq -r '.retention.local_backups' "$CONFIG_FILE")
+    KEEP_GDRIVE_BACKUPS=$(jq -r '.retention.gdrive_backups' "$CONFIG_FILE")
+else
+    # Fallback: hardcoded defaults if jq not available
+    DB_NAME="pharmacy"
+    DB_USER="pharmacy"
+    DB_PASSWORD="pharmacy"
+    DB_HOST="localhost"
+    DB_PORT="5432"
+    GDRIVE_REMOTE="gdrive"
+    GDRIVE_FOLDER="PharmacyBackups"
+    KEEP_LOCAL_BACKUPS=5
+    KEEP_GDRIVE_BACKUPS=30
+fi
 
 # Local backup directory
 BACKUP_DIR="$HOME/pharmacy_backups"
 LOG_FILE="$BACKUP_DIR/backup.log"
-
-# Retention settings
-KEEP_LOCAL_BACKUPS=5    # Keep last 5 local backups
-KEEP_GDRIVE_BACKUPS=30  # Keep last 30 backups on Google Drive
 
 # =============================================================================
 # Functions
