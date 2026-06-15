@@ -1,16 +1,18 @@
 package com.rdp.config;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Optional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 /**
  * Global exception handler returning JSON payloads so frontend can display messages.
@@ -116,10 +118,14 @@ public class RestExceptionHandler {
     }
 
     /**
-     * Generic fallback: return 500 with minimal message (do not leak stacktrace).
+     * Suppress favicon.ico 404 errors by filtering them in generic handler.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAll(Exception ex) {
+        // Don't log favicon errors
+        if (ex.getClass().getSimpleName().equals("NoResourceFoundException") && ex.getMessage().contains("favicon")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Not found"));
+        }
         log.error("Unhandled exception", ex);
         String msg = Optional.ofNullable(ex.getMessage()).orElse("Internal server error");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(msg));

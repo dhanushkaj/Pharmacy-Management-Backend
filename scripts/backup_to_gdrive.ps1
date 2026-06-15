@@ -1,26 +1,36 @@
 # =============================================================================
 # Pharmacy Database Backup to Google Drive (Windows PowerShell)
 # Runs every 6 hours via Windows Task Scheduler
+# Reads configuration from backup_config.json
 # =============================================================================
 
-# Configuration - Update these values
-$DB_NAME = "pharmacy"
-$DB_USER = "pharmacy"
-$DB_PASSWORD = "pharmacy"
-$DB_HOST = "localhost"
-$DB_PORT = "5432"
+# Load configuration from backup_config.json
+$ConfigFile = Split-Path $MyInvocation.MyCommand.Path | Join-Path -ChildPath "backup_config.json"
+if (-not (Test-Path $ConfigFile)) {
+    Write-Host "ERROR: backup_config.json not found at $ConfigFile"
+    exit 1
+}
 
-# Google Drive remote name (configured in rclone)
-$GDRIVE_REMOTE = "gdrive"
-$GDRIVE_FOLDER = "PharmacyBackups"
+$Config = Get-Content $ConfigFile | ConvertFrom-Json
+
+# Database configuration from config file
+$DB_NAME = $Config.database.name
+$DB_USER = $Config.database.user
+$DB_PASSWORD = $Config.database.password
+$DB_HOST = $Config.database.host
+$DB_PORT = $Config.database.port
+
+# Google Drive configuration from config file
+$GDRIVE_REMOTE = $Config.gdrive.remote
+$GDRIVE_FOLDER = $Config.gdrive.folder
 
 # Local backup directory
 $BACKUP_DIR = "$env:USERPROFILE\pharmacy_backups"
 $LOG_FILE = "$BACKUP_DIR\backup.log"
 
-# Retention settings
-$KEEP_LOCAL_BACKUPS = 5     # Keep last 5 local backups
-$KEEP_GDRIVE_BACKUPS = 30   # Keep last 30 backups on Google Drive
+# Retention settings from config file
+$KEEP_LOCAL_BACKUPS = $Config.retention.local_backups
+$KEEP_GDRIVE_BACKUPS = $Config.retention.gdrive_backups
 
 # PostgreSQL bin path (update if different)
 $PG_BIN_PATH = "C:\Program Files\PostgreSQL\16\bin"

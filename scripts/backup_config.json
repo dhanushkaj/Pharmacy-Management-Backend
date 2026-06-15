@@ -1,0 +1,33 @@
+{
+  "backup": {
+    "enabled": true,
+    "interval_hours": 6,
+    "description": "Configurable backup interval in hours. Examples: 1, 2, 4, 6, 12, 24"
+  },
+  "database": {
+    "name": "pharmacy",
+    "user": "pharmacy",
+    "password": "pharmacy",
+    "host": "localhost",
+    "port": 5432
+  },
+  "gdrive": {
+    "remote_name": "gdrive",
+    "folder": "PharmacyBackups"
+  },
+  "local_storage": {
+    "backup_directory": "%USERPROFILE%\\pharmacy_backups",
+    "keep_local_backups": 5
+  },
+  "retention": {
+    "keep_gdrive_backups": 30,
+    "description": "Number of backups to keep on Google Drive"
+  },
+  "postgresql": {
+    "bin_path": "C:\\Program Files\\PostgreSQL\\16\\bin"
+  },
+  "logging": {
+    "log_file": "%USERPROFILE%\\pharmacy_backups\\backup.log",
+    "verbose": true
+  }
+}
