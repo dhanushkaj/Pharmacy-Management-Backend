@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Data
@@ -21,6 +22,7 @@ public class StockMovementDto {
     private BinType fromBin;
     private BinType toBin;
     private Integer quantity;
+    private BigDecimal price;
     private String referenceType;
     private String referenceId;
     private String performedBy;
