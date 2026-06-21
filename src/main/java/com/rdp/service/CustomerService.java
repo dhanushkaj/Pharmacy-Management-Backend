@@ -1,16 +1,18 @@
 package com.rdp.service;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.rdp.dto.CustomerRequest;
 import com.rdp.dto.CustomerResponse;
 import com.rdp.model.Customer;
 import com.rdp.repository.CustomerRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class CustomerService {
     private CustomerResponse toResponse(Customer c) {
         return new CustomerResponse(
                 c.getCustomerId(),
+                c.getTitle(),
                 c.getName(),
                 c.getPhone(),
                 c.getEmail(),
@@ -93,6 +96,7 @@ public class CustomerService {
     }
 
     private void apply(CustomerRequest req, Customer c) {
+        c.setTitle(req.title());
         c.setName(req.name());
         c.setPhone(req.phone());
         c.setEmail(req.email());

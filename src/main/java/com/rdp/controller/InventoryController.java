@@ -1,16 +1,27 @@
 package com.rdp.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.rdp.dto.CreateInventoryRequest;
+import com.rdp.dto.QuickPriceAddRequest;
 import com.rdp.dto.UpdateInventoryRequest;
 import com.rdp.model.InventoryItem;
 import com.rdp.service.InventoryService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/products/{productId}/inventory")
@@ -44,6 +55,13 @@ public class InventoryController {
     public ResponseEntity<String> delete(@PathVariable("productId") Long productId, @PathVariable("invId") Long invId, @RequestParam(value = "performedBy", required = false) String performedBy) {
         inventoryService.deleteInventory(productId, invId, performedBy);
         return ResponseEntity.ok("Deleted");
+    }
+    @PostMapping("/quick-price-add")
+    public ResponseEntity<InventoryDto> quickPriceAdd(
+            @PathVariable("productId") Long productId,
+            @RequestBody QuickPriceAddRequest req) {
+        var inventoryItem = inventoryService.quickPriceAdd(productId, req.price());
+        return ResponseEntity.ok(InventoryDto.from(inventoryItem));
     }
 
     // Simple DTO for API responses (avoid returning entity directly)

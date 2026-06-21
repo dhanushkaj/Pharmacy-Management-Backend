@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public record CustomerResponse(
         Long customerId,
+        String title,
         String name,
         String phone,
         String email,
