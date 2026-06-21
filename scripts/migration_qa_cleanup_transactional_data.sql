@@ -37,68 +37,78 @@ BEGIN;
 -- STEP 1: DELETE CHILD/DEPENDENT TABLES FIRST (Foreign Key Order)
 -- ============================================================================
 
--- Delete billing items (child of billings and products)
-DELETE FROM rdp_billing_items;
-
--- Delete billings (depends on customers)
-DELETE FROM rdp_billings;
-
--- Delete GRN items (child of grns and products)
-DELETE FROM rdp_grn_items;
-
--- Delete GRNs (depends on purchase orders)
-DELETE FROM rdp_grns;
-
--- Delete purchase order items (child of purchase orders and products)
-DELETE FROM rdp_purchase_order_items;
-
--- Delete purchase orders (depends on suppliers)
-DELETE FROM rdp_purchase_orders;
-
--- Delete inventory items (depends on products)
-DELETE FROM rdp_inventory_items;
-
--- Delete inventory returns (depends on products and suppliers)
-DELETE FROM rdp_inventory_returns;
-
--- Delete stock movements (depends on products)
-DELETE FROM stock_movement;
-
--- Delete customers (billing references removed already)
-DELETE FROM rdp_customers;
-
--- ============================================================================
--- STEP 2: DELETE ALERT SYSTEM DATA
--- ============================================================================
-
-DELETE FROM rdp_alert_logs;
-
-DELETE FROM rdp_alert_config;
-
 -- ============================================================================
 -- STEP 3: DELETE AUDIT TRAIL
 -- ============================================================================
 
-DELETE FROM audit_logs;
-
+DELETE FROM pharmacy.audit_logs;
 -- ============================================================================
--- STEP 4: DELETE DAY END REPORT DATA
+-- STEP 2: DELETE ALERT SYSTEM DATA
 -- ============================================================================
 
+DELETE FROM pharmacy.rdp_alert_logs;
+
+DELETE FROM pharmacy.rdp_alert_config;
+
+
+
+-- Delete billing items (child of billings and products)
+DELETE FROM pharmacy.rdp_billing_items;
+
+DELETE FROM pharmacy.rdp_billing_return_records 
+
+-- Delete billings (depends on customers)
+DELETE FROM pharmacy.rdp_billings;
+
+DELETE FROM pharmacy.rdp_customers;
+ 
 -- Delete day end child tables first (due to FK constraints)
-DELETE FROM rdp_day_end_supplier_payments;
-DELETE FROM rdp_day_end_note_breakdown;
-DELETE FROM rdp_day_end_coin_breakdown;
-
+DELETE FROM pharmacy.rdp_day_end_coin_breakdown;
 -- Delete day end manual bills
-DELETE FROM rdp_day_end_manual_bill;
+DELETE FROM pharmacy.rdp_day_end_manual_bill;
 
+DELETE FROM pharmacy.rdp_day_end_note_breakdown;
 -- Delete day end reports (parent table)
-DELETE FROM rdp_day_end_reports;
+DELETE FROM pharmacy.rdp_day_end_reports;
 
+DELETE FROM pharmacy.rdp_day_end_supplier_payments;
+
+
+-- Delete GRN items (child of grns and products)
+DELETE FROM pharmacy.rdp_grn_items;
+
+-- Delete GRNs (depends on purchase orders)
+DELETE FROM pharmacy.rdp_grns;
+
+
+-- Delete inventory items (depends on products)
+DELETE FROM pharmacy.rdp_inventory_items;
+
+-- Delete inventory returns (depends on products and suppliers)
+DELETE FROM pharmacy.rdp_inventory_returns;
+
+-- Delete purchase order items (child of purchase orders and products)
+DELETE FROM pharmacy.rdp_purchase_order_items;
+
+-- Delete purchase orders (depends on suppliers)
+DELETE FROM pharmacy.rdp_purchase_orders;
+
+
+-- Delete customers (billing references removed already)
+
+DELETE FROM pharmacy.rdp_suppliers ;
+
+
+DELETE FROM pharmacy.sales_targets;
+ 
+
+-- Delete stock movements (depends on products)
+DELETE FROM pharmacy.stock_movement;
 -- ============================================================================
 -- STEP 5: RESET SEQUENCES FOR CLEAN IDs
 -- ============================================================================
+
+DELETE FROM pharmacy.rdp_product;
 
 -- Reset transactional table sequences
 ALTER SEQUENCE rdp_billing_items_billing_item_id_seq RESTART WITH 1;

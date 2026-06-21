@@ -219,6 +219,7 @@ public class StockMovementService {
                 .fromBin(sm.getFromBin())
                 .toBin(sm.getToBin())
                 .quantity(sm.getQuantity())
+                .price(sm.getPrice())
                 .referenceType(sm.getReferenceType())
                 .referenceId(sm.getReferenceId())
                 .performedBy(sm.getPerformedBy())
