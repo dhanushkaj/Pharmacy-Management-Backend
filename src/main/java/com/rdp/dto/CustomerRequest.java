@@ -1,9 +1,15 @@
 package com.rdp.dto;
 
-import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public record CustomerRequest(
+        @Size(max = 20) String title,
         @NotBlank @Size(max = 100) String name,
         @Size(max = 20) String phone,
         @Email @Size(max = 100) String email,

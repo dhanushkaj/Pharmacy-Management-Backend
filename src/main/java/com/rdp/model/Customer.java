@@ -24,6 +24,10 @@ public class Customer extends BaseAuditableEntity {
     private String name;
 
     @Size(max = 20)
+    @Column(name = "title", length = 20)
+    private String title;
+
+    @Size(max = 20)
     @Column(length = 20)
     private String phone;
 
