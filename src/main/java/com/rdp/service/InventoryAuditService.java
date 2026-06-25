@@ -1,17 +1,36 @@
 package com.rdp.service;
 
-import com.rdp.dto.InventoryAuditDetailDto;
-import com.rdp.dto.InventoryAuditDto;
-import com.rdp.model.*;
-import com.rdp.repository.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.rdp.dto.InventoryAuditDetailDto;
+import com.rdp.dto.InventoryAuditDto;
+import com.rdp.model.BinType;
+import com.rdp.model.Category;
+import com.rdp.model.InventoryAudit;
+import com.rdp.model.InventoryAuditDetail;
+import com.rdp.model.InventoryItem;
+import com.rdp.model.Product;
+import com.rdp.model.StockMovement;
+import com.rdp.model.User;
+import com.rdp.repository.CategoryRepository;
+import com.rdp.repository.InventoryAuditDetailRepository;
+import com.rdp.repository.InventoryAuditRepository;
+import com.rdp.repository.InventoryItemRepository;
+import com.rdp.repository.ProductRepository;
+import com.rdp.repository.StockMovementRepository;
+import com.rdp.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -190,6 +209,17 @@ public class InventoryAuditService {
                     
                     try {
                         stockMovementRepository.save(movement);
+                        
+                        // IMPORTANT: Update the actual InventoryItem quantities
+                        List<InventoryItem> inventoryItems = inventoryItemRepository.findByProductProductIdOrderByCreatedAtDesc(productId);
+                        if (!inventoryItems.isEmpty()) {
+                            InventoryItem latestInventory = inventoryItems.get(0);
+                            int newStock = latestInventory.getStock() + detail.getVariance();
+                            latestInventory.setStock(newStock);
+                            inventoryItemRepository.save(latestInventory);
+                            log.info("Updated inventory for product: {}, new stock: {}", productId, newStock);
+                        }
+                        
                         log.info("Created stock movement for product: {}, variance: {}", productId, detail.getVariance());
                     } catch (Exception e) {
                         log.error("Failed to create stock movement for product: {}", productId, e);
@@ -236,7 +266,7 @@ public class InventoryAuditService {
     }
 
     /**
-     * Rollback audit adjustments
+     * Rollback audit adjustments - reverts both inventory and stock movements
      */
     @Transactional
     public Map<String, Object> rollback(Long auditId) {
@@ -245,38 +275,77 @@ public class InventoryAuditService {
         InventoryAudit audit = auditRepository.findById(auditId)
                 .orElseThrow(() -> new IllegalArgumentException("Audit not found: " + auditId));
         
-        // Find and delete all stock movements related to this audit
+        // Find all audit details to revert inventory
+        List<InventoryAuditDetail> auditDetails = auditDetailRepository.findByAuditId(auditId);
+        
+        int reversionsCount = 0;
+        List<String> reversals = new ArrayList<>();
+        
+        // Revert inventory quantities back to systemQtyAtExport
+        for (InventoryAuditDetail detail : auditDetails) {
+            if (detail.getVariance() != 0) {
+                Long productId = detail.getProduct().getProductId();
+                
+                // Revert InventoryItem back to original system quantity
+                List<InventoryItem> inventoryItems = inventoryItemRepository.findByProductProductIdOrderByCreatedAtDesc(productId);
+                if (!inventoryItems.isEmpty()) {
+                    InventoryItem latestInventory = inventoryItems.get(0);
+                    int originalQty = detail.getSystemQtyAtExport();
+                    latestInventory.setStock(originalQty);
+                    inventoryItemRepository.save(latestInventory);
+                    
+                    reversionsCount++;
+                    reversals.add("Reverted " + detail.getProduct().getName() + " to " + originalQty + " units");
+                    log.info("Reverted product {} stock to original: {}", productId, originalQty);
+                }
+            }
+        }
+        
+        // Find and create reversal stock movements for audit trail
         List<StockMovement> movements = stockMovementRepository.findByReferenceTypeAndReferenceId(
                 "INVENTORY_AUDIT", 
                 String.valueOf(auditId)
         );
         
-        int reversionsCount = 0;
-        List<String> reversals = new ArrayList<>();
-        
         for (StockMovement movement : movements) {
-            // Reverse the movement
-            StockMovement reversal = StockMovement.builder()
-                    .productId(movement.getProductId())
-                    .fromBin(movement.getToBin())
-                    .toBin(movement.getFromBin())
-                    .quantity(movement.getQuantity())
-                    .batchNo(movement.getBatchNo())
-                    .price(movement.getPrice())
-                    .referenceType("INVENTORY_AUDIT_ROLLBACK")
-                    .referenceId(String.valueOf(auditId))
-                    .performedBy("SYSTEM")
-                    .remarks("Rollback of audit: " + auditId)
-                    .build();
-            
-            stockMovementRepository.save(reversal);
-            reversionsCount++;
-            reversals.add("Reversed adjustment for product ID: " + movement.getProductId());
+            // Skip the download/upload log entries, only reverse actual adjustments
+            if (movement.getProductId() > 0) {
+                StockMovement reversal = StockMovement.builder()
+                        .productId(movement.getProductId())
+                        .fromBin(movement.getToBin())
+                        .toBin(movement.getFromBin())
+                        .quantity(movement.getQuantity())
+                        .batchNo(movement.getBatchNo())
+                        .price(movement.getPrice())
+                        .referenceType("INVENTORY_AUDIT_ROLLBACK")
+                        .referenceId(String.valueOf(auditId))
+                        .performedBy("SYSTEM")
+                        .remarks("Rollback of audit: " + auditId)
+                        .build();
+                
+                stockMovementRepository.save(reversal);
+                log.info("Created reversal movement for product: {}", movement.getProductId());
+            }
         }
         
         // Update audit status
         audit.setStatus("ROLLED_BACK");
         auditRepository.save(audit);
+        
+        // Log rollback event
+        StockMovement rollbackLog = StockMovement.builder()
+                .productId(0L)
+                .fromBin(BinType.INVENTORY)
+                .toBin(BinType.INVENTORY)
+                .quantity(0)
+                .batchNo("AUDIT_ROLLBACK")
+                .price(java.math.BigDecimal.ZERO)
+                .referenceType("AUDIT_ROLLBACK")
+                .referenceId(String.valueOf(auditId))
+                .performedBy("SYSTEM")
+                .remarks("Rollback completed: " + reversionsCount + " products reverted to original quantities")
+                .build();
+        stockMovementRepository.save(rollbackLog);
         
         log.info("Audit rollback complete. Reversions: {}", reversionsCount);
         
