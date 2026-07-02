@@ -19,7 +19,7 @@ public class JwtUtil {
     private final String jwtSecret = "yourSuperLongSecretKeyThatIsAtLeast64CharactersLongForHS512Algorithm1234567890";
     
     // Token expiration: 1 hour (3600 seconds)
-    private final long jwtExpirationMs = 60 * 60 * 1000; // 1 hour
+    private final long jwtExpirationMs = 1 * 60 * 60 * 1000; // 1 hour
     // Warning time: 1 minute before expiration
     private final long warningTimeMs = 1 * 60 * 1000; // 1 minute
     
