@@ -1,19 +1,27 @@
 package com.rdp.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
     private final String jwtSecret = "yourSuperLongSecretKeyThatIsAtLeast64CharactersLongForHS512Algorithm1234567890";
     
-    // Token expiration: 30 minutes (matches frontend inactivity timeout)
-    private final long jwtExpirationMs = 30 * 60 * 1000; // 30 minutes
+    // Token expiration: 1 hour (3600 seconds)
+    private final long jwtExpirationMs = 1 * 60 * 60 * 1000; // 1 hour
+    // Warning time: 1 minute before expiration
+    private final long warningTimeMs = 1 * 60 * 1000; // 1 minute
     
     private final SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
@@ -52,5 +60,26 @@ public class JwtUtil {
     
     public long getJwtExpirationMs() {
         return jwtExpirationMs;
+    }
+    
+    public long getWarningTimeMs() {
+        return warningTimeMs;
+    }
+    
+    public Date getTokenExpirationDate(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return claims.getExpiration();
+        } catch (JwtException | IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public long getTokenExpirationTime(String token) {
+        Date expirationDate = getTokenExpirationDate(token);
+        if (expirationDate != null) {
+            return expirationDate.getTime();
+        }
+        return 0;
     }
 }
