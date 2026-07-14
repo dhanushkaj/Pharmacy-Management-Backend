@@ -39,13 +39,7 @@ public interface BillingRepository extends JpaRepository<Billing, Long> {
     @Query("SELECT b FROM Billing b JOIN b.items i WHERE i.product.productId = :productId ORDER BY b.billingDate DESC")
     Page<Billing> findByProductId(@Param("productId") Long productId, Pageable pageable);
 
-    @Query("SELECT b FROM Billing b WHERE b.customer.customerId = :customerId AND b.billingDate BETWEEN :startDate AND :endDate ORDER BY b.billingDate DESC")
-    Page<Billing> findByCustomerAndDateRange(
-            @Param("customerId") Long customerId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
-            Pageable pageable
-    );
-    
+    @Query("SELECT b FROM Billing b WHERE b.billingId = :billingId")
+    Optional<Billing> findByIdWithDetails(@Param("billingId") Long billingId);
     
 }
