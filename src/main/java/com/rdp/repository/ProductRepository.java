@@ -37,4 +37,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // quick existence check by category id
     @Query("select case when count(p) > 0 then true else false end from Product p where p.category.categoryId = :catId")
     boolean existsByCategoryId(@Param("catId") Long categoryId);
+    
+    // Find all products in a category
+    @Query("SELECT p FROM Product p WHERE p.category = :category ORDER BY p.productCode")
+    List<Product> findByCategory(@Param("category") Category category);
 }
