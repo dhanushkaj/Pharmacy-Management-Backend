@@ -24,8 +24,10 @@ public interface InventoryCountSessionRepository extends JpaRepository<Inventory
             @Param("categoryId") Long categoryId,
             @Param("versionNumber") Integer versionNumber);
     
-    @Query("SELECT s FROM InventoryCountSession s WHERE s.category.id = :categoryId AND s.status = 'DRAFT'")
-    Optional<InventoryCountSession> findDraftByCategoryId(@Param("categoryId") Long categoryId);
+    @Query("SELECT s FROM InventoryCountSession s WHERE s.category.id = :categoryId AND s.status = :status ORDER BY s.createdAt DESC")
+    Optional<InventoryCountSession> findDraftByCategoryId(
+            @Param("categoryId") Long categoryId,
+            @Param("status") CountSessionStatus status);
     
     @Query("SELECT s FROM InventoryCountSession s WHERE s.status = :status ORDER BY s.createdAt DESC")
     Page<InventoryCountSession> findByStatus(@Param("status") CountSessionStatus status, Pageable pageable);

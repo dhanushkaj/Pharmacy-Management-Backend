@@ -417,10 +417,10 @@ CREATE TABLE pharmacy.stock_movement (
 	remarks text NULL,
 	to_bin varchar(255) NOT NULL,
 	price numeric(12, 2) NOT NULL,
-	CONSTRAINT stock_movement_from_bin_check CHECK (((from_bin)::text = ANY ((ARRAY['GRN'::character varying, 'INVENTORY'::character varying, 'SOLD'::character varying, 'CUSTOMER_RETURN'::character varying, 'SUPPLIER_RETURN'::character varying, 'EXPIRED'::character varying, 'DAMAGED'::character varying])::text[]))),
+	CONSTRAINT stock_movement_from_bin_check CHECK (((from_bin)::text = ANY ((ARRAY['PHYSICAL_COUNT'::character varying, 'GRN'::character varying, 'INVENTORY'::character varying, 'SOLD'::character varying, 'CUSTOMER_RETURN'::character varying, 'SUPPLIER_RETURN'::character varying, 'EXPIRED'::character varying, 'DAMAGED'::character varying])::text[]))),  
 	CONSTRAINT stock_movement_pkey PRIMARY KEY (id),
 	CONSTRAINT stock_movement_quantity_check CHECK ((quantity >= 1)),
-	CONSTRAINT stock_movement_to_bin_check CHECK (((to_bin)::text = ANY ((ARRAY['GRN'::character varying, 'INVENTORY'::character varying, 'SOLD'::character varying, 'CUSTOMER_RETURN'::character varying, 'SUPPLIER_RETURN'::character varying, 'EXPIRED'::character varying, 'DAMAGED'::character varying])::text[])))
+	CONSTRAINT stock_movement_to_bin_check CHECK (((to_bin)::text = ANY ((ARRAY['PHYSICAL_COUNT'::character varying, 'GRN'::character varying, 'INVENTORY'::character varying, 'SOLD'::character varying, 'CUSTOMER_RETURN'::character varying, 'SUPPLIER_RETURN'::character varying, 'EXPIRED'::character varying, 'DAMAGED'::character varying])::text[])))
 );
 CREATE INDEX idx_sm_product_batch_date ON pharmacy.stock_movement USING btree (product_id, batch_no, created_at);
 

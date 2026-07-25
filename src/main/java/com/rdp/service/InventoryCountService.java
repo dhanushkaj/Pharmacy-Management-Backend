@@ -60,6 +60,14 @@ public class InventoryCountService {
         User clerk = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
         
+        // Check if a DRAFT already exists for this category
+        java.util.Optional<InventoryCountSession> existingDraft = sessionRepository.findDraftByCategoryId(categoryId, CountSessionStatus.DRAFT);
+        if (existingDraft.isPresent()) {
+            log.warn("DRAFT session already exists for category: {}. Returning existing session.", categoryId);
+            Hibernate.initialize(existingDraft.get().getLines());
+            return mapSessionToDTO(existingDraft.get());
+        }
+        
         // Get next version number for this category
         List<InventoryCountSession> previousSessions = sessionRepository.findByCategoryId(categoryId);
         Integer nextVersion = previousSessions.isEmpty() ? 1 : previousSessions.stream()
@@ -134,7 +142,7 @@ public class InventoryCountService {
      */
     @Transactional(readOnly = true)
     public InventoryCountSessionDTO getDraftSessionByCategory(Long categoryId) {
-        InventoryCountSession session = sessionRepository.findDraftByCategoryId(categoryId)
+        InventoryCountSession session = sessionRepository.findDraftByCategoryId(categoryId, CountSessionStatus.DRAFT)
                 .orElseThrow(() -> new IllegalArgumentException("No DRAFT session found for category: " + categoryId));
         
         // Initialize lazy collections
@@ -243,17 +251,20 @@ public class InventoryCountService {
             throw new IllegalArgumentException("Only DRAFT sessions can be submitted");
         }
         
-        // Check all lines are counted
-        List<InventoryCountLine> uncountedLines = lineRepository.findUncountedBySessionId(sessionId);
-        if (!uncountedLines.isEmpty()) {
-            throw new IllegalArgumentException("Cannot submit: " + uncountedLines.size() + " lines are not yet counted");
-        }
+        // No strict validation - users only need to count items with variance
+        // The system will calculate variances for all items and managers can review
         
         session.setStatus(CountSessionStatus.SUBMITTED);
         session.setSubmittedAt(LocalDateTime.now());
+        
+        // Set the user who submitted
+        User submittedByUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        session.setSubmittedBy(submittedByUser);
+        
         session = sessionRepository.save(session);
         
-        log.info("Submitted session for approval: sessionId={} submittedAt={}", sessionId, session.getSubmittedAt());
+        log.info("Submitted session for approval: sessionId={} submittedAt={} submittedBy={}", sessionId, session.getSubmittedAt(), userId);
         
         return mapSessionToDTO(session);
     }
@@ -326,7 +337,7 @@ public class InventoryCountService {
         // Create stock movement only if variance exists
         if (variance != 0) {
             CreateMovementRequest moveReq = new CreateMovementRequest();
-            moveReq.setFromBin(BinType.INVENTORY);
+            moveReq.setFromBin(BinType.PHYSICAL_COUNT);
             moveReq.setToBin(BinType.INVENTORY);
             moveReq.setQuantity(Math.abs(variance));
             moveReq.setReferenceType("INVENTORY_COUNT_SESSION");
@@ -334,8 +345,11 @@ public class InventoryCountService {
             moveReq.setPerformedBy(approver.getUserId().toString());
             moveReq.setBatchNo(inventoryItem.getBatchNo());
             moveReq.setPrice(inventoryItem.getPrice());
-            moveReq.setRemarks(String.format("Physical Count Reconciliation - %s (Category: %s) - Variance: %d units",
-                    product.getName(), line.getSession().getCategory().getName(), variance));
+            
+            // Show the variance as signed (+4 or -4)
+            String signedVariance = variance > 0 ? "+" + variance : String.valueOf(variance);
+            moveReq.setRemarks(String.format("Physical Count Reconciliation - %s (Category: %s) - Variance: %s units",
+                    product.getName(), line.getSession().getCategory().getName(), signedVariance));
             
             stockMovementService.createMovement(product.getProductId(), moveReq);
         }
@@ -355,8 +369,13 @@ public class InventoryCountService {
             throw new IllegalArgumentException("Only SUBMITTED sessions can be rejected");
         }
         
+        User manager = userRepository.findById(managerId)
+                .orElseThrow(() -> new IllegalArgumentException("Manager not found: " + managerId));
+        
         session.setStatus(CountSessionStatus.REJECTED);
         session.setRejectedReason(reason);
+        session.setRejectedBy(manager);
+        session.setRejectedAt(LocalDateTime.now());
         session = sessionRepository.save(session);
         
         log.info("Rejected inventory count session: sessionId={} reason={} by={}",
@@ -405,10 +424,15 @@ public class InventoryCountService {
                 .createdById(session.getCreatedBy().getUserId())
                 .createdByName(session.getCreatedBy().getUsername())
                 .createdAt(session.getCreatedAt())
+                .submittedById(session.getSubmittedBy() != null ? session.getSubmittedBy().getUserId() : null)
+                .submittedByName(session.getSubmittedBy() != null ? session.getSubmittedBy().getUsername() : null)
                 .submittedAt(session.getSubmittedAt())
                 .approvedById(session.getApprovedBy() != null ? session.getApprovedBy().getUserId() : null)
                 .approvedByName(session.getApprovedBy() != null ? session.getApprovedBy().getUsername() : null)
                 .approvedAt(session.getApprovedAt())
+                .rejectedById(session.getRejectedBy() != null ? session.getRejectedBy().getUserId() : null)
+                .rejectedByName(session.getRejectedBy() != null ? session.getRejectedBy().getUsername() : null)
+                .rejectedAt(session.getRejectedAt())
                 .rejectedReason(session.getRejectedReason())
                 .overallComment(session.getOverallComment())
                 .updatedAt(session.getUpdatedAt())

@@ -46,11 +46,22 @@ public class InventoryCountSession {
     private LocalDateTime submittedAt;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "submitted_by", nullable = true)
+    private User submittedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by", nullable = true)
     private User approvedBy;
-    
+
     @Column(nullable = true)
     private LocalDateTime approvedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rejected_by", nullable = true)
+    private User rejectedBy;
+
+    @Column(nullable = true)
+    private LocalDateTime rejectedAt;
     
     @Column(columnDefinition = "TEXT", nullable = true)
     private String rejectedReason;
