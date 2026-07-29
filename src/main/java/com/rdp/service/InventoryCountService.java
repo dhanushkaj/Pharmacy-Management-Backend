@@ -342,7 +342,7 @@ public class InventoryCountService {
             moveReq.setQuantity(Math.abs(variance));
             moveReq.setReferenceType("INVENTORY_COUNT_SESSION");
             moveReq.setReferenceId(line.getSession().getId().toString());
-            moveReq.setPerformedBy(approver.getUserId().toString());
+            moveReq.setPerformedBy(approver.getUsername());
             moveReq.setBatchNo(inventoryItem.getBatchNo());
             moveReq.setPrice(inventoryItem.getPrice());
             
