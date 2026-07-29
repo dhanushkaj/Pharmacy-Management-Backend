@@ -1,17 +1,21 @@
 package com.rdp.service;
 
-import com.rdp.dto.CreateMovementRequest;
-import com.rdp.dto.StockMovementDto;
-import com.rdp.model.BinType;
-import com.rdp.model.InventoryItem;
-import com.rdp.model.StockMovement;
-import com.rdp.model.Product;
-import com.rdp.repository.InventoryItemRepository;
-import com.rdp.repository.StockMovementRepository;
-import com.rdp.repository.ProductRepository;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -20,10 +24,17 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.rdp.dto.CreateMovementRequest;
+import com.rdp.dto.StockMovementDto;
+import com.rdp.model.BinType;
+import com.rdp.model.InventoryItem;
+import com.rdp.model.Product;
+import com.rdp.model.StockMovement;
+import com.rdp.repository.InventoryItemRepository;
+import com.rdp.repository.ProductRepository;
+import com.rdp.repository.StockMovementRepository;
+
+import jakarta.transaction.Transactional;
 
 
 @Service
@@ -60,6 +71,8 @@ public class StockMovementService {
         ALLOWED_TRANSITIONS.add("SOLD->INVENTORY");
         // Allow manual inventory adjustments
         ALLOWED_TRANSITIONS.add("INVENTORY->INVENTORY");
+        // Allow physical count reconciliation
+        ALLOWED_TRANSITIONS.add("PHYSICAL_COUNT->INVENTORY");
     }
 
     private boolean isTransitionAllowed(BinType from, BinType to) {

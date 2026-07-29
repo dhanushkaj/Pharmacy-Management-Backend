@@ -1,6 +1,7 @@
 package com.rdp.model;
 
 public enum BinType {
+    PHYSICAL_COUNT,
     GRN,
     INVENTORY,
     SOLD,
