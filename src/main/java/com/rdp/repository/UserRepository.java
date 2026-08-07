@@ -12,4 +12,7 @@ import com.rdp.model.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("FROM User u WHERE u.username = :username")
     Optional<User> findByUsername(@Param("username") String username);
+
+    @Query("FROM User u WHERE u.sessionCode = :sessionCode")
+    Optional<User> findBySessionCode(@Param("sessionCode") String sessionCode);
 }

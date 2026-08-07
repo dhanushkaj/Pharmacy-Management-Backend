@@ -67,6 +67,40 @@ public class AuthController {
             "message", "Login successful"
         ));
     }
+
+    @PostMapping("/switch-user")
+    public ResponseEntity<Map<String, Object>> switchUserByCode(@RequestBody Map<String, String> payload, HttpServletResponse response) {
+        String sessionCode = payload.get("sessionCode");
+        if (sessionCode == null || sessionCode.isBlank()) {
+            throw new RuntimeException("Session code is required");
+        }
+        
+        User user = userRepository.findBySessionCode(sessionCode).orElse(null);
+        if (user == null) {
+            throw new RuntimeException("Invalid session code");
+        }
+        
+        List<String> roles = user.getRoles().stream().map(r -> r.getRoleName()).collect(Collectors.toList());
+        String token = jwtUtil.generateToken(user.getUsername(), roles);
+        
+        // Set JWT in HTTP-only cookie
+        ResponseCookie cookie = ResponseCookie.from(JWT_COOKIE_NAME, token)
+            .httpOnly(true)
+            .secure(false)
+            .path("/")
+            .maxAge(jwtUtil.getJwtExpirationMs() / 1000)
+            .sameSite("Lax")
+            .build();
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        
+        // Return user info
+        return ResponseEntity.ok(Map.of(
+            "username", user.getUsername(),
+            "roles", roles,
+            "message", "User session switched successfully"
+        ));
+    }
     
     @GetMapping("/token-info")
     public ResponseEntity<Map<String, Object>> getTokenInfo(HttpServletRequest request) {

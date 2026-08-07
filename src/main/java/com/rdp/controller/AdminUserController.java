@@ -2,13 +2,24 @@
 
 package com.rdp.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import java.util.*;
-import com.rdp.model.User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.rdp.model.Role;
-import com.rdp.repository.UserRepository;
+import com.rdp.model.User;
 import com.rdp.repository.RoleRepository;
+import com.rdp.repository.UserRepository;
 import com.rdp.service.UserAdminService;
 
 @RestController
@@ -46,10 +57,18 @@ public class AdminUserController {
                 userMap.put("email", user.getEmail());
                 userMap.put("address", user.getAddress());
                 userMap.put("phone", user.getPhone());
+                userMap.put("sessionCode", user.getSessionCode() != null ? user.getSessionCode() : "");
                 userMap.put("roles", user.getRoles() == null ? List.of() : user.getRoles().stream().map(Role::getRoleName).toList());
                 result.add(userMap);
             }
             return result;
+    }
+
+    // Admin: regenerate session code for a user
+    @PostMapping("/users/{userId}/regenerate-session-code")
+    public Map<String, String> regenerateUserSessionCode(@PathVariable Long userId) {
+        String newCode = userAdminService.generateAndSaveSessionCode(userId);
+        return Map.of("sessionCode", newCode, "message", "Session code regenerated successfully");
     }
 
     // Admin: get all role names
