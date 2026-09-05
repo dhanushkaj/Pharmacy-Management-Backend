@@ -32,10 +32,11 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(req -> {
                 var c = new CorsConfiguration();
-                c.setAllowedOrigins(List.of("http://localhost:3000", "http://192.168.1.103:3000"));
+                c.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080", "http://127.0.0.1:3000", "http://127.0.0.1:8080", "http://192.168.1.103:3000"));
                 c.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
-                c.setAllowedHeaders(List.of("Authorization","Content-Type"));
-                c.setAllowCredentials(true);  // IMPORTANT: Allow cookies to be sent
+                c.setAllowedHeaders(List.of("*"));
+                c.setAllowCredentials(true);
+                c.setMaxAge(3600L);
                 return c;
             }))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -84,6 +85,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/grn/approve").hasRole("ADMIN")
                 .requestMatchers("/api/reports/**").hasAnyRole("ADMIN","MANAGER")
                 .requestMatchers("/api/sales/**").hasAnyRole("ADMIN","MANAGER","PHARMACIST")
+                // AI endpoints - require authentication
+                .requestMatchers("/api/ai/**").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form.disable())
