@@ -59,6 +59,7 @@ public class BillingService {
         Billing bill = billingRepo.findByBillingNumber(billingNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Billing not found: " + billingNumber));
         bill.setPaid(true);
+        bill.setPaidDate(LocalDateTime.now());
         billingRepo.save(bill);
     }
 

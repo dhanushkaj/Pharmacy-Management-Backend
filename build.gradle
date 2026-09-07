@@ -1,6 +1,5 @@
 plugins {
     id 'org.springframework.boot' version '3.5.5'
-    id 'io.spring.dependency-management' version '1.1.4'
     id 'java'
     id 'eclipse'
 }
@@ -10,6 +9,12 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot BOM (native platform import — replaces io.spring.dependency-management)
+    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+
+    // Spring AI BOM (native platform import)
+    implementation platform('org.springframework.ai:spring-ai-bom:1.1.5')
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -23,16 +28,20 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate6'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    // Logging: switch to Log4j2 (exclude default logback)
+
+    implementation 'org.springframework.ai:spring-ai-client-chat'
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+	annotationProcessor 'org.projectlombok:lombok:1.18.42'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-engine:1.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
     testImplementation 'org.mockito:mockito-core:5.2.0'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 configurations {
