@@ -1,22 +1,23 @@
 package com.rdp.service;
 
-import com.rdp.dto.DayEndReportRequest;
-import com.rdp.model.DayEndReport;
-import com.rdp.model.Billing;
-import com.rdp.model.Customer;
-import com.rdp.repository.DayEndReportRepository;
-import com.rdp.repository.BillingRepository;
-import com.rdp.repository.InventoryReturnRepository;
-import com.rdp.repository.RdpDayEndManualBillRepository;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.rdp.dto.DayEndReportRequest;
+import com.rdp.model.Billing;
+import com.rdp.model.Customer;
+import com.rdp.model.DayEndReport;
+import com.rdp.repository.BillingRepository;
+import com.rdp.repository.DayEndReportRepository;
+import com.rdp.repository.InventoryReturnRepository;
+import com.rdp.repository.RdpDayEndManualBillRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +64,28 @@ public class DayEndReportService {
             }).collect(Collectors.toList());
             report.setCoinDenominations(coinDenoms);
         }
+        // Next day opening float: cash set aside from the drawer for tomorrow (entered separately from Physical Cash Value)
+        if (request.getNextDayFloatNoteDenominations() != null) {
+            List<DayEndReport.Denomination> floatNoteDenoms = request.getNextDayFloatNoteDenominations().stream().map(d -> {
+                DayEndReport.Denomination dn = new DayEndReport.Denomination();
+                dn.setValue(d.getValue());
+                dn.setQty(d.getQty());
+                dn.setTotal(d.getTotal());
+                return dn;
+            }).collect(Collectors.toList());
+            report.setNextDayFloatNoteDenominations(floatNoteDenoms);
+        }
+        if (request.getNextDayFloatCoinDenominations() != null) {
+            List<DayEndReport.Denomination> floatCoinDenoms = request.getNextDayFloatCoinDenominations().stream().map(d -> {
+                DayEndReport.Denomination dn = new DayEndReport.Denomination();
+                dn.setValue(d.getValue());
+                dn.setQty(d.getQty());
+                dn.setTotal(d.getTotal());
+                return dn;
+            }).collect(Collectors.toList());
+            report.setNextDayFloatCoinDenominations(floatCoinDenoms);
+        }
+        report.setNextDayFloatTotal(request.getNextDayFloatTotal());
         // Set non-cash fields from request
         // Removed: cardPayments, onlineTransfers, customerChequePayments (auto-filled from billing)
         // Supplier payments
@@ -85,27 +108,40 @@ public class DayEndReportService {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
         List<Billing> billings = billingRepository.findByBillingDateBetween(startOfDay, endOfDay);
-        double totalSales = 0.0, cashSales = 0.0, cardSales = 0.0, onlineTransferSales = 0.0, chequeSales = 0.0, creditSale= 0.0;
+        double totalSales = 0.0, cashSales = 0.0, cardSales = 0.0, onlineTransferSales = 0.0, chequeSales = 0.0;
         for (Billing b : billings) {
             double amount = b.getGrandTotal() != null ? b.getGrandTotal().doubleValue() : 0.0;
+            // Credit sales aren't counted until actually paid off (added back in via Credit Paid Today below)
+            if (b.getPaymentMethod() == Billing.PaymentMethod.CREDIT) {
+                continue;
+            }
             totalSales += amount;
             if (b.getPaymentMethod() != null) {
                 switch (b.getPaymentMethod()) {
                     case CASH -> cashSales += amount;
                     case CARD -> cardSales += amount;
-                    case CREDIT -> creditSale += amount;
                     case ONLINE_TRANSFER, MOBILE_PAYMENT -> onlineTransferSales += amount;
                     case CHEQUE -> chequeSales += amount;
                     default -> {}
                 }
             }
         }
-        report.setTotalSales(totalSales);
         report.setCashSales(cashSales);
         report.setCardSales(cardSales);
         report.setOnlineTransferSales(onlineTransferSales);
         report.setChequeSales(chequeSales);
-        report.setCreditCustomerTotal(creditSale);
+
+        // Credit sales aren't cash received today; only what was actually paid off today counts here
+        List<Billing> creditPaidToday = billingRepository.findCreditBillsPaidBetween(startOfDay, endOfDay);
+        double creditPaidTodayTotal = creditPaidToday.stream()
+            .mapToDouble(b -> b.getGrandTotal() != null ? b.getGrandTotal().doubleValue() : 0.0)
+            .sum();
+        report.setCreditCustomerTotal(creditPaidTodayTotal);
+        report.setTotalSales(totalSales + creditPaidTodayTotal);
+        report.setCreditCustomerDetails(creditPaidToday.stream().map(b -> {
+            Customer c = b.getCustomer();
+            return String.format("%s (%s) - Rs.%.2f | Bill#: %s", c != null ? c.getName() : "N/A", c != null ? c.getPhone() : "", b.getGrandTotal(), b.getBillingNumber());
+        }).toList());
 
         // Calculate returns/refunds (customer returns)
         double returns = 0.0;
@@ -121,7 +157,8 @@ public class DayEndReportService {
         for (com.rdp.model.RdpDayEndManualBill mb : manualBills) {
             if (mb.getAmount() != null) manualBillsTotal += mb.getAmount();
         }
-        double expectedCash = cashSales - returns - supplierPaymentsCashTotal + manualBillsTotal;
+        // Retained float is money kept back for tomorrow, so it isn't part of what's expected to be handed over today
+        double expectedCash = cashSales - returns - supplierPaymentsCashTotal + manualBillsTotal - report.getNextDayFloatTotal();
         report.setExpectedCash(expectedCash);
 
         // Set physical cash counted from request
@@ -167,56 +204,60 @@ public class DayEndReportService {
             LocalDateTime startOfDay = localDate.atStartOfDay();
             LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
 
-            // If no report exists, create a transient one with calculated values from billing
+            // If no report exists for today yet, start from a transient one (cashier's manual entries default to blank)
             if (report == null) {
                 report = new DayEndReport();
                 report.setDate(date);
-                // Calculate system sales summary from billings
-                List<Billing> billings = billingRepository.findByBillingDateBetween(startOfDay, endOfDay);
-                double totalSales = 0.0, cashSales = 0.0, cardSales = 0.0, onlineTransferSales = 0.0, chequeSales = 0.0,creditSale=0.0;
-                for (Billing b : billings) {
-                    double amount = b.getGrandTotal() != null ? b.getGrandTotal().doubleValue() : 0.0;
-                    totalSales += amount;
-                    if (b.getPaymentMethod() != null) {
-                        switch (b.getPaymentMethod()) {
-                            case CASH -> cashSales += amount;
-                            case CARD -> cardSales += amount;
-                            case CREDIT -> creditSale += amount;
-                            case ONLINE_TRANSFER, MOBILE_PAYMENT -> onlineTransferSales += amount;
-                            case CHEQUE -> chequeSales += amount;
-                            default -> {}
-                        }
-                    }
-                }
-                report.setTotalSales(totalSales);
-                report.setCashSales(cashSales);
-                report.setCardSales(cardSales);
-                report.setOnlineTransferSales(onlineTransferSales);
-                report.setChequeSales(chequeSales);
-                report.setCreditCustomerTotal(creditSale);
-                // Returns/refunds
-                double returns = 0.0;
-                List<com.rdp.model.InventoryReturn> customerReturns = inventoryReturnRepository.findCustomerReturnsForDay(startOfDay, endOfDay);
-                for (com.rdp.model.InventoryReturn ret : customerReturns) {
-                    if (ret.getTotalAmount() != null) returns += ret.getTotalAmount().doubleValue();
-                }
-                report.setReturns(returns);
             }
 
-            // Always fetch and set credit customer details for the day (detailed info)
-            List<Billing> creditBillings = billingRepository.findByBillingDateBetween(startOfDay, endOfDay).stream()
-                .filter(b -> b.getPaymentMethod() == Billing.PaymentMethod.CREDIT)
-                .toList();
-            // Attach as a transient field (not persisted)
-            report.setCreditCustomerDetails(creditBillings.stream().map(b -> {
+            // Sales summary is always recomputed live from billings, even if today's report was already submitted,
+            // so later events (e.g. a credit bill paid after submission) are reflected without needing a resubmit
+            List<Billing> billings = billingRepository.findByBillingDateBetween(startOfDay, endOfDay);
+            double totalSales = 0.0, cashSales = 0.0, cardSales = 0.0, onlineTransferSales = 0.0, chequeSales = 0.0;
+            for (Billing b : billings) {
+                double amount = b.getGrandTotal() != null ? b.getGrandTotal().doubleValue() : 0.0;
+                // Credit sales aren't counted until actually paid off (added back in via Credit Paid Today below)
+                if (b.getPaymentMethod() == Billing.PaymentMethod.CREDIT) {
+                    continue;
+                }
+                totalSales += amount;
+                if (b.getPaymentMethod() != null) {
+                    switch (b.getPaymentMethod()) {
+                        case CASH -> cashSales += amount;
+                        case CARD -> cardSales += amount;
+                        case ONLINE_TRANSFER, MOBILE_PAYMENT -> onlineTransferSales += amount;
+                        case CHEQUE -> chequeSales += amount;
+                        default -> {}
+                    }
+                }
+            }
+            report.setCashSales(cashSales);
+            report.setCardSales(cardSales);
+            report.setOnlineTransferSales(onlineTransferSales);
+            report.setChequeSales(chequeSales);
+            // Returns/refunds
+            double returns = 0.0;
+            List<com.rdp.model.InventoryReturn> customerReturns = inventoryReturnRepository.findCustomerReturnsForDay(startOfDay, endOfDay);
+            for (com.rdp.model.InventoryReturn ret : customerReturns) {
+                if (ret.getTotalAmount() != null) returns += ret.getTotalAmount().doubleValue();
+            }
+            report.setReturns(returns);
+
+            // Opening balance for the day = previous day's retained next-day float (0.00 if no prior report)
+            DayEndReport previousDayReport = dayEndReportRepository.findByDate(localDate.minusDays(1).toString());
+            report.setOpeningBalanceFromPreviousDay(previousDayReport != null ? previousDayReport.getNextDayFloatTotal() : 0.0);
+
+            // Credit sales aren't cash received today; only what was actually paid off today counts here
+            List<Billing> creditPaidToday = billingRepository.findCreditBillsPaidBetween(startOfDay, endOfDay);
+            report.setCreditCustomerDetails(creditPaidToday.stream().map(b -> {
                 Customer c = b.getCustomer();
                 return String.format("%s (%s) - Rs.%.2f | Bill#: %s", c != null ? c.getName() : "N/A", c != null ? c.getPhone() : "", b.getGrandTotal(), b.getBillingNumber());
             }).toList());
-            // Set the total value for credit customer billings
-            double creditCustomerTotal = creditBillings.stream()
+            double creditCustomerTotal = creditPaidToday.stream()
                 .mapToDouble(b -> b.getGrandTotal() != null ? b.getGrandTotal().doubleValue() : 0.0)
                 .sum();
             report.setCreditCustomerTotal(creditCustomerTotal);
+            report.setTotalSales(totalSales + creditCustomerTotal);
             
             
          // Fetch and set old manual bills (type OLD_MANUAL)

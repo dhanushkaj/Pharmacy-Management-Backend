@@ -1,12 +1,27 @@
 
 package com.rdp.model;
 
-import com.rdp.audit.BaseAuditableEntity;
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.math.BigDecimal;
 import java.util.List;
+
+import com.rdp.audit.BaseAuditableEntity;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "rdp_day_end_reports", indexes = {
@@ -52,6 +67,24 @@ public class DayEndReport extends BaseAuditableEntity {
     @ElementCollection
     @CollectionTable(name = "rdp_day_end_coin_breakdown", joinColumns = @JoinColumn(name = "day_end_report_id"))
     private List<Denomination> coinDenominations;
+
+    // Next day opening float: cash set aside from the drawer for tomorrow (entered separately from Physical Cash Value, netted out of Expected Cash)
+    @ElementCollection
+    @CollectionTable(name = "rdp_day_end_next_day_float_notes", joinColumns = @JoinColumn(name = "day_end_report_id"))
+    private List<Denomination> nextDayFloatNoteDenominations;
+
+    @ElementCollection
+    @CollectionTable(name = "rdp_day_end_next_day_float_coins", joinColumns = @JoinColumn(name = "day_end_report_id"))
+    private List<Denomination> nextDayFloatCoinDenominations;
+
+    private double nextDayFloatTotal;
+
+    // Not persisted: the previous day's nextDayFloatTotal, surfaced so today's opening balance is known
+    @Transient
+    private double openingBalanceFromPreviousDay;
+
+    public double getOpeningBalanceFromPreviousDay() { return openingBalanceFromPreviousDay; }
+    public void setOpeningBalanceFromPreviousDay(double openingBalanceFromPreviousDay) { this.openingBalanceFromPreviousDay = openingBalanceFromPreviousDay; }
 
     // Non-cash collections
     // Removed: cardPayments, onlineTransfers, customerChequePayments (auto-filled from billing)

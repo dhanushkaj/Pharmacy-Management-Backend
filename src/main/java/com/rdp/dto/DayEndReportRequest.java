@@ -10,6 +10,10 @@ public class DayEndReportRequest {
     private String dayEndNo;
     private List<Denomination> noteDenominations;
     private List<Denomination> coinDenominations;
+    // Next day opening float: subset of physicalCashCounted retained in the drawer for tomorrow
+    private List<Denomination> nextDayFloatNoteDenominations;
+    private List<Denomination> nextDayFloatCoinDenominations;
+    private double nextDayFloatTotal;
     // Removed: cardPayments, onlineTransfers, customerChequePayments (auto-filled from billing)
     private List<SupplierPayment> supplierPayments;
     private double totalSales;
@@ -46,6 +50,12 @@ public class DayEndReportRequest {
     public void setNoteDenominations(List<Denomination> noteDenominations) { this.noteDenominations = noteDenominations; }
     public List<Denomination> getCoinDenominations() { return coinDenominations; }
     public void setCoinDenominations(List<Denomination> coinDenominations) { this.coinDenominations = coinDenominations; }
+    public List<Denomination> getNextDayFloatNoteDenominations() { return nextDayFloatNoteDenominations; }
+    public void setNextDayFloatNoteDenominations(List<Denomination> nextDayFloatNoteDenominations) { this.nextDayFloatNoteDenominations = nextDayFloatNoteDenominations; }
+    public List<Denomination> getNextDayFloatCoinDenominations() { return nextDayFloatCoinDenominations; }
+    public void setNextDayFloatCoinDenominations(List<Denomination> nextDayFloatCoinDenominations) { this.nextDayFloatCoinDenominations = nextDayFloatCoinDenominations; }
+    public double getNextDayFloatTotal() { return nextDayFloatTotal; }
+    public void setNextDayFloatTotal(double nextDayFloatTotal) { this.nextDayFloatTotal = nextDayFloatTotal; }
     // Removed: cardPayments, onlineTransfers, customerChequePayments getters/setters
     public List<SupplierPayment> getSupplierPayments() { return supplierPayments; }
     public void setSupplierPayments(List<SupplierPayment> supplierPayments) { this.supplierPayments = supplierPayments; }

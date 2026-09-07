@@ -41,5 +41,8 @@ public interface BillingRepository extends JpaRepository<Billing, Long> {
 
     @Query("SELECT b FROM Billing b WHERE b.billingId = :billingId")
     Optional<Billing> findByIdWithDetails(@Param("billingId") Long billingId);
-    
+
+    @Query("FROM Billing b WHERE b.paymentMethod = com.rdp.model.Billing.PaymentMethod.CREDIT AND b.paid = true AND b.paidDate BETWEEN :start AND :end")
+    List<Billing> findCreditBillsPaidBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
 }
