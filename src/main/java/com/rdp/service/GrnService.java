@@ -266,14 +266,17 @@ public class GrnService {
             .collect(Collectors.toList());
 
         String supplierName = null;
+        Long supplierId = null;
         if (grn.getPurchaseOrder() != null && grn.getPurchaseOrder().getSupplier() != null) {
             supplierName = grn.getPurchaseOrder().getSupplier().getName();
+            supplierId = grn.getPurchaseOrder().getSupplier().getSupplierId();
         }
         return new GrnResponse(
             grn.getId(),
             grn.getGrnCode(),
             grn.getPurchaseOrder().getId(),
             grn.getPurchaseOrder().getOrderCode(),
+            supplierId,
             supplierName,
             grn.getCreatedAt(),
             grn.getApprovedDate(),

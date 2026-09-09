@@ -12,10 +12,12 @@ import com.rdp.dto.DayEndReportRequest;
 import com.rdp.model.Billing;
 import com.rdp.model.Customer;
 import com.rdp.model.DayEndReport;
+import com.rdp.model.SupplierPayment;
 import com.rdp.repository.BillingRepository;
 import com.rdp.repository.DayEndReportRepository;
 import com.rdp.repository.InventoryReturnRepository;
 import com.rdp.repository.RdpDayEndManualBillRepository;
+import com.rdp.repository.SupplierPaymentRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,7 @@ public class DayEndReportService {
     private final BillingRepository billingRepository;
     private final InventoryReturnRepository inventoryReturnRepository;
     private final RdpDayEndManualBillRepository rdpDayEndManualBillRepository;
+    private final SupplierPaymentRepository supplierPaymentRepository;
 
     @Transactional
     public DayEndReport submitDayEndReport(DayEndReportRequest request) {
@@ -272,6 +275,20 @@ public class DayEndReportService {
                 Customer c = b.getCustomer();
                 return String.format("%s (%s) - Rs.%.2f | Bill#: %s", c != null ? c.getName() : "N/A", c != null ? c.getPhone() : "", b.getGrandTotal(), b.getBillingNumber());
             }).toList());
+            
+            // Fetch supplier payments for this day and convert to DayEndReport.SupplierPayment
+            LocalDate reportDate = LocalDate.parse(date);
+            List<SupplierPayment> supplierPaymentsForDay = supplierPaymentRepository.findPaymentsByDateRange(reportDate, reportDate);
+            List<DayEndReport.SupplierPayment> mappedSupplierPayments = supplierPaymentsForDay.stream()
+                .map(sp -> {
+                    DayEndReport.SupplierPayment dayEndSp = new DayEndReport.SupplierPayment();
+                    dayEndSp.setSupplierName(sp.getSupplier() != null ? sp.getSupplier().getName() : "Unknown");
+                    dayEndSp.setMode(sp.getPaymentMethod() != null ? sp.getPaymentMethod() : "CASH");
+                    dayEndSp.setAmount(sp.getPaymentAmount() != null ? sp.getPaymentAmount().doubleValue() : 0.0);
+                    return dayEndSp;
+                })
+                .collect(Collectors.toList());
+            report.setSupplierPayments(mappedSupplierPayments);
             
             return report;
         } catch (Exception e) {

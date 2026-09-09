@@ -77,6 +77,18 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE,"/api/purchase-orders/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH,"/api/purchase-orders/**").hasRole("ADMIN")
 
+                // Invoices (GRN-related)
+                .requestMatchers(HttpMethod.GET,   "/api/invoices/**").hasAnyRole("ADMIN","MANAGER","PHARMACIST")
+                .requestMatchers(HttpMethod.POST,  "/api/invoices/**").hasAnyRole("ADMIN","MANAGER")
+                .requestMatchers(HttpMethod.PUT,   "/api/invoices/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE,"/api/invoices/**").hasRole("ADMIN")
+
+                // Supplier Payments
+                .requestMatchers(HttpMethod.GET,   "/api/supplier-payments/**").hasAnyRole("ADMIN","MANAGER","PHARMACIST")
+                .requestMatchers(HttpMethod.POST,  "/api/supplier-payments/**").hasAnyRole("ADMIN","MANAGER")
+                .requestMatchers(HttpMethod.PUT,   "/api/supplier-payments/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE,"/api/supplier-payments/**").hasRole("ADMIN")
+
                 // User self-profile update (allow all authenticated users)
                 .requestMatchers(HttpMethod.PUT, "/api/users/me").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/users/me").authenticated()
