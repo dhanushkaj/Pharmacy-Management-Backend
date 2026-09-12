@@ -28,5 +28,11 @@ public class DayEndReportController {
         return ResponseEntity.ok(report);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<List<DayEndReport>> getAllDayEndReports() {
+        List<DayEndReport> reports = dayEndReportService.getAllDayEndReports();
+        return ResponseEntity.ok(reports);
+    }
+
     // Removed obsolete payment-summary endpoint
 }

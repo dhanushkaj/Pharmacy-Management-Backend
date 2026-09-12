@@ -299,5 +299,7 @@ public class DayEndReportService {
         }
     }
 
-    // ...existing code...
+    public List<DayEndReport> getAllDayEndReports() {
+        return dayEndReportRepository.findAll();
+    }
 }
