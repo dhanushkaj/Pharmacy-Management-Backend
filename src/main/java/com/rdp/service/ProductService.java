@@ -1,5 +1,22 @@
 package com.rdp.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.rdp.dto.BulkImportResponse;
 import com.rdp.dto.ProductRequest;
 import com.rdp.dto.ProductResponse;
@@ -10,15 +27,8 @@ import com.rdp.repository.CategoryRepository;
 import com.rdp.repository.InventoryItemRepository;
 import com.rdp.repository.ProductRepository;
 import com.rdp.repository.SupplierRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +74,8 @@ public class ProductService {
                 p.getMinStock(),
                 p.getMaxStock(),
                 p.getMaxDiscount(),
+                p.getDiscountStartDate(),
+                p.getDiscountEndDate(),
                 p.getExpiryDate(),
                 p.getPatientInstructions(),
                 p.getBinLocation(),
