@@ -11,6 +11,7 @@ public record BillingItemResponse(
         BigDecimal unitPrice,
         BigDecimal subtotal,
         String batchNo,
-        Integer returnedQty
+        Integer returnedQty,
+        BigDecimal appliedDiscount
 ) {
 }

@@ -87,4 +87,43 @@ public class Product extends BaseAuditableEntity {
 
     @Column(name = "pack_size", length = 50)
     private String packSize;
+
+    /**
+     * Get the active discount percentage for this product based on today's date.
+     * 
+     * Logic:
+     * - If no discount set, return 0
+     * - If discount has no date range (both null), return discount (permanent)
+     * - If discount has date range, check if today falls within:
+     *   - If today < startDate: return 0 (hasn't started)
+     *   - If today > endDate: return 0 (expired)
+     *   - If today is within range: return discount
+     *
+     * @return Active discount percentage (0-100), or BigDecimal.ZERO if no active discount
+     */
+    public java.math.BigDecimal getActiveDiscount() {
+        // No discount set
+        if (maxDiscount == null || maxDiscount.compareTo(java.math.BigDecimal.ZERO) == 0) {
+            return java.math.BigDecimal.ZERO;
+        }
+
+        LocalDate today = LocalDate.now();
+
+        // Permanent discount (no date range)
+        if (discountStartDate == null && discountEndDate == null) {
+            return maxDiscount;
+        }
+
+        // Seasonal discount - check date range
+        if (discountStartDate != null && today.isBefore(discountStartDate)) {
+            return java.math.BigDecimal.ZERO; // Discount hasn't started yet
+        }
+
+        if (discountEndDate != null && today.isAfter(discountEndDate)) {
+            return java.math.BigDecimal.ZERO; // Discount has expired
+        }
+
+        // Today is within the discount period (or only startDate/endDate is set)
+        return maxDiscount;
+    }
 }

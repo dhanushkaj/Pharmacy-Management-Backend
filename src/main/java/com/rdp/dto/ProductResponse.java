@@ -19,8 +19,9 @@ public record ProductResponse(
         Integer minStock,
         Integer maxStock,
         BigDecimal maxDiscount,
-        LocalDate discountStartDate,   // NEW: Discount start date
-        LocalDate discountEndDate,     // NEW: Discount end date
+        BigDecimal activeDiscount,     // Active discount % based on current date (0 if expired/not started)
+        LocalDate discountStartDate,   // Discount start date (null = permanent)
+        LocalDate discountEndDate,     // Discount end date (null = permanent)
         LocalDate expiryDate,
         String patientInstructions,
         String binLocation,

@@ -74,6 +74,7 @@ public class ProductService {
                 p.getMinStock(),
                 p.getMaxStock(),
                 p.getMaxDiscount(),
+                p.getActiveDiscount(),          // Active discount based on current date
                 p.getDiscountStartDate(),
                 p.getDiscountEndDate(),
                 p.getExpiryDate(),
