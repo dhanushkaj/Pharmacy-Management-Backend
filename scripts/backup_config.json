@@ -12,6 +12,7 @@
     "port": 5432
   },
   "gdrive": {
+    "remote": "gdrive",
     "remote_name": "gdrive",
     "folder": "PharmacyBackups"
   },
@@ -20,11 +21,13 @@
     "keep_local_backups": 5
   },
   "retention": {
+    "local_backups": 5,
+    "gdrive_backups": 30,
     "keep_gdrive_backups": 30,
     "description": "Number of backups to keep on Google Drive"
   },
   "postgresql": {
-    "bin_path": "C:\\Program Files\\PostgreSQL\\16\\bin"
+    "bin_path": "C:\\Program Files\\PostgreSQL\\18\\bin"
   },
   "logging": {
     "log_file": "%USERPROFILE%\\pharmacy_backups\\backup.log",
