@@ -4,6 +4,8 @@ import com.rdp.dto.CustomerRequest;
 import com.rdp.dto.CustomerResponse;
 import com.rdp.service.CustomerService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,11 @@ public class CustomerController {
     @GetMapping
     public List<CustomerResponse> all() {
         return service.findAll();
+    }
+
+    @GetMapping("/page")
+    public Page<CustomerResponse> allPaginated(Pageable pageable) {
+        return service.findAllPaginated(pageable);
     }
 
     @GetMapping("/{id}")

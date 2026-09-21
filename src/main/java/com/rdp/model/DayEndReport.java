@@ -103,6 +103,8 @@ public class DayEndReport extends BaseAuditableEntity {
     private double returns;
 
     // Reconciliation
+    // Cashier-entered card-machine reading (must not be replaced by system-recorded cardSales)
+    private double cardPayments;
     private double expectedCash;
     private double physicalCashCounted;
     private double difference;

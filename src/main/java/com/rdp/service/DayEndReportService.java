@@ -154,20 +154,25 @@ public class DayEndReportService {
         }
         report.setReturns(returns);
 
-        // Calculate expected cash: cash sales - returns - supplier payments + manual bills
+        // Cashier-entered card-machine reading (must not be replaced by the system-recorded cardSales figure)
+        report.setCardPayments(request.getCardPayments());
+
+        // System Cash Expected: purely system-derived (Total Sales already covers cash+card+online+cheque+old-manual+credit paid),
+        // plus cashier's Manual Bill Entry, minus returns and cash-funded supplier payments
         double manualBillsTotal = 0.0;
         List<com.rdp.model.RdpDayEndManualBill> manualBills = rdpDayEndManualBillRepository.findByReportDate(today);
         for (com.rdp.model.RdpDayEndManualBill mb : manualBills) {
             if (mb.getAmount() != null) manualBillsTotal += mb.getAmount();
         }
-        // Retained float is money kept back for tomorrow, so it isn't part of what's expected to be handed over today
-        double expectedCash = cashSales - returns - supplierPaymentsCashTotal + manualBillsTotal - report.getNextDayFloatTotal();
-        report.setExpectedCash(expectedCash);
+        double systemCashExpected = report.getTotalSales() + manualBillsTotal - returns - supplierPaymentsCashTotal;
+        report.setExpectedCash(systemCashExpected);
 
-        // Set physical cash counted from request
+        // Set physical cash counted from request (remainder-only denomination breakdown; Next Day Float is never part of reconciliation)
         report.setPhysicalCashCounted(request.getPhysicalCashCounted());
-        // Calculate difference
-        double difference = report.getPhysicalCashCounted() - expectedCash;
+        // Manual Cash Expected: what's actually in hand — physical cash counted + the cashier's card-machine reading
+        double manualCashExpected = report.getPhysicalCashCounted() + request.getCardPayments();
+        // Calculate difference: Manual Cash Expected vs System Cash Expected
+        double difference = manualCashExpected - systemCashExpected;
         report.setDifference(difference);
         // Set status
         if (Math.abs(difference) < 0.01) {
