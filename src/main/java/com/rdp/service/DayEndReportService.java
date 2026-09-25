@@ -125,6 +125,7 @@ public class DayEndReportService {
                     case CARD -> cardSales += amount;
                     case ONLINE_TRANSFER, MOBILE_PAYMENT -> onlineTransferSales += amount;
                     case CHEQUE -> chequeSales += amount;
+                    case OLD_MANUAL -> {} // Already included in totalSales, counted separately for reporting
                     default -> {}
                 }
             }
@@ -158,13 +159,13 @@ public class DayEndReportService {
         report.setCardPayments(request.getCardPayments());
 
         // System Cash Expected: purely system-derived (Total Sales already covers cash+card+online+cheque+old-manual+credit paid),
-        // plus cashier's Manual Bill Entry, minus returns and cash-funded supplier payments
+        // minus returns and cash-funded supplier payments (Manual Bill Entry is NOT included here)
         double manualBillsTotal = 0.0;
         List<com.rdp.model.RdpDayEndManualBill> manualBills = rdpDayEndManualBillRepository.findByReportDate(today);
         for (com.rdp.model.RdpDayEndManualBill mb : manualBills) {
             if (mb.getAmount() != null) manualBillsTotal += mb.getAmount();
         }
-        double systemCashExpected = report.getTotalSales() + manualBillsTotal - returns - supplierPaymentsCashTotal;
+        double systemCashExpected = report.getTotalSales() - returns - supplierPaymentsCashTotal;
         report.setExpectedCash(systemCashExpected);
 
         // Set physical cash counted from request (remainder-only denomination breakdown; Next Day Float is never part of reconciliation)
@@ -235,6 +236,7 @@ public class DayEndReportService {
                         case CARD -> cardSales += amount;
                         case ONLINE_TRANSFER, MOBILE_PAYMENT -> onlineTransferSales += amount;
                         case CHEQUE -> chequeSales += amount;
+                        case OLD_MANUAL -> {} // Already included in totalSales, counted separately for reporting
                         default -> {}
                     }
                 }
@@ -294,6 +296,17 @@ public class DayEndReportService {
                 })
                 .collect(Collectors.toList());
             report.setSupplierPayments(mappedSupplierPayments);
+            
+            // Recalculate System Cash Expected when viewing (total sales - returns - supplier cash payments)
+            double supplierPaymentsCashTotal = 0.0;
+            if (mappedSupplierPayments != null) {
+                supplierPaymentsCashTotal = mappedSupplierPayments.stream()
+                    .filter(sp -> sp.getMode() != null && sp.getMode().equalsIgnoreCase("CASH"))
+                    .mapToDouble(DayEndReport.SupplierPayment::getAmount)
+                    .sum();
+            }
+            double systemCashExpected = report.getTotalSales() - returns - supplierPaymentsCashTotal;
+            report.setExpectedCash(systemCashExpected);
             
             return report;
         } catch (Exception e) {
