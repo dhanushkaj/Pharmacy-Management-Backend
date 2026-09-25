@@ -33,11 +33,15 @@ public class DayEndReport extends BaseAuditableEntity {
                 private double oldManualBillTotal;
                 @Transient
                 private java.util.List<String> oldManualBillDetails;
+                @Transient
+                private double manualBillEntriesTotal;
 
                 public double getOldManualBillTotal() { return oldManualBillTotal; }
                 public void setOldManualBillTotal(double oldManualBillTotal) { this.oldManualBillTotal = oldManualBillTotal; }
                 public java.util.List<String> getOldManualBillDetails() { return oldManualBillDetails; }
                 public void setOldManualBillDetails(java.util.List<String> oldManualBillDetails) { this.oldManualBillDetails = oldManualBillDetails; }
+                public double getManualBillEntriesTotal() { return manualBillEntriesTotal; }
+                public void setManualBillEntriesTotal(double manualBillEntriesTotal) { this.manualBillEntriesTotal = manualBillEntriesTotal; }
             @Column(name = "cash_value", nullable = false)
             private double cashValue;
             public double getCashValue() { return cashValue; }

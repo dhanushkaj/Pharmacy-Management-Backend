@@ -170,8 +170,8 @@ public class DayEndReportService {
 
         // Set physical cash counted from request (remainder-only denomination breakdown; Next Day Float is never part of reconciliation)
         report.setPhysicalCashCounted(request.getPhysicalCashCounted());
-        // Manual Cash Expected: what's actually in hand — physical cash counted + the cashier's card-machine reading
-        double manualCashExpected = report.getPhysicalCashCounted() + request.getCardPayments();
+        // Manual Cash Expected: what's actually in hand — physical cash counted + the cashier's card-machine reading + manual bill entries
+        double manualCashExpected = report.getPhysicalCashCounted() + request.getCardPayments() + manualBillsTotal;
         // Calculate difference: Manual Cash Expected vs System Cash Expected
         double difference = manualCashExpected - systemCashExpected;
         report.setDifference(difference);
@@ -308,6 +308,28 @@ public class DayEndReportService {
             double systemCashExpected = report.getTotalSales() - returns - supplierPaymentsCashTotal;
             report.setExpectedCash(systemCashExpected);
             
+            // Fetch manual bills for this day from separate table (date already parsed as LocalDate reportDate above)
+            double manualBillsTotal = 0.0;
+            List<com.rdp.model.RdpDayEndManualBill> manualBills = rdpDayEndManualBillRepository.findByReportDate(date);
+            for (com.rdp.model.RdpDayEndManualBill mb : manualBills) {
+                if (mb.getAmount() != null) manualBillsTotal += mb.getAmount();
+            }
+            report.setManualBillEntriesTotal(manualBillsTotal);
+            
+            // Recalculate Difference with Manual Bill Entry included
+            double manualCashExpected = report.getPhysicalCashCounted() + report.getCardPayments() + manualBillsTotal;
+            double difference = manualCashExpected - systemCashExpected;
+            report.setDifference(difference);
+            
+            // Recalculate Status
+            if (Math.abs(difference) < 0.01) {
+                report.setStatus("BALANCED");
+            } else if (difference < 0) {
+                report.setStatus("SHORT");
+            } else {
+                report.setStatus("EXCESS");
+            }
+            
             return report;
         } catch (Exception e) {
             // Log the error and return a meaningful error response
@@ -318,6 +340,85 @@ public class DayEndReportService {
     }
 
     public List<DayEndReport> getAllDayEndReports() {
-        return dayEndReportRepository.findAll();
+        List<DayEndReport> reports = dayEndReportRepository.findAll();
+        // Recalculate System Cash Expected and Difference for all reports, plus populate missing transient fields
+        for (DayEndReport report : reports) {
+            LocalDate reportDate = null;
+            try {
+                reportDate = LocalDate.parse(report.getDate());
+            } catch (Exception e) {
+                System.err.println("Error parsing report date: " + report.getDate());
+                continue;
+            }
+            
+            LocalDateTime startOfDay = reportDate.atStartOfDay();
+            LocalDateTime endOfDay = reportDate.atTime(23, 59, 59);
+            
+            // Populate creditCustomerTotal (Credit bills paid today)
+            List<Billing> creditPaidToday = billingRepository.findCreditBillsPaidBetween(startOfDay, endOfDay);
+            report.setCreditCustomerDetails(creditPaidToday.stream().map(b -> {
+                Customer c = b.getCustomer();
+                return String.format("%s (%s) - Rs.%.2f | Bill#: %s", c != null ? c.getName() : "N/A", c != null ? c.getPhone() : "", b.getGrandTotal(), b.getBillingNumber());
+            }).toList());
+            double creditCustomerTotal = creditPaidToday.stream()
+                .mapToDouble(b -> b.getGrandTotal() != null ? b.getGrandTotal().doubleValue() : 0.0)
+                .sum();
+            report.setCreditCustomerTotal(creditCustomerTotal);
+            
+            // Populate oldManualBillTotal (Old Manual Bills from billing)
+            List<Billing> oldManualBills = billingRepository.findByBillingDateBetween(startOfDay, endOfDay).stream()
+                .filter(b -> b.getPaymentMethod() == Billing.PaymentMethod.OLD_MANUAL)
+                .toList();
+            double oldManualBillTotal = oldManualBills.stream()
+                .mapToDouble(b -> b.getGrandTotal() != null ? b.getGrandTotal().doubleValue() : 0.0)
+                .sum();
+            report.setOldManualBillTotal(oldManualBillTotal);
+            report.setOldManualBillDetails(oldManualBills.stream().map(b -> {
+                Customer c = b.getCustomer();
+                return String.format("%s (%s) - Rs.%.2f | Bill#: %s", c != null ? c.getName() : "N/A", c != null ? c.getPhone() : "", b.getGrandTotal(), b.getBillingNumber());
+            }).toList());
+            
+            // Recalculate System Cash Expected
+            double returns = report.getReturns();
+            double supplierPaymentsCashTotal = 0.0;
+            if (report.getSupplierPayments() != null) {
+                supplierPaymentsCashTotal = report.getSupplierPayments().stream()
+                    .filter(sp -> sp.getMode() != null && sp.getMode().equalsIgnoreCase("CASH"))
+                    .mapToDouble(DayEndReport.SupplierPayment::getAmount)
+                    .sum();
+            }
+            double totalSales = report.getTotalSales();
+            double systemCashExpected = totalSales - returns - supplierPaymentsCashTotal;
+            report.setExpectedCash(systemCashExpected);
+            
+            // Fetch manual bills for this report's date and populate manualBillEntriesTotal
+            double manualBillsTotal = 0.0;
+            try {
+                List<com.rdp.model.RdpDayEndManualBill> manualBills = rdpDayEndManualBillRepository.findByReportDate(report.getDate());
+                for (com.rdp.model.RdpDayEndManualBill mb : manualBills) {
+                    if (mb.getAmount() != null) {
+                        manualBillsTotal += mb.getAmount();
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error fetching manual bills for report date: " + report.getDate());
+            }
+            report.setManualBillEntriesTotal(manualBillsTotal);
+            
+            // Recalculate Difference with Manual Bill Entry included
+            double manualCashExpected = report.getPhysicalCashCounted() + report.getCardPayments() + manualBillsTotal;
+            double difference = manualCashExpected - systemCashExpected;
+            report.setDifference(difference);
+            
+            // Recalculate Status
+            if (Math.abs(difference) < 0.01) {
+                report.setStatus("BALANCED");
+            } else if (difference < 0) {
+                report.setStatus("SHORT");
+            } else {
+                report.setStatus("EXCESS");
+            }
+        }
+        return reports;
     }
 }
