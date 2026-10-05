@@ -1,6 +1,7 @@
 package com.rdp.service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -412,6 +413,7 @@ public class InventoryCountService {
         Hibernate.initialize(session.getLines());
         
         List<InventoryCountLineDTO> lineDTOs = session.getLines().stream()
+                .sorted(Comparator.comparing(InventoryCountLine::getProductName, String.CASE_INSENSITIVE_ORDER))
                 .map(this::mapLineToDTO)
                 .collect(Collectors.toList());
         
