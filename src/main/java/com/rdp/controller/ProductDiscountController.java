@@ -23,6 +23,22 @@ public class ProductDiscountController {
   @Autowired
   private ProductRepository productRepository;
 
+  /**
+   * Validates that the requested discount does not exceed the product's configured max discount (ceiling).
+   * If no max discount is configured, there is no ceiling to enforce and any value is allowed.
+   * Returns an error message if invalid, or null if the discount is allowed.
+   */
+  private String validateAgainstCeiling(Product product, BigDecimal discountPercent) {
+    BigDecimal ceiling = product.getMaxDiscount();
+    if (ceiling == null || ceiling.compareTo(BigDecimal.ZERO) <= 0) {
+      return null;
+    }
+    if (discountPercent.compareTo(ceiling) > 0) {
+      return String.format("Discount cannot exceed the maximum allowed discount of %s%% for this product.", ceiling.stripTrailingZeros().toPlainString());
+    }
+    return null;
+  }
+
   @PostMapping("/{productId}/discount")
   public ResponseEntity<?> applySeasonalDiscount(
       @PathVariable Long productId,
@@ -42,17 +58,22 @@ public class ProductDiscountController {
       LocalDate startDate = LocalDate.parse(startDateStr);
       LocalDate endDate = LocalDate.parse(endDateStr);
 
-      // Check if product already has a discount and return info if it does
-      if (product.getMaxDiscount() != null && product.getMaxDiscount().compareTo(BigDecimal.ZERO) > 0) {
+      String ceilingError = validateAgainstCeiling(product, discountPercent);
+      if (ceilingError != null) {
+        return ResponseEntity.badRequest().body(Map.of("error", ceilingError));
+      }
+
+      // Check if product already has a seasonal discount and return info if it does
+      if (product.getSeasonalDiscountPercent() != null && product.getSeasonalDiscountPercent().compareTo(BigDecimal.ZERO) > 0) {
         return ResponseEntity.ok(Map.of(
           "hadExistingDiscount", true,
-          "previousDiscount", product.getMaxDiscount(),
+          "previousDiscount", product.getSeasonalDiscountPercent(),
           "message", "Product already has a discount. Overwriting..."
         ));
       }
 
-      // Update the product with new discount and dates
-      product.setMaxDiscount(discountPercent);
+      // Update the product with new seasonal discount and dates (maxDiscount stays untouched as the ceiling)
+      product.setSeasonalDiscountPercent(discountPercent);
       product.setDiscountStartDate(startDate);
       product.setDiscountEndDate(endDate);
       productRepository.save(product);
@@ -90,8 +111,13 @@ public class ProductDiscountController {
       LocalDate startDate = LocalDate.parse(startDateStr);
       LocalDate endDate = LocalDate.parse(endDateStr);
 
-      // Overwrite the discount and dates
-      product.setMaxDiscount(discountPercent);
+      String ceilingError = validateAgainstCeiling(product, discountPercent);
+      if (ceilingError != null) {
+        return ResponseEntity.badRequest().body(Map.of("error", ceilingError));
+      }
+
+      // Overwrite the seasonal discount and dates (maxDiscount stays untouched as the ceiling)
+      product.setSeasonalDiscountPercent(discountPercent);
       product.setDiscountStartDate(startDate);
       product.setDiscountEndDate(endDate);
       productRepository.save(product);

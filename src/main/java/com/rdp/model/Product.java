@@ -70,6 +70,13 @@ public class Product extends BaseAuditableEntity {
     @Column(name = "max_discount", precision = 5, scale = 2)
     private java.math.BigDecimal maxDiscount;
 
+    // The actual discount currently configured/applied (e.g. via the seasonal discount screen).
+    // Must never exceed maxDiscount - maxDiscount is only the ceiling, not the applied value.
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "100.0", message = "Seasonal Discount must be between 0.0 and 100.0")
+    @Column(name = "seasonal_discount_percent", precision = 5, scale = 2)
+    private java.math.BigDecimal seasonalDiscountPercent;
+
     @Column(name = "discount_start_date")
     private LocalDate discountStartDate;
 
@@ -92,18 +99,20 @@ public class Product extends BaseAuditableEntity {
      * Get the active discount percentage for this product based on today's date.
      * 
      * Logic:
-     * - If no discount set, return 0
+     * - If no seasonal discount set, return 0
      * - If discount has no date range (both null), return discount (permanent)
      * - If discount has date range, check if today falls within:
      *   - If today < startDate: return 0 (hasn't started)
      *   - If today > endDate: return 0 (expired)
      *   - If today is within range: return discount
      *
+     * Note: maxDiscount is only the configured ceiling and is never returned here directly.
+     *
      * @return Active discount percentage (0-100), or BigDecimal.ZERO if no active discount
      */
     public java.math.BigDecimal getActiveDiscount() {
-        // No discount set
-        if (maxDiscount == null || maxDiscount.compareTo(java.math.BigDecimal.ZERO) == 0) {
+        // No seasonal discount set
+        if (seasonalDiscountPercent == null || seasonalDiscountPercent.compareTo(java.math.BigDecimal.ZERO) == 0) {
             return java.math.BigDecimal.ZERO;
         }
 
@@ -111,7 +120,7 @@ public class Product extends BaseAuditableEntity {
 
         // Permanent discount (no date range)
         if (discountStartDate == null && discountEndDate == null) {
-            return maxDiscount;
+            return seasonalDiscountPercent;
         }
 
         // Seasonal discount - check date range
@@ -124,6 +133,6 @@ public class Product extends BaseAuditableEntity {
         }
 
         // Today is within the discount period (or only startDate/endDate is set)
-        return maxDiscount;
+        return seasonalDiscountPercent;
     }
 }
