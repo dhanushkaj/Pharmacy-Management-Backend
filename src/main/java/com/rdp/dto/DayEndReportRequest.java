@@ -22,6 +22,8 @@ public class DayEndReportRequest {
     private double onlineTransferSales;
     private double chequeSales;
     private double returns;
+    // Cashier-entered card-machine reading (must not be replaced by system-recorded cardSales)
+    private double cardPayments;
     private double expectedCash;
     private double physicalCashCounted;
     private double difference;
@@ -71,6 +73,8 @@ public class DayEndReportRequest {
     public void setChequeSales(double chequeSales) { this.chequeSales = chequeSales; }
     public double getReturns() { return returns; }
     public void setReturns(double returns) { this.returns = returns; }
+    public double getCardPayments() { return cardPayments; }
+    public void setCardPayments(double cardPayments) { this.cardPayments = cardPayments; }
     public double getExpectedCash() { return expectedCash; }
     public void setExpectedCash(double expectedCash) { this.expectedCash = expectedCash; }
     public double getPhysicalCashCounted() { return physicalCashCounted; }

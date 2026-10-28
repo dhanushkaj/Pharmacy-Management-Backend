@@ -9,5 +9,10 @@ if exist "build\libs\Pharmacy-Management-Backend.jar" (
     java -jar "build\libs\Pharmacy-Management-Backend.jar"
 ) else (
     echo [INFO] Backend: JAR not found, starting with Gradle bootRun...
-    gradlew.bat bootRun
+    REM Try gradlew first, if it fails use system gradle
+    call gradlew.bat bootRun
+    if errorlevel 1 (
+        echo [INFO] Gradle wrapper failed, trying system Gradle...
+        gradle bootRun
+    )
 )

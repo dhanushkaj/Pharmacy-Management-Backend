@@ -19,10 +19,10 @@ if command -v jq &> /dev/null; then
     DB_PASSWORD=$(jq -r '.database.password' "$CONFIG_FILE")
     DB_HOST=$(jq -r '.database.host' "$CONFIG_FILE")
     DB_PORT=$(jq -r '.database.port' "$CONFIG_FILE")
-    GDRIVE_REMOTE=$(jq -r '.gdrive.remote' "$CONFIG_FILE")
-    GDRIVE_FOLDER=$(jq -r '.gdrive.folder' "$CONFIG_FILE")
-    KEEP_LOCAL_BACKUPS=$(jq -r '.retention.local_backups' "$CONFIG_FILE")
-    KEEP_GDRIVE_BACKUPS=$(jq -r '.retention.gdrive_backups' "$CONFIG_FILE")
+    GDRIVE_REMOTE=$(jq -r '(.gdrive.remote // .gdrive.remote_name // "gdrive")' "$CONFIG_FILE")
+    GDRIVE_FOLDER=$(jq -r '(.gdrive.folder // "PharmacyBackups")' "$CONFIG_FILE")
+    KEEP_LOCAL_BACKUPS=$(jq -r '(.retention.local_backups // .local_storage.keep_local_backups // .retention.keep_local_backups // 5)' "$CONFIG_FILE")
+    KEEP_GDRIVE_BACKUPS=$(jq -r '(.retention.gdrive_backups // .retention.keep_gdrive_backups // 30)' "$CONFIG_FILE")
 else
     # Fallback: hardcoded defaults if jq not available
     DB_NAME="pharmacy"

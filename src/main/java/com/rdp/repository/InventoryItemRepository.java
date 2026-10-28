@@ -35,4 +35,17 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
 
     @Query(value = "SELECT * FROM rdp_inventory_items WHERE product_id = :productId AND price = :price FOR UPDATE", nativeQuery = true)
     Optional<InventoryItem> findByProductIdAndPriceForUpdateNative(@Param("productId") Long productId, @Param("price") BigDecimal price);
+
+    /**
+     * Find all inventory records for a product ordered by updatedAt descending (latest first)
+     * Used for multi-record stock allocation when latest price record has zero stock
+     */
+    @Query("FROM InventoryItem ii WHERE ii.product.productId = :productId ORDER BY ii.updatedAt DESC, ii.id DESC")
+    List<InventoryItem> findByProductIdOrderByLatestPrice(@Param("productId") Long productId);
+
+    /**
+     * Find the latest selling price for a product using updatedAt timestamp
+     */
+    @Query("FROM InventoryItem ii WHERE ii.product.productId = :productId ORDER BY ii.updatedAt DESC LIMIT 1")
+    Optional<InventoryItem> findLatestPriceByProductId(@Param("productId") Long productId);
 }

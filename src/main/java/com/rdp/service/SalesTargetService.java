@@ -38,7 +38,7 @@ public class SalesTargetService {
         // Delete existing targets for the month
         String deleteSql = "DELETE FROM sales_targets WHERE year = ? AND month = ?";
         jdbcTemplate.update(deleteSql, year, month);
-        
+
         // Insert new targets
         String insertSql = "INSERT INTO sales_targets (year, month, day, target_amount) VALUES (?, ?, ?, ?)";
         for (SalesTarget target : targets) {
@@ -49,7 +49,7 @@ public class SalesTargetService {
     @Transactional
     public SalesTarget saveOrUpdateTarget(Integer year, Integer month, Integer day, BigDecimal targetAmount) {
         Optional<SalesTarget> existing = salesTargetRepository.findByYearAndMonthAndDay(year, month, day);
-        
+
         SalesTarget target;
         if (existing.isPresent()) {
             target = existing.get();
@@ -61,7 +61,7 @@ public class SalesTargetService {
             target.setDay(day);
             target.setTargetAmount(targetAmount);
         }
-        
+
         return salesTargetRepository.save(target);
     }
 
@@ -69,15 +69,26 @@ public class SalesTargetService {
      * Get actual sales for a specific day from pharmacy.rdp_billings
      */
     public BigDecimal getActualSalesForDay(Integer year, Integer month, Integer day) {
+        // Credit bills aren't counted as sales on the billing date; instead, they count
+        // on whatever day they're actually paid off (paid_date), consistent with
+        // day-end report logic
         String sql = """
-            SELECT COALESCE(SUM(grand_total), 0) 
-            FROM pharmacy.rdp_billings 
-            WHERE EXTRACT(YEAR FROM billing_date) = ? 
-            AND EXTRACT(MONTH FROM billing_date) = ? 
-            AND EXTRACT(DAY FROM billing_date) = ?
-            """;
-        
-        BigDecimal result = jdbcTemplate.queryForObject(sql, BigDecimal.class, year, month, day);
+                SELECT COALESCE(SUM(grand_total), 0)
+                FROM pharmacy.rdp_billings
+                WHERE (
+                    payment_method IS DISTINCT FROM 'CREDIT'
+                    AND EXTRACT(YEAR FROM billing_date) = ?
+                    AND EXTRACT(MONTH FROM billing_date) = ?
+                    AND EXTRACT(DAY FROM billing_date) = ?
+                ) OR (
+                    payment_method = 'CREDIT' AND paid = true
+                    AND EXTRACT(YEAR FROM paid_date) = ?
+                    AND EXTRACT(MONTH FROM paid_date) = ?
+                    AND EXTRACT(DAY FROM paid_date) = ?
+                )
+                """;
+
+        BigDecimal result = jdbcTemplate.queryForObject(sql, BigDecimal.class, year, month, day, year, month, day);
         return result != null ? result : BigDecimal.ZERO;
     }
 
@@ -85,15 +96,26 @@ public class SalesTargetService {
      * Get accumulated actual sales from day 1 to specified day
      */
     public BigDecimal getAccumulatedSalesUpToDay(Integer year, Integer month, Integer day) {
+        // Credit bills aren't counted as sales on the billing date; instead, they count
+        // on whatever day they're actually paid off (paid_date), consistent with
+        // day-end report logic
         String sql = """
-            SELECT COALESCE(SUM(grand_total), 0) 
-            FROM pharmacy.rdp_billings 
-            WHERE EXTRACT(YEAR FROM billing_date) = ? 
-            AND EXTRACT(MONTH FROM billing_date) = ? 
-            AND EXTRACT(DAY FROM billing_date) <= ?
-            """;
-        
-        BigDecimal result = jdbcTemplate.queryForObject(sql, BigDecimal.class, year, month, day);
+                SELECT COALESCE(SUM(grand_total), 0)
+                FROM pharmacy.rdp_billings
+                WHERE (
+                    payment_method IS DISTINCT FROM 'CREDIT'
+                    AND EXTRACT(YEAR FROM billing_date) = ?
+                    AND EXTRACT(MONTH FROM billing_date) = ?
+                    AND EXTRACT(DAY FROM billing_date) <= ?
+                ) OR (
+                    payment_method = 'CREDIT' AND paid = true
+                    AND EXTRACT(YEAR FROM paid_date) = ?
+                    AND EXTRACT(MONTH FROM paid_date) = ?
+                    AND EXTRACT(DAY FROM paid_date) <= ?
+                )
+                """;
+
+        BigDecimal result = jdbcTemplate.queryForObject(sql, BigDecimal.class, year, month, day, year, month, day);
         return result != null ? result : BigDecimal.ZERO;
     }
 
@@ -108,7 +130,8 @@ public class SalesTargetService {
     }
 
     /**
-     * Get dashboard data: today's sales vs target, and accumulated sales vs accumulated target
+     * Get dashboard data: today's sales vs target, and accumulated sales vs
+     * accumulated target
      */
     public Map<String, Object> getDashboardData() {
         LocalDate today = LocalDate.now();
@@ -140,13 +163,15 @@ public class SalesTargetService {
 
         // Progress percentages
         if (todayTarget.compareTo(BigDecimal.ZERO) > 0) {
-            data.put("todayProgress", todaySales.multiply(BigDecimal.valueOf(100)).divide(todayTarget, 2, BigDecimal.ROUND_HALF_UP));
+            data.put("todayProgress",
+                    todaySales.multiply(BigDecimal.valueOf(100)).divide(todayTarget, 2, BigDecimal.ROUND_HALF_UP));
         } else {
             data.put("todayProgress", BigDecimal.ZERO);
         }
 
         if (accumulatedTarget.compareTo(BigDecimal.ZERO) > 0) {
-            data.put("accumulatedProgress", accumulatedSales.multiply(BigDecimal.valueOf(100)).divide(accumulatedTarget, 2, BigDecimal.ROUND_HALF_UP));
+            data.put("accumulatedProgress", accumulatedSales.multiply(BigDecimal.valueOf(100)).divide(accumulatedTarget,
+                    2, BigDecimal.ROUND_HALF_UP));
         } else {
             data.put("accumulatedProgress", BigDecimal.ZERO);
         }
@@ -160,20 +185,30 @@ public class SalesTargetService {
     public List<Map<String, Object>> getMonthlyBreakdown(Integer year, Integer month) {
         // Get all targets for the month
         List<SalesTarget> targets = salesTargetRepository.findByYearAndMonthOrderByDay(year, month);
-        
-        // Get daily sales for the month
+
+        // Get daily sales for the month: credit bills count on their paid_date, not
+        // their
+        // billing_date, consistent with day-end report logic
         String sql = """
-            SELECT EXTRACT(DAY FROM billing_date)::INTEGER as day, 
-                   COALESCE(SUM(grand_total), 0) as sales
-            FROM pharmacy.rdp_billings 
-            WHERE EXTRACT(YEAR FROM billing_date) = ? 
-            AND EXTRACT(MONTH FROM billing_date) = ?
-            GROUP BY EXTRACT(DAY FROM billing_date)
-            ORDER BY day
-            """;
-        
-        List<Map<String, Object>> salesData = jdbcTemplate.queryForList(sql, year, month);
-        
+                SELECT day, COALESCE(SUM(amt), 0) as sales FROM (
+                    SELECT EXTRACT(DAY FROM billing_date)::INTEGER as day, grand_total as amt
+                    FROM pharmacy.rdp_billings
+                    WHERE EXTRACT(YEAR FROM billing_date) = ?
+                    AND EXTRACT(MONTH FROM billing_date) = ?
+                    AND payment_method IS DISTINCT FROM 'CREDIT'
+                    UNION ALL
+                    SELECT EXTRACT(DAY FROM paid_date)::INTEGER as day, grand_total as amt
+                    FROM pharmacy.rdp_billings
+                    WHERE payment_method = 'CREDIT' AND paid = true
+                    AND EXTRACT(YEAR FROM paid_date) = ?
+                    AND EXTRACT(MONTH FROM paid_date) = ?
+                ) combined
+                GROUP BY day
+                ORDER BY day
+                """;
+
+        List<Map<String, Object>> salesData = jdbcTemplate.queryForList(sql, year, month, year, month);
+
         // Create a map of day -> sales
         Map<Integer, BigDecimal> salesByDay = new HashMap<>();
         for (Map<String, Object> row : salesData) {
@@ -181,17 +216,17 @@ public class SalesTargetService {
             BigDecimal sales = (BigDecimal) row.get("sales");
             salesByDay.put(day, sales);
         }
-        
+
         // Create a map of day -> target
         Map<Integer, BigDecimal> targetByDay = new HashMap<>();
         for (SalesTarget target : targets) {
             targetByDay.put(target.getDay(), target.getTargetAmount());
         }
-        
+
         // Build result for each day of the month
         LocalDate firstDay = LocalDate.of(year, month, 1);
         int daysInMonth = firstDay.lengthOfMonth();
-        
+
         List<Map<String, Object>> result = new java.util.ArrayList<>();
         for (int day = 1; day <= daysInMonth; day++) {
             Map<String, Object> dayData = new HashMap<>();
@@ -200,7 +235,7 @@ public class SalesTargetService {
             dayData.put("sales", salesByDay.getOrDefault(day, BigDecimal.ZERO));
             result.add(dayData);
         }
-        
+
         return result;
     }
 }

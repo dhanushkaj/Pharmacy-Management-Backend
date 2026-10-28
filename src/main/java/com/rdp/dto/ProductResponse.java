@@ -19,6 +19,10 @@ public record ProductResponse(
         Integer minStock,
         Integer maxStock,
         BigDecimal maxDiscount,
+        BigDecimal seasonalDiscountPercent, // The configured discount value (must be <= maxDiscount); maxDiscount is only the ceiling
+        BigDecimal activeDiscount,     // Active discount % based on current date (0 if expired/not started)
+        LocalDate discountStartDate,   // Discount start date (null = permanent)
+        LocalDate discountEndDate,     // Discount end date (null = permanent)
         LocalDate expiryDate,
         String patientInstructions,
         String binLocation,

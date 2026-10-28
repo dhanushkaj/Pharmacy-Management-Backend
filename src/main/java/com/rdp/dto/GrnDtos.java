@@ -59,6 +59,7 @@ public class GrnDtos {
             String grnCode,
             Long purchaseOrderId,
             String purchaseOrderCode,
+            Long supplierId,
             String supplierName,
             LocalDateTime createdAt,
             LocalDateTime approvedDate,

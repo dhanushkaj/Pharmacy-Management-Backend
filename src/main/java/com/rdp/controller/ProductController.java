@@ -5,27 +5,70 @@ import com.rdp.dto.BulkImportResponse;
 import com.rdp.dto.ProductCsvRequest;
 import com.rdp.dto.ProductRequest;
 import com.rdp.dto.ProductResponse;
+import com.rdp.model.InventoryItem;
+import com.rdp.repository.InventoryItemRepository;
 import com.rdp.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService service;
-    public ProductController(ProductService service) { this.service = service; }
+    private final InventoryItemRepository inventoryRepo;
+
+    public ProductController(ProductService service, InventoryItemRepository inventoryRepo) {
+        this.service = service;
+        this.inventoryRepo = inventoryRepo;
+    }
 
     @GetMapping
     public List<ProductResponse> all() { return service.findAll(); }
 
     @GetMapping("/{id}")
     public ProductResponse one(@PathVariable("id") Long id) { return service.findById(id); }
+
+    /**
+     * Get the latest selling price for a product
+     * Used by Inventory Returns to get the current market price
+     */
+    @GetMapping("/{id}/latest-price")
+    public ResponseEntity<?> getLatestPrice(@PathVariable("id") Long id) {
+        try {
+            // Verify product exists
+            service.findById(id);
+            
+            // Get latest price from inventory
+            Optional<InventoryItem> latestOpt = inventoryRepo.findLatestPriceByProductId(id);
+            
+            if (latestOpt.isEmpty()) {
+                return ResponseEntity.ok(Map.of(
+                    "productId", id,
+                    "latestPrice", null,
+                    "message", "No price information available"
+                ));
+            }
+            
+            BigDecimal latestPrice = latestOpt.get().getPrice();
+            return ResponseEntity.ok(Map.of(
+                "productId", id,
+                "latestPrice", latestPrice,
+                "formattedPrice", "Rs. " + latestPrice
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @PostMapping
     public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest req) {

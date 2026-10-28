@@ -21,19 +21,19 @@ $DB_HOST = $Config.database.host
 $DB_PORT = $Config.database.port
 
 # Google Drive configuration from config file
-$GDRIVE_REMOTE = $Config.gdrive.remote
-$GDRIVE_FOLDER = $Config.gdrive.folder
+$GDRIVE_REMOTE = if ($Config.gdrive.remote) { $Config.gdrive.remote } elseif ($Config.gdrive.remote_name) { $Config.gdrive.remote_name } else { "gdrive" }
+$GDRIVE_FOLDER = if ($Config.gdrive.folder) { $Config.gdrive.folder } else { "PharmacyBackups" }
 
 # Local backup directory
 $BACKUP_DIR = "$env:USERPROFILE\pharmacy_backups"
 $LOG_FILE = "$BACKUP_DIR\backup.log"
 
 # Retention settings from config file
-$KEEP_LOCAL_BACKUPS = $Config.retention.local_backups
-$KEEP_GDRIVE_BACKUPS = $Config.retention.gdrive_backups
+$KEEP_LOCAL_BACKUPS = if ($Config.retention.local_backups -ne $null) { $Config.retention.local_backups } elseif ($Config.local_storage.keep_local_backups -ne $null) { $Config.local_storage.keep_local_backups } elseif ($Config.retention.keep_local_backups -ne $null) { $Config.retention.keep_local_backups } else { 5 }
+$KEEP_GDRIVE_BACKUPS = if ($Config.retention.gdrive_backups -ne $null) { $Config.retention.gdrive_backups } elseif ($Config.retention.keep_gdrive_backups -ne $null) { $Config.retention.keep_gdrive_backups } else { 30 }
 
 # PostgreSQL bin path (update if different)
-$PG_BIN_PATH = "C:\Program Files\PostgreSQL\16\bin"
+$PG_BIN_PATH = if ($Config.postgresql -and $Config.postgresql.bin_path) { $Config.postgresql.bin_path } else { "C:\Program Files\PostgreSQL\18\bin" }
 
 # =============================================================================
 # Functions

@@ -1,11 +1,28 @@
 package com.rdp.model;
 
-import com.rdp.audit.BaseAuditableEntity;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.*;
-
 import java.time.LocalDate;
+
+import com.rdp.audit.BaseAuditableEntity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "rdp_products",
@@ -53,6 +70,19 @@ public class Product extends BaseAuditableEntity {
     @Column(name = "max_discount", precision = 5, scale = 2)
     private java.math.BigDecimal maxDiscount;
 
+    // The actual discount currently configured/applied (e.g. via the seasonal discount screen).
+    // Must never exceed maxDiscount - maxDiscount is only the ceiling, not the applied value.
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "100.0", message = "Seasonal Discount must be between 0.0 and 100.0")
+    @Column(name = "seasonal_discount_percent", precision = 5, scale = 2)
+    private java.math.BigDecimal seasonalDiscountPercent;
+
+    @Column(name = "discount_start_date")
+    private LocalDate discountStartDate;
+
+    @Column(name = "discount_end_date")
+    private LocalDate discountEndDate;
+
     @Column(name = "expiry_date")
     private LocalDate expiryDate;
 
@@ -64,4 +94,45 @@ public class Product extends BaseAuditableEntity {
 
     @Column(name = "pack_size", length = 50)
     private String packSize;
+
+    /**
+     * Get the active discount percentage for this product based on today's date.
+     * 
+     * Logic:
+     * - If no seasonal discount set, return 0
+     * - If discount has no date range (both null), return discount (permanent)
+     * - If discount has date range, check if today falls within:
+     *   - If today < startDate: return 0 (hasn't started)
+     *   - If today > endDate: return 0 (expired)
+     *   - If today is within range: return discount
+     *
+     * Note: maxDiscount is only the configured ceiling and is never returned here directly.
+     *
+     * @return Active discount percentage (0-100), or BigDecimal.ZERO if no active discount
+     */
+    public java.math.BigDecimal getActiveDiscount() {
+        // No seasonal discount set
+        if (seasonalDiscountPercent == null || seasonalDiscountPercent.compareTo(java.math.BigDecimal.ZERO) == 0) {
+            return java.math.BigDecimal.ZERO;
+        }
+
+        LocalDate today = LocalDate.now();
+
+        // Permanent discount (no date range)
+        if (discountStartDate == null && discountEndDate == null) {
+            return seasonalDiscountPercent;
+        }
+
+        // Seasonal discount - check date range
+        if (discountStartDate != null && today.isBefore(discountStartDate)) {
+            return java.math.BigDecimal.ZERO; // Discount hasn't started yet
+        }
+
+        if (discountEndDate != null && today.isAfter(discountEndDate)) {
+            return java.math.BigDecimal.ZERO; // Discount has expired
+        }
+
+        // Today is within the discount period (or only startDate/endDate is set)
+        return seasonalDiscountPercent;
+    }
 }

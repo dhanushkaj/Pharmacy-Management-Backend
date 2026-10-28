@@ -127,12 +127,17 @@ public class BillingService {
             } else {
                 eligibleForOverall = eligibleForOverall.add(subtotal);
             }
+            
+            // Capture the applied discount at time of billing
+            BigDecimal appliedDiscount = product.getActiveDiscount() != null ? product.getActiveDiscount() : BigDecimal.ZERO;
+            
             BillingItem item = BillingItem.builder()
                     .product(product)
                     .quantity(itemReq.quantity())
                     .unitPrice(itemReq.unitPrice())
                     .batchNo(itemReq.batchNo())
                     .subtotal(subtotal)
+                    .appliedDiscount(appliedDiscount)
                     .build();
             items.add(item);
         }
@@ -352,7 +357,8 @@ public class BillingService {
                         item.getUnitPrice(),
                         item.getSubtotal(),
                         item.getBatchNo(),
-                        item.getReturnedQty()
+                        item.getReturnedQty(),
+                        item.getAppliedDiscount()
                 ))
                 .collect(Collectors.toList());
 
